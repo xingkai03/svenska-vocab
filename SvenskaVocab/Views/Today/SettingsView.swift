@@ -77,7 +77,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Lookup")
                 } footer: {
-                    Text("Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0.")
+                    Text("Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0.")
                 }
 
                 Section("Data") {
@@ -91,7 +91,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    ForEach(dictionary.customDecks) { deck in
+                    ForEach(myLists) { deck in
                         HStack {
                             Text(deck.name)
                             Spacer()
@@ -100,7 +100,7 @@ struct SettingsView: View {
                         .deleteDisabled(!deck.isImported)
                     }
                     .onDelete { offsets in
-                        offsets.map { dictionary.customDecks[$0] }.forEach(dictionary.deleteDeck)
+                        offsets.map { myLists[$0] }.forEach(dictionary.deleteDeck)
                     }
                     Button {
                         showImporter = true
@@ -132,6 +132,9 @@ struct SettingsView: View {
             .onChange(of: reminderTime) { updateReminder() }
         }
     }
+
+    /// Personal lists: imported ones and private bundled ones (not the open lists that ship with the app).
+    private var myLists: [WordDeck] { dictionary.customDecks.filter { $0.group == WordDeck.myLists } }
 
     private func importList(_ result: Result<URL, Error>) {
         do {

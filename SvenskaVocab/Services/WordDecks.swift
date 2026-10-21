@@ -3,12 +3,14 @@ import Foundation
 /// An extra word list for Learn new words: a bundled `deck_*.tsv` file (e.g. a personal list in
 /// Resources/Private) or a list the learner imported, stored in Application Support/decks.
 ///
-/// File format: an optional `# deck: Display name` line, then rows with the columns of core_vocabulary.tsv
+/// File format: optional `# deck: Display name` and `# group: Section` lines, then rows with the columns of core_vocabulary.tsv
 /// (word, pos, gender, forms, translation, example, example_translation) plus an optional 8th `chapter` column.
 /// Columns left empty are filled in from the dictionary entry with the same word.
 struct WordDeck: Identifiable, Sendable {
     let id: String
     let name: String
+    /// Section in the word list picker, e.g. "Coursebook" or "Topics"; personal lists are in `WordDeck.myLists`.
+    let group: String
     let entries: [DictionaryEntry]
     /// Chapter of each entry, parallel to `entries`; empty strings when the file has no chapters.
     let entryChapters: [String]
@@ -16,6 +18,10 @@ struct WordDeck: Identifiable, Sendable {
     let chapters: [String]
     let url: URL
     let isImported: Bool
+
+    static let myLists = "My lists"
+    /// Picker sections in display order; groups not listed here come after them.
+    static let groupOrder = ["Coursebook", "Spoken frequency", "Topics", myLists]
 
     func entries(inChapter chapter: String) -> [DictionaryEntry] {
         guard !chapter.isEmpty else { return entries }
@@ -92,6 +98,7 @@ enum WordDecks {
         guard let text = try? String(contentsOf: url, encoding: .utf8) else { return nil }
         var name = url.deletingPathExtension().lastPathComponent.dropFirst("deck_".count)
             .replacingOccurrences(of: "_", with: " ").capitalized
+        var group = WordDeck.myLists
         var entries: [DictionaryEntry] = []
         var chapters: [String] = []
         var seen = Set<String>()
@@ -100,6 +107,8 @@ enum WordDecks {
                 let comment = line.dropFirst().trimmingCharacters(in: .whitespaces)
                 if comment.lowercased().hasPrefix("deck:") {
                     name = comment.dropFirst("deck:".count).trimmingCharacters(in: .whitespaces)
+                } else if comment.lowercased().hasPrefix("group:"), !imported {
+                    group = comment.dropFirst("group:".count).trimmingCharacters(in: .whitespaces)
                 }
                 continue
             }
@@ -117,7 +126,7 @@ enum WordDecks {
         guard !entries.isEmpty else { return nil }
         var seenChapters = Set<String>()
         return WordDeck(id: (imported ? "imported/" : "bundled/") + url.lastPathComponent, name: name,
-                        entries: entries, entryChapters: chapters,
+                        group: group, entries: entries, entryChapters: chapters,
                         chapters: chapters.filter { !$0.isEmpty && seenChapters.insert($0).inserted },
                         url: url, isImported: imported)
     }

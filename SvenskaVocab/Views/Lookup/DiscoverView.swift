@@ -34,6 +34,19 @@ struct DiscoverView: View {
         }
     }
 
+    /// Bundled and imported word lists by picker section, in `WordDeck.groupOrder`.
+    private var deckGroups: [(String, [WordDeck])] {
+        let groups = Dictionary(grouping: dictionary.customDecks, by: \.group)
+        let order = { (g: String) in WordDeck.groupOrder.firstIndex(of: g) ?? WordDeck.groupOrder.count }
+        return groups.keys.sorted { (order($0), $0) < (order($1), $1) }.map { ($0, groups[$0]!) }
+    }
+
+    /// "A1 · 120/1339": learned of total words in a list.
+    private func label(_ name: String, _ entries: [DictionaryEntry], _ saved: Set<String>) -> String {
+        guard !entries.isEmpty else { return name }
+        return "\(name) · \(entries.filter { saved.contains($0.id) }.count)/\(entries.count)"
+    }
+
     private func matchesFilter(_ e: DictionaryEntry) -> Bool {
         switch partOfSpeech {
         case "all": true
@@ -50,13 +63,15 @@ struct DiscoverView: View {
         VStack(spacing: 20) {
             HStack {
                 Picker("Word list", selection: $deck) {
-                    Text("Core").tag("core")
-                    Section("CEFR levels") {
-                        ForEach(DictionaryService.levels, id: \.self) { Text($0).tag($0) }
+                    Text(label("Core", dictionary.coreEntries, saved)).tag("core")
+                    Section("CEFR levels (Kelly)") {
+                        ForEach(DictionaryService.levels, id: \.self) { level in
+                            Text(label(level, dictionary.deck(level), saved)).tag(level)
+                        }
                     }
-                    if !dictionary.customDecks.isEmpty {
-                        Section("Word lists") {
-                            ForEach(dictionary.customDecks) { Text($0.name).tag($0.id) }
+                    ForEach(deckGroups, id: \.0) { group, decks in
+                        Section(group) {
+                            ForEach(decks) { Text(label($0.name, $0.entries, saved)).tag($0.id) }
                         }
                     }
                 }
