@@ -9,22 +9,30 @@ final class DictionaryService: ObservableObject {
     /// The curated, frequency-ordered core vocabulary only (word of the day, Discover, quiz distractors).
     @Published private(set) var coreEntries: [DictionaryEntry] = []
 
+    /// CEFR levels of the Kelly word lists.
+    static let levels = ["A1", "A2", "B1", "B2", "C1", "C2"]
+
     private var index = SearchIndex(entries: [], coreCount: 0)
+    private var decks: [String: [DictionaryEntry]] = [:]
 
     init() {
         // The small core list loads synchronously so the Today screen has its word straight away;
-        // the ~36 000 Folkets entries are parsed and indexed off the main thread.
+        // the ~36 000 Folkets entries and the Kelly levels are parsed and indexed off the main thread.
         let core = Self.parse(resource: "core_vocabulary")
         coreEntries = core
         entries = core
         index = SearchIndex(entries: core, coreCount: core.count)
         let seen = Set(core.map(\.id))
         Task.detached(priority: .userInitiated) {
-            let all = core + Self.parse(resource: "folkets_sv_en", skipping: seen)
+            var loaded = core + Self.parse(resource: "folkets_sv_en", skipping: seen)
+            let decks = Self.applyLevels(to: &loaded)
+            let all = loaded
             let fullIndex = SearchIndex(entries: all, coreCount: core.count)
             await MainActor.run {
+                self.coreEntries = Array(all.prefix(core.count))
                 self.entries = all
                 self.index = fullIndex
+                self.decks = decks
             }
         }
     }
@@ -49,8 +57,32 @@ final class DictionaryService: ObservableObject {
         return result
     }
 
+    /// Sets `level` from kelly_levels.tsv (word, pos, level, rank) and returns the entries of each level in Kelly rank order.
+    private nonisolated static func applyLevels(to entries: inout [DictionaryEntry]) -> [String: [DictionaryEntry]] {
+        guard let url = Bundle.main.url(forResource: "kelly_levels", withExtension: "tsv"),
+              let text = try? String(contentsOf: url, encoding: .utf8) else { return [:] }
+        var levels: [String: (level: String, rank: Int)] = [:]
+        for line in text.split(separator: "\n") where !line.hasPrefix("#") {
+            let c = line.split(separator: "\t", omittingEmptySubsequences: false)
+            guard c.count >= 4, let rank = Int(c[3]) else { continue }
+            levels["\(c[0].lowercased())#\(c[1])"] = (String(c[2]), rank)
+        }
+        var ranked: [String: [(Int, DictionaryEntry)]] = [:]
+        for i in entries.indices {
+            guard let match = levels[entries[i].id] else { continue }
+            entries[i].level = match.level
+            ranked[match.level, default: []].append((match.rank, entries[i]))
+        }
+        return ranked.mapValues { $0.sorted { $0.0 < $1.0 }.map(\.1) }
+    }
+
+    /// Kelly words of one CEFR level ("A1" … "C2"), most useful first.
+    func deck(_ level: String) -> [DictionaryEntry] {
+        decks[level] ?? []
+    }
+
     /// Ranked search in both directions. Exact Swedish spelling ranks above diacritic-folded matches.
-    func search(_ query: String, limit: Int = 60) -> [DictionaryEntry] {
+    func search(_ query: String, limit: Int = 40) -> SearchResults {
         index.search(query, limit: limit)
     }
 
@@ -104,6 +136,16 @@ final class DictionaryService: ObservableObject {
     }
 }
 
+/// Offline matches, split by what matched: the Swedish word (or one of its forms) or the English translation.
+struct SearchResults {
+    var swedish: [DictionaryEntry] = []
+    var english: [DictionaryEntry] = []
+    /// True when the query looks English: no Swedish word matches it exactly, but a translation does.
+    var englishFirst = false
+
+    var isEmpty: Bool { swedish.isEmpty && english.isEmpty }
+}
+
 /// Lookup tables over the offline entries. search() runs on every keystroke over ~37 000 entries, so whole-word,
 /// inflection and prefix matches come from hash maps and a sorted list; only the substring pass scans everything.
 private struct SearchIndex: Sendable {
@@ -148,9 +190,9 @@ private struct SearchIndex: Sendable {
         sortedByWord = entries.indices.sorted { words[$0].lexicographicallyPrecedes(words[$1]) }
     }
 
-    func search(_ query: String, limit: Int) -> [DictionaryEntry] {
+    func search(_ query: String, limit: Int) -> SearchResults {
         let q = query.searchFolded
-        guard !q.isEmpty else { return [] }
+        guard !q.isEmpty else { return SearchResults() }
         let exactLower = query.lowercased().trimmingCharacters(in: .whitespaces)
         var score = [Int8](repeating: -1, count: entries.count)
         var hits: [Int] = []
@@ -177,14 +219,19 @@ private struct SearchIndex: Sendable {
             }
         }
         // Ties: curated core words first, then shorter words.
-        return hits
-            .sorted {
-                if score[$0] != score[$1] { return score[$0] < score[$1] }
-                if ($0 < coreCount) != ($1 < coreCount) { return $0 < coreCount }
-                return foldedWords[$0].count < foldedWords[$1].count
-            }
-            .prefix(limit)
-            .map { entries[$0] }
+        hits.sort {
+            if score[$0] != score[$1] { return score[$0] < score[$1] }
+            if ($0 < coreCount) != ($1 < coreCount) { return $0 < coreCount }
+            return foldedWords[$0].count < foldedWords[$1].count
+        }
+        // Scores 3 and 5 matched the translation; everything else matched the Swedish side.
+        let isEnglish = { (i: Int) in score[i] == 3 || score[i] == 5 }
+        let swedish = hits.lazy.filter { !isEnglish($0) }.prefix(limit).map { entries[$0] }
+        let english = hits.lazy.filter(isEnglish).prefix(limit).map { entries[$0] }
+        let hasSwedishLetters = query.rangeOfCharacter(from: CharacterSet(charactersIn: "åäöÅÄÖ")) != nil
+        return SearchResults(
+            swedish: Array(swedish), english: Array(english),
+            englishFirst: !hasSwedishLetters && hits.first.map { score[$0] == 3 } == true)
     }
 
     private func prefixMatches(_ prefix: [UInt8]) -> [Int] {

@@ -88,6 +88,23 @@ struct PartOfSpeechTag: View {
     }
 }
 
+/// CEFR level ("A2") from the Kelly list; draws nothing for words without a level.
+struct LevelBadge: View {
+    let level: String
+
+    var body: some View {
+        if !level.isEmpty {
+            Text(level)
+                .font(.caption2.weight(.semibold))
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(.secondary)
+                .accessibilityLabel("Level \(level)")
+        }
+    }
+}
+
 /// A list row for a dictionary entry.
 struct EntryRow: View {
     let entry: DictionaryEntry
@@ -99,6 +116,7 @@ struct EntryRow: View {
                 HStack(spacing: 6) {
                     Text(entry.word).font(.headline)
                     PartOfSpeechTag(entry: entry)
+                    LevelBadge(level: entry.level)
                 }
                 Text(entry.translation)
                     .font(.subheadline)

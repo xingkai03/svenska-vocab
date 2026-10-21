@@ -16,6 +16,7 @@ struct CollectionView: View {
     @Query(sort: \SavedWord.addedAt, order: .reverse) private var words: [SavedWord]
     @State private var filter: Filter = .all
     @State private var sort: Sort = .recent
+    @State private var level = ""
     @State private var search = ""
     @State private var showAdd = false
 
@@ -29,7 +30,7 @@ struct CollectionView: View {
             case .mastered: w.mastery == .mastered || w.mastery == .familiar
             case .favorites: w.isFavorite
             }
-            return matchesFilter && (q.isEmpty || w.word.searchFolded.contains(q) || w.translation.searchFolded.contains(q))
+            return matchesFilter && (level.isEmpty || w.level == level) && (q.isEmpty || w.word.searchFolded.contains(q) || w.translation.searchFolded.contains(q))
         }
         switch sort {
         case .recent: return filtered
@@ -90,10 +91,14 @@ struct CollectionView: View {
                         Picker("Sort", selection: $sort) {
                             ForEach(Sort.allCases) { Text($0.rawValue).tag($0) }
                         }
+                        Picker("Level", selection: $level) {
+                            Text("All levels").tag("")
+                            ForEach(DictionaryService.levels, id: \.self) { Text($0).tag($0) }
+                        }
                     } label: {
-                        Image(systemName: "arrow.up.arrow.down")
+                        Image(systemName: level.isEmpty ? "arrow.up.arrow.down" : "line.3.horizontal.decrease.circle.fill")
                     }
-                    .accessibilityLabel("Sort")
+                    .accessibilityLabel("Sort and level")
                 }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if !words.isEmpty {
@@ -116,6 +121,7 @@ struct CollectionView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(word.word).font(.headline)
+                LevelBadge(level: word.level)
                 if word.isFavorite {
                     Image(systemName: "star.fill").font(.caption).foregroundStyle(.yellow)
                 }

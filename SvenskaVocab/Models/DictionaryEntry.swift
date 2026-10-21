@@ -16,6 +16,8 @@ struct DictionaryEntry: Identifiable, Hashable {
     var example: String
     var exampleTranslation: String
     var source: Source = .bundled
+    /// CEFR level from the Kelly list ("A1" … "C2"), or empty if the word is not on it.
+    var level: String = ""
 
     var id: String { "\(word.lowercased())#\(partOfSpeech)" }
 

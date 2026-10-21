@@ -29,6 +29,7 @@ struct WordDetailView: View {
                         Text(shown.headword).font(.largeTitle.bold())
                         Spacer()
                         PartOfSpeechTag(entry: shown)
+                        LevelBadge(level: shown.level.isEmpty ? entry.level : shown.level)
                     }
                     Text(shown.translation).font(.title3)
                     HStack(spacing: 20) {

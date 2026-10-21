@@ -191,7 +191,7 @@ struct TodayView: View {
                         .foregroundStyle(.purple)
                     VStack(alignment: .leading) {
                         Text("Learn new words").font(.headline)
-                        Text("Pick up the most common Swedish words, in order of frequency")
+                        Text("The most common Swedish words first, or CEFR word lists from A1 to C2")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.leading)

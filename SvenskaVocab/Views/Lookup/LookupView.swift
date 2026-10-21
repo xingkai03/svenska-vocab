@@ -10,6 +10,7 @@ struct LookupView: View {
     @State private var onlineResults: [DictionaryEntry] = []
     @State private var onlineState: OnlineState = .idle
     @State private var showAddWord = false
+    @State private var showAllFirst = false
 
     enum OnlineState: Equatable {
         case idle, loading, done, failed(String)
@@ -17,7 +18,7 @@ struct LookupView: View {
 
     private var savedKeys: Set<String> { Set(words.map(\.key)) }
     private var recent: [String] { recentRaw.split(separator: "\n").map(String.init) }
-    private var localResults: [DictionaryEntry] { dictionary.search(query) }
+    private var localResults: SearchResults { dictionary.search(query) }
 
     var body: some View {
         NavigationStack {
@@ -26,13 +27,7 @@ struct LookupView: View {
                     emptyState
                 } else {
                     let local = localResults
-                    if !local.isEmpty {
-                        Section("Dictionary") {
-                            ForEach(local) { entry in
-                                link(entry)
-                            }
-                        }
-                    }
+                    localSections(local)
                     if onlineLookup {
                         onlineSection(hasLocal: !local.isEmpty)
                     } else if local.isEmpty {
@@ -59,6 +54,7 @@ struct LookupView: View {
             .onChange(of: query) {
                 onlineResults = []
                 onlineState = .idle
+                showAllFirst = false
             }
             .toolbar {
                 Button { showAddWord = true } label: { Image(systemName: "plus") }
@@ -66,6 +62,33 @@ struct LookupView: View {
             }
             .sheet(isPresented: $showAddWord) {
                 EditWordView(prefill: query)
+            }
+        }
+    }
+
+    /// Swedish-word matches and translation matches in separate sections. When both exist, the first section
+    /// is cut to a few rows so the other stays visible (e.g. "dog" shows Swedish "dog" = died, and "hund").
+    @ViewBuilder
+    private func localSections(_ results: SearchResults) -> some View {
+        let swedish = ("Swedish", results.swedish)
+        let english = ("English → Swedish", results.english)
+        let (first, second) = results.englishFirst ? (english, swedish) : (swedish, english)
+        let collapsed = !showAllFirst && !second.1.isEmpty && first.1.count > 6
+        if !first.1.isEmpty {
+            Section(first.0) {
+                ForEach(collapsed ? Array(first.1.prefix(5)) : first.1) { entry in
+                    link(entry)
+                }
+                if collapsed {
+                    Button("Show \(first.1.count - 5) more") { showAllFirst = true }
+                }
+            }
+        }
+        if !second.1.isEmpty {
+            Section(second.0) {
+                ForEach(second.1) { entry in
+                    link(entry)
+                }
             }
         }
     }

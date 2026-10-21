@@ -74,7 +74,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Lookup")
                 } footer: {
-                    Text("Searches Folkets lexikon (KTH) for words that are not in the built-in vocabulary. Dictionary data © Folkets lexikon, CC BY-SA 2.5.")
+                    Text("Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0.")
                 }
 
                 Section("Data") {

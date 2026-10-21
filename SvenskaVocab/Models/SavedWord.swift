@@ -16,6 +16,8 @@ final class SavedWord {
     var source: String
     var addedAt: Date
     var isFavorite: Bool
+    /// CEFR level ("A1" … "C2") or empty. Has a default so existing stores migrate.
+    var level: String = ""
 
     // SM-2 scheduling state
     var easeFactor: Double
@@ -39,6 +41,7 @@ final class SavedWord {
         source = entry.source.rawValue
         addedAt = now
         isFavorite = false
+        level = entry.level
         easeFactor = 2.5
         interval = 0
         repetitions = 0
@@ -51,7 +54,7 @@ final class SavedWord {
     var entry: DictionaryEntry {
         DictionaryEntry(word: word, partOfSpeech: partOfSpeech, gender: gender, forms: forms,
                         translation: translation, example: example, exampleTranslation: exampleTranslation,
-                        source: DictionaryEntry.Source(rawValue: source) ?? .custom)
+                        source: DictionaryEntry.Source(rawValue: source) ?? .custom, level: level)
     }
 
     var isDue: Bool { dueDate <= .now }

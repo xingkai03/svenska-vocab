@@ -12,6 +12,7 @@ enum AppSettings {
     static let skippedWords = "skippedWords"
     static let recentSearches = "recentSearches"
     static let onlineLookup = "onlineLookup"
+    static let discoverDeck = "discoverDeck"
 }
 
 /// Daily study reminder via a repeating local notification.
