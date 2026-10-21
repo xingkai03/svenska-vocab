@@ -17,7 +17,7 @@ struct DiscoverView: View {
     private var candidates: [DictionaryEntry] {
         let saved = Set(words.map(\.key))
         let skip = skipped
-        return dictionary.entries.filter {
+        return dictionary.coreEntries.filter {
             !saved.contains($0.id) && !skip.contains($0.id) && matchesFilter($0)
         }
     }

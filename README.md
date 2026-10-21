@@ -1,14 +1,14 @@
 # Svenska – Swedish vocabulary builder for iOS
 
-A compact SwiftUI app for building Swedish vocabulary, with an offline core dictionary, spaced repetition and a daily check-in streak.
+A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedish–English dictionary, spaced repetition and a daily check-in streak.
 
 ## Features
 
-- **Lookup** – search in Swedish or English, with or without å/ä/ö ("bat" finds "båt"). About 700 common words work offline; anything else is looked up in [Folkets lexikon](https://folkets-lexikon.csc.kth.se/folkets/) (KTH). Recent searches are remembered.
+- **Lookup** – search in Swedish or English, with or without å/ä/ö ("bat" finds "båt"). About 37 000 words work offline: a curated core vocabulary of ~700 common words plus the whole of [Folkets lexikon](https://folkets-lexikon.csc.kth.se/folkets/) (KTH). Anything else is looked up in Folkets lexikon online. Recent searches are remembered.
 - **Word details** – article (en/ett), inflected forms, translation, example sentence with translation, personal notes.
 - **Pronunciation** – every word, form and example sentence can be spoken with the system's Swedish (sv-SE) voice, at normal or slow speed. Optional auto-pronounce.
 - **Collection** – save words, add your own, edit, favourite, filter (due, learning, mastered, favourites), sort (recent, A–Z, next review, weakest memory), swipe to delete. Export as CSV.
-- **Learn new words** – step through the built-in vocabulary in frequency order: "Learn" adds a word, "I know it" skips it.
+- **Learn new words** – step through the core vocabulary in frequency order: "Learn" adds a word, "I know it" skips it.
 - **Spaced repetition** – an SM-2 scheduler with Again / Hard / Good / Easy grading and interval previews. Forgotten words come back in the same session.
 - **Forgetting curve** – each word has a modelled recall probability R(t) = 0.9^(t / interval), shown as a memory-strength bar and a curve on its detail page.
 - **Review modes** – flashcards, English → Swedish, multiple choice, listening, and spelling (with å/ä/ö keys and "almost right" detection). When nothing is due you can practise without changing the schedule.
@@ -38,7 +38,8 @@ SvenskaVocab/
   Models/         SwiftData models (SavedWord, ReviewLog, CheckIn) and DictionaryEntry
   Services/       Dictionary (offline + Folkets lexikon), speech, scheduler, settings, reminders
   Views/          Today, Lookup, Collection, Review, Summary
-  Resources/      core_vocabulary.tsv
+  Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv (generated)
+scripts/          build_folkets.py
 ```
 
 ### Extending the built-in vocabulary
@@ -51,6 +52,19 @@ word  part_of_speech  gender(en/ett)  forms  translation  example  example_trans
 
 Part of speech is one of `noun verb adjective adverb pronoun preposition conjunction numeral interjection phrase`. Lines starting with `#` are ignored.
 
+Word of the day, "Learn new words" and quiz distractors use only this curated list; search covers it and the Folkets lexikon file.
+
+### Updating the bundled Folkets lexikon
+
+`Resources/folkets_sv_en.tsv` uses the same columns and is generated from the Folkets XML export by `scripts/build_folkets.py`, which skips words already in `core_vocabulary.tsv`:
+
+```
+curl -LO https://folkets-lexikon.csc.kth.se/folkets/folkets_sv_en_public.xml
+python3 scripts/build_folkets.py folkets_sv_en_public.xml
+```
+
+Don't commit the XML. Rerun the script after editing `core_vocabulary.tsv` so the two files don't overlap.
+
 ## Credits
 
-Online dictionary data comes from Folkets lexikon, © KTH, licensed CC BY-SA 2.5.
+Dictionary data (bundled and online) comes from Folkets lexikon, © KTH, licensed CC BY-SA 2.5. The generated `folkets_sv_en.tsv` is a derivative work under the same licence.

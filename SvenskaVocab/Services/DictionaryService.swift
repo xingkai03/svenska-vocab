@@ -1,29 +1,39 @@
 import Foundation
 
-/// Swedish ⇄ English lookup: an offline core vocabulary bundled with the app,
-/// plus an optional online lookup in Folkets lexikon (KTH, CC BY-SA 2.5).
+/// Swedish ⇄ English lookup: a curated core vocabulary and the full Folkets lexikon (KTH, CC BY-SA 2.5)
+/// bundled with the app, plus an optional online lookup in Folkets lexikon.
 @MainActor
 final class DictionaryService: ObservableObject {
+    /// Everything searchable offline: the core vocabulary followed by Folkets lexikon.
     @Published private(set) var entries: [DictionaryEntry] = []
+    /// The curated, frequency-ordered core vocabulary only (word of the day, Discover, quiz distractors).
+    @Published private(set) var coreEntries: [DictionaryEntry] = []
 
-    private struct Indexed {
-        let entry: DictionaryEntry
-        let word: String
-        let translation: String
-        let translationTokens: Set<String>
-    }
-
-    private var index: [Indexed] = []
+    private var index = SearchIndex(entries: [], coreCount: 0)
 
     init() {
-        load()
+        // The small core list loads synchronously so the Today screen has its word straight away;
+        // the ~36 000 Folkets entries are parsed and indexed off the main thread.
+        let core = Self.parse(resource: "core_vocabulary")
+        coreEntries = core
+        entries = core
+        index = SearchIndex(entries: core, coreCount: core.count)
+        let seen = Set(core.map(\.id))
+        Task.detached(priority: .userInitiated) {
+            let all = core + Self.parse(resource: "folkets_sv_en", skipping: seen)
+            let fullIndex = SearchIndex(entries: all, coreCount: core.count)
+            await MainActor.run {
+                self.entries = all
+                self.index = fullIndex
+            }
+        }
     }
 
-    private func load() {
-        guard let url = Bundle.main.url(forResource: "core_vocabulary", withExtension: "tsv"),
-              let text = try? String(contentsOf: url, encoding: .utf8) else { return }
+    private nonisolated static func parse(resource: String, skipping seen: Set<String> = []) -> [DictionaryEntry] {
+        guard let url = Bundle.main.url(forResource: resource, withExtension: "tsv"),
+              let text = try? String(contentsOf: url, encoding: .utf8) else { return [] }
         var result: [DictionaryEntry] = []
-        var seen = Set<String>()
+        var seen = seen
         for line in text.split(separator: "\n", omittingEmptySubsequences: true) {
             if line.hasPrefix("#") { continue }
             let c = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
@@ -36,52 +46,29 @@ final class DictionaryService: ObservableObject {
                 result.append(entry)
             }
         }
-        entries = result
-        index = result.map { e in
-            let t = e.translation.searchFolded
-            let tokens = t.components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }
-            return Indexed(entry: e, word: e.word.searchFolded, translation: t, translationTokens: Set(tokens))
-        }
+        return result
     }
 
     /// Ranked search in both directions. Exact Swedish spelling ranks above diacritic-folded matches.
     func search(_ query: String, limit: Int = 60) -> [DictionaryEntry] {
-        let q = query.searchFolded
-        guard !q.isEmpty else { return [] }
-        let exactLower = query.lowercased().trimmingCharacters(in: .whitespaces)
-        var scored: [(Int, DictionaryEntry)] = []
-        for item in index {
-            var score: Int?
-            if item.entry.word.lowercased() == exactLower { score = 0 }
-            else if item.word == q { score = 1 }
-            else if item.entry.formList.contains(where: { $0.searchFolded == q }) { score = 2 }
-            else if item.translationTokens.contains(q) { score = 3 }
-            else if item.word.hasPrefix(q) { score = 4 }
-            else if item.translation.contains(q) { score = 5 }
-            else if item.word.contains(q) { score = 6 }
-            if let score { scored.append((score, item.entry)) }
-        }
-        return scored
-            .sorted { $0.0 != $1.0 ? $0.0 < $1.0 : $0.1.word.count < $1.1.word.count }
-            .prefix(limit)
-            .map(\.1)
+        index.search(query, limit: limit)
     }
 
     /// Same word every day, cycling through the core vocabulary.
     func wordOfTheDay(date: Date = .now) -> DictionaryEntry? {
-        guard !entries.isEmpty else { return nil }
+        guard !coreEntries.isEmpty else { return nil }
         let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
         // Stride by a prime so consecutive days are not neighbours in the frequency list.
-        return entries[(day * 7919) % entries.count]
+        return coreEntries[(day * 7919) % coreEntries.count]
     }
 
     /// Random translations to use as wrong answers in multiple-choice questions.
     func distractors(for correct: String, count: Int) -> [String] {
         var pool = Set<String>()
         var attempts = 0
-        while pool.count < count, attempts < 200, !entries.isEmpty {
+        while pool.count < count, attempts < 200, !coreEntries.isEmpty {
             attempts += 1
-            let t = entries.randomElement()!.translation
+            let t = coreEntries.randomElement()!.translation
             if t != correct { pool.insert(t) }
         }
         return Array(pool)
@@ -117,105 +104,202 @@ final class DictionaryService: ObservableObject {
     }
 }
 
-/// Parses the XML returned by the Folkets lexikon web service into entries with Swedish headwords.
-final class FolketsParser: NSObject, XMLParserDelegate {
-    private struct Builder {
-        var value: String
-        var lang: String
-        var wordClass: String
-        var translations: [String] = []
-        var inflections: [String] = []
-        var examples: [(String, String)] = []
-    }
+/// Lookup tables over the offline entries. search() runs on every keystroke over ~37 000 entries, so whole-word,
+/// inflection and prefix matches come from hash maps and a sorted list; only the substring pass scans everything.
+private struct SearchIndex: Sendable {
+    private let entries: [DictionaryEntry]
+    private let coreCount: Int
+    private let foldedWords: [[UInt8]]
+    private let foldedTranslations: [[UInt8]]
+    private let byExactWord: [String: [Int]]
+    private let byWord: [String: [Int]]
+    private let byForm: [String: [Int]]
+    private let byTranslationToken: [String: [Int]]
+    /// Entry indices ordered by folded word bytes, for prefix lookup by binary search.
+    private let sortedByWord: [Int]
 
-    private var entries: [DictionaryEntry] = []
-    private var current: Builder?
-    private var example: (String, String)?
-    private var nestedDepth = 0 // inside idiom/definition/explanation/etc., whose translations we skip
-
-    static func parse(_ data: Data) -> [DictionaryEntry] {
-        let delegate = FolketsParser()
-        let parser = XMLParser(data: data)
-        parser.delegate = delegate
-        parser.parse()
-        return delegate.entries
-    }
-
-    func parser(_ parser: XMLParser, didStartElement name: String, namespaceURI: String?,
-                qualifiedName: String?, attributes: [String: String] = [:]) {
-        let value = attributes["value"]?.trimmingCharacters(in: .whitespaces) ?? ""
-        switch name {
-        case "word":
-            current = Builder(value: value, lang: attributes["lang"] ?? "sv", wordClass: attributes["class"] ?? "")
-        case "example":
-            example = (value, "")
-        case "translation":
-            if example != nil {
-                if example!.1.isEmpty { example!.1 = value }
-            } else if nestedDepth == 0, !value.isEmpty {
-                current?.translations.append(value)
+    init(entries: [DictionaryEntry], coreCount: Int) {
+        self.entries = entries
+        self.coreCount = coreCount
+        var exact: [String: [Int]] = [:], word: [String: [Int]] = [:]
+        var form: [String: [Int]] = [:], token: [String: [Int]] = [:]
+        var words: [[UInt8]] = [], translations: [[UInt8]] = []
+        words.reserveCapacity(entries.count)
+        translations.reserveCapacity(entries.count)
+        for (i, e) in entries.enumerated() {
+            let w = e.word.searchFolded
+            let t = e.translation.searchFolded
+            words.append(Array(w.utf8))
+            translations.append(Array(t.utf8))
+            exact[e.word.lowercased(), default: []].append(i)
+            word[w, default: []].append(i)
+            for f in Set(e.formList.map(\.searchFolded)) { form[f, default: []].append(i) }
+            // Single letters are mostly leftovers like the "s" in "someone's"; "I" is the exception.
+            for k in Set(t.components(separatedBy: CharacterSet.alphanumerics.inverted)) where k.count > 1 || k == "i" {
+                token[k, default: []].append(i)
             }
-        case "inflection":
-            if nestedDepth == 0, !value.isEmpty { current?.inflections.append(value) }
-        case "idiom", "definition", "explanation", "compound", "derivation", "use", "related", "synonym", "see":
-            nestedDepth += 1
-        default:
-            break
+        }
+        foldedWords = words
+        foldedTranslations = translations
+        byExactWord = exact
+        byWord = word
+        byForm = form
+        byTranslationToken = token
+        sortedByWord = entries.indices.sorted { words[$0].lexicographicallyPrecedes(words[$1]) }
+    }
+
+    func search(_ query: String, limit: Int) -> [DictionaryEntry] {
+        let q = query.searchFolded
+        guard !q.isEmpty else { return [] }
+        let exactLower = query.lowercased().trimmingCharacters(in: .whitespaces)
+        var score = [Int8](repeating: -1, count: entries.count)
+        var hits: [Int] = []
+        func add(_ ids: [Int]?, _ s: Int8) {
+            for i in ids ?? [] where score[i] < 0 {
+                score[i] = s
+                hits.append(i)
+            }
+        }
+        add(byExactWord[exactLower], 0)
+        add(byWord[q], 1)
+        add(byForm[q], 2)
+        add(byTranslationToken[q], 3)
+        add(prefixMatches(Array(q.utf8)), 4)
+        // Substring matches rank last; skip the full scan when better matches already fill the list,
+        // and for single letters, which would match nearly everything.
+        if hits.count < limit, q.utf8.count >= 2 {
+            let needle = Array(q.utf8)
+            for i in entries.indices where score[i] < 0 {
+                if Self.contains(foldedTranslations[i], needle) { score[i] = 5 }
+                else if Self.contains(foldedWords[i], needle) { score[i] = 6 }
+                else { continue }
+                hits.append(i)
+            }
+        }
+        // Ties: curated core words first, then shorter words.
+        return hits
+            .sorted {
+                if score[$0] != score[$1] { return score[$0] < score[$1] }
+                if ($0 < coreCount) != ($1 < coreCount) { return $0 < coreCount }
+                return foldedWords[$0].count < foldedWords[$1].count
+            }
+            .prefix(limit)
+            .map { entries[$0] }
+    }
+
+    private func prefixMatches(_ prefix: [UInt8]) -> [Int] {
+        var low = 0, high = sortedByWord.count
+        while low < high {
+            let mid = (low + high) / 2
+            if foldedWords[sortedByWord[mid]].lexicographicallyPrecedes(prefix) { low = mid + 1 } else { high = mid }
+        }
+        var result: [Int] = []
+        while low < sortedByWord.count, foldedWords[sortedByWord[low]].starts(with: prefix) {
+            result.append(sortedByWord[low])
+            low += 1
+        }
+        return result
+    }
+
+    private static func contains(_ haystack: [UInt8], _ needle: [UInt8]) -> Bool {
+        haystack.withUnsafeBytes { h in
+            needle.withUnsafeBytes { n in
+                memmem(h.baseAddress, h.count, n.baseAddress, n.count) != nil
+            }
+        }
+    }
+}
+
+/// Parses the Folkets lexikon web service response. Despite the name "service" it returns an HTML page
+/// with one `<P>` per entry, e.g.
+/// `<P><img alt="(Svenska)"/> <b>hund</b> noun, <img alt="(Engelska)"/> <b>dog</b><br>Inflections:  hunden, hundar<br>
+/// Example: gå ut med hunden (take the dog for a walk),<br>…</P>`
+enum FolketsParser {
+    static func parse(_ data: Data) -> [DictionaryEntry] {
+        guard let html = String(data: data, encoding: .utf8) else { return [] }
+        return html.components(separatedBy: "<P>").dropFirst().flatMap { block in
+            entries(from: block.components(separatedBy: "</P>")[0])
         }
     }
 
-    func parser(_ parser: XMLParser, didEndElement name: String, namespaceURI: String?, qualifiedName: String?) {
-        switch name {
-        case "example":
-            if let example, !example.0.isEmpty { current?.examples.append(example) }
-            example = nil
-        case "idiom", "definition", "explanation", "compound", "derivation", "use", "related", "synonym", "see":
-            nestedDepth = max(0, nestedDepth - 1)
-        case "word":
-            if let b = current { entries.append(contentsOf: build(b)) }
-            current = nil
-            nestedDepth = 0
-        default:
-            break
-        }
-    }
+    private static func entries(from block: String) -> [DictionaryEntry] {
+        let lines = block.components(separatedBy: "<br>")
+        let header = lines[0]
+        // The first flag is the headword's language, the second the translations'.
+        let flags = header.components(separatedBy: "<img")
+        guard flags.count >= 3 else { return [] } // "No hit"
+        let isSwedish = flags[1].contains("(Svenska)")
+        guard let headword = bold(flags[1]).first else { return [] }
+        let afterHeadword = flags[1].components(separatedBy: "</b>").dropFirst().joined()
+        let pos = partOfSpeech(text(afterHeadword))
+        let translations = bold(flags[2...].joined(separator: "<img"))
 
-    private func build(_ b: Builder) -> [DictionaryEntry] {
-        let pos = Self.partOfSpeech(b.wordClass)
-        let example = b.examples.first
-        let clean = { (s: String) in s.replacingOccurrences(of: "|", with: "") }
-        if b.lang == "sv" {
-            guard !b.value.isEmpty else { return [] }
+        var forms: [String] = []
+        var example: (String, String)?
+        for line in lines.dropFirst() {
+            let line = text(line)
+            if line.hasPrefix("Inflections:") {
+                forms = line.dropFirst("Inflections:".count).split(separator: ",")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            } else if example == nil, line.hasPrefix("Example:") {
+                example = splitExample(String(line.dropFirst("Example:".count)))
+            }
+        }
+        guard !translations.isEmpty else { return [] }
+
+        if isSwedish {
             return [DictionaryEntry(
-                word: clean(b.value), partOfSpeech: pos,
-                gender: pos == "noun" ? Self.gender(fromInflections: b.inflections) : "",
-                forms: b.inflections.map(clean).joined(separator: ", "),
-                translation: b.translations.joined(separator: "; "),
+                word: headword, partOfSpeech: pos,
+                gender: pos == "noun" ? gender(fromInflections: forms) : "",
+                forms: forms.joined(separator: ", "),
+                translation: translations.joined(separator: "; "),
                 example: example?.0 ?? "", exampleTranslation: example?.1 ?? "",
                 source: .online)]
         }
         // English headword: turn each Swedish translation into its own entry.
-        return b.translations.prefix(4).map { sv in
-            DictionaryEntry(word: clean(sv), partOfSpeech: pos, gender: "", forms: "",
-                            translation: b.value,
+        return translations.prefix(4).map { sv in
+            DictionaryEntry(word: sv, partOfSpeech: pos, gender: "", forms: "",
+                            translation: headword,
                             example: example?.1 ?? "", exampleTranslation: example?.0 ?? "",
                             source: .online)
         }
     }
 
-    private static func partOfSpeech(_ cls: String) -> String {
-        switch cls {
-        case "nn", "pm": "noun"
-        case "vb": "verb"
-        case "jj", "pc": "adjective"
-        case "ab": "adverb"
-        case "pn", "hp": "pronoun"
-        case "pp": "preposition"
-        case "kn", "sn": "conjunction"
-        case "rg", "ro": "numeral"
-        case "in": "interjection"
-        default: "phrase"
+    /// Contents of every `<b>…</b>` in order, as plain text.
+    private static func bold(_ html: String) -> [String] {
+        html.components(separatedBy: "<b>").dropFirst().compactMap { part in
+            let value = text(part.components(separatedBy: "</b>")[0])
+            return value.isEmpty ? nil : value
         }
+    }
+
+    /// Strips tags, decodes the entities the service uses and drops compound markers ("hund|mat").
+    private static func text(_ html: String) -> String {
+        var s = html.replacingOccurrences(of: "<[^>]*>", with: "", options: .regularExpression)
+        for (entity, char) in [("&nbsp;", " "), ("&quot;", "\""), ("&#39;", "'"), ("&lt;", "<"),
+                               ("&gt;", ">"), ("&amp;", "&")] {
+            s = s.replacingOccurrences(of: entity, with: char)
+        }
+        return s.replacingOccurrences(of: "|", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: ",")))
+    }
+
+    /// "gå ut med hunden (take the dog for a walk)" → ("gå ut med hunden", "take the dog for a walk")
+    private static func splitExample(_ s: String) -> (String, String) {
+        let s = s.trimmingCharacters(in: .whitespaces)
+        guard s.hasSuffix(")"), let open = s.lastIndex(of: "(") else { return (s, "") }
+        return (s[..<open].trimmingCharacters(in: .whitespaces),
+                String(s[s.index(after: open)..<s.index(before: s.endIndex)]))
+    }
+
+    /// The word class follows the headword in English, e.g. "noun (everyday language),".
+    private static func partOfSpeech(_ label: String) -> String {
+        let name = label.lowercased()
+        for pos in PartOfSpeech.all where name.hasPrefix(pos) { return pos }
+        if name.hasPrefix("participle") { return "adjective" }
+        if name.hasPrefix("proper noun") { return "noun" }
+        if name.hasPrefix("article") { return "pronoun" }
+        return "phrase"
     }
 
     /// Definite singular ending in -n → "en", in -t → "ett".

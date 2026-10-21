@@ -103,7 +103,7 @@ struct LookupView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Label("Search in Swedish or English", systemImage: "character.book.closed")
                     .font(.headline)
-                Text("Type without å, ä, ö if you like: “bat” finds “båt”. \(dictionary.entries.count) common words work offline; anything else is looked up in Folkets lexikon.")
+                Text("Type without å, ä, ö if you like: “bat” finds “båt”. \(dictionary.entries.count.formatted()) words work offline; anything else is looked up online in Folkets lexikon.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
