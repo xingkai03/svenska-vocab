@@ -1,7 +1,8 @@
 import SwiftData
 import SwiftUI
 
-/// Learn new words from the curated core vocabulary (most frequent first) or a Kelly CEFR word list.
+/// Learn new words from the curated core vocabulary (most frequent first), a Kelly CEFR word list,
+/// or an extra word list (bundled or imported), optionally one chapter at a time.
 struct DiscoverView: View {
     @Environment(\.modelContext) private var context
     @EnvironmentObject private var dictionary: DictionaryService
@@ -9,15 +10,20 @@ struct DiscoverView: View {
     @Query private var words: [SavedWord]
     @AppStorage(AppSettings.skippedWords) private var skippedRaw = ""
     @AppStorage(AppSettings.autoSpeak) private var autoSpeak = true
-    /// "core" or a CEFR level ("A1" … "C2").
+    /// "core", a CEFR level ("A1" … "C2") or a WordDeck id.
     @AppStorage(AppSettings.discoverDeck) private var deck = "core"
+    @State private var chapter = ""
     @State private var partOfSpeech = "all"
     @State private var learnedThisVisit = 0
 
     private var skipped: Set<String> { Set(skippedRaw.split(separator: "\n").map(String.init)) }
 
+    private var customDeck: WordDeck? { dictionary.customDecks.first { $0.id == deck } }
+
     private var deckEntries: [DictionaryEntry] {
-        deck == "core" ? dictionary.coreEntries : dictionary.deck(deck)
+        if deck == "core" { return dictionary.coreEntries }
+        if let customDeck { return customDeck.entries(inChapter: chapter) }
+        return dictionary.deck(deck)
     }
 
     private var candidates: [DictionaryEntry] {
@@ -42,11 +48,27 @@ struct DiscoverView: View {
         let saved = Set(words.map(\.key))
         let learned = all.filter { saved.contains($0.id) }.count
         VStack(spacing: 20) {
-            Picker("Word list", selection: $deck) {
-                Text("Core").tag("core")
-                ForEach(DictionaryService.levels, id: \.self) { Text($0).tag($0) }
+            HStack {
+                Picker("Word list", selection: $deck) {
+                    Text("Core").tag("core")
+                    Section("CEFR levels") {
+                        ForEach(DictionaryService.levels, id: \.self) { Text($0).tag($0) }
+                    }
+                    if !dictionary.customDecks.isEmpty {
+                        Section("Word lists") {
+                            ForEach(dictionary.customDecks) { Text($0.name).tag($0.id) }
+                        }
+                    }
+                }
+                if let customDeck, !customDeck.chapters.isEmpty {
+                    Picker("Chapter", selection: $chapter) {
+                        Text("All chapters").tag("")
+                        ForEach(customDeck.chapters, id: \.self) { Text($0).tag($0) }
+                    }
+                }
             }
-            .pickerStyle(.segmented)
+            .pickerStyle(.menu)
+            .onChange(of: deck) { chapter = "" }
 
             Picker("Type", selection: $partOfSpeech) {
                 Text("All").tag("all")
@@ -97,8 +119,8 @@ struct DiscoverView: View {
                     .buttonStyle(.borderedProminent)
                 }
                 .controlSize(.large)
-            } else if all.isEmpty {
-                // Kelly decks are ready a moment after launch, once the full dictionary has loaded.
+            } else if !dictionary.isLoaded {
+                // Kelly decks and word lists are ready a moment after launch, once the full dictionary has loaded.
                 ProgressView("Loading word list…")
             } else {
                 ContentUnavailableView("You've seen them all",
@@ -108,6 +130,12 @@ struct DiscoverView: View {
             Spacer()
         }
         .padding()
+        .task(id: dictionary.isLoaded) {
+            // A word list that was deleted (or not part of this build) falls back to the core list.
+            if dictionary.isLoaded, deck != "core", !DictionaryService.levels.contains(deck), customDeck == nil {
+                deck = "core"
+            }
+        }
         .navigationTitle("Learn new words")
         .navigationBarTitleDisplayMode(.inline)
     }

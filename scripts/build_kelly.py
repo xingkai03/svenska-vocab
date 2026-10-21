@@ -10,7 +10,9 @@ then run from the repository root, after build_folkets.py:
     python3 scripts/build_kelly.py kelly.xml
 
 Writes SvenskaVocab/Resources/kelly_levels.tsv (word, pos, level, rank), keeping only
-lemmas that exist in core_vocabulary.tsv or folkets_sv_en.tsv. Word and part of speech
+lemmas that exist in core_vocabulary.tsv or folkets_sv_en.tsv. Rank is by frequency
+(words per million, highest first); the hand-added words, whose WPM is a placeholder
+1 000 000, come last. Word and part of speech
 are written as they appear in the dictionary, so the app can match them on its entry id.
 """
 
@@ -62,7 +64,9 @@ def kelly_entries(source):
         word = " ".join((feats.get("writtenForm") or "").split())
         if level and word:
             pos = CLASSES.get(feats.get("kellyPartOfSpeech", ""), "phrase")
-            yield word, pos, level, int(feats["kellyID"])
+            manual = feats.get("source") == "manual"
+            wpm = float((feats.get("wpm") or "0").replace(",", "."))
+            yield word, pos, level, (manual, -wpm, int(feats["kellyID"]))
 
 
 def main():
@@ -71,7 +75,7 @@ def main():
     by_id, by_word = dictionary()
     rows, assigned = [], set()
     total, matched = Counter(), Counter()
-    for word, pos, level, rank in sorted(kelly_entries(sys.argv[1]), key=lambda e: e[3]):
+    for rank, (word, pos, level, _) in enumerate(sorted(kelly_entries(sys.argv[1]), key=lambda e: e[3]), 1):
         total[level] += 1
         target = by_id.get((word.lower(), pos)) or by_word.get(word.lower())
         if target is None or target in assigned:

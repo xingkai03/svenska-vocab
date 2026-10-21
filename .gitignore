@@ -3,3 +3,6 @@ xcuserdata/
 DerivedData/
 *.xcuserstate
 build/
+__pycache__/
+# Personal word lists (e.g. from a textbook you own): bundled into local builds only, never committed.
+SvenskaVocab/Resources/Private/

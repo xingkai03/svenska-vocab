@@ -9,6 +9,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 - **Pronunciation** – every word, form and example sentence can be spoken with the system's Swedish (sv-SE) voice, at normal or slow speed. Optional auto-pronounce.
 - **Collection** – save words, add your own, edit, favourite, filter (due, learning, mastered, favourites), sort (recent, A–Z, next review, weakest memory), swipe to delete. Export as CSV.
 - **Learn new words** – step through the core vocabulary in frequency order, or a CEFR word list (A1, A2, B1, B2, C1, C2) from the Swedish Kelly list, with progress per list: "Learn" adds a word, "I know it" skips it.
+- **Word lists** – import your own lists (Settings › Word lists › Import word list…, from Files on the iPhone) as .tsv, .csv or .txt with Swedish, English and optionally part of speech, example and chapter. They appear in Learn new words with a chapter filter; missing grammar and examples are filled in from the dictionary.
 - **CEFR levels** – about 7 500 words carry a level badge (A1–C2) in search results, word details and your collection, which you can filter by level.
 - **Spaced repetition** – an SM-2 scheduler with Again / Hard / Good / Easy grading and interval previews. Forgotten words come back in the same session.
 - **Forgetting curve** – each word has a modelled recall probability R(t) = 0.9^(t / interval), shown as a memory-strength bar and a curve on its detail page.
@@ -66,9 +67,15 @@ python3 scripts/build_folkets.py folkets_sv_en_public.xml
 
 Don't commit the XML. Rerun the script after editing `core_vocabulary.tsv` so the two files don't overlap.
 
+### Personal word lists
+
+Any `deck_*.tsv` file in the app bundle shows up as a word list in Learn new words. Format: an optional `# deck: Display name` line, then rows with the seven columns above plus an optional 8th `chapter` column (e.g. `Kapitel 3`). Only the word is required; empty columns are filled in from the dictionary entry with the same word.
+
+Put personal lists, such as vocabulary from a textbook you own, in `SvenskaVocab/Resources/Private/`. That folder is in `.gitignore`: files there are bundled into your local builds but never committed. To get the same lists onto an iPhone, run the app from Xcode on the device, or AirDrop the .tsv to the phone and use Import word list.
+
 ### Updating the CEFR levels
 
-`Resources/kelly_levels.tsv` (word, part of speech, level, Kelly rank) is generated from the Swedish Kelly list by `scripts/build_kelly.py`. It keeps only words found in the two dictionary files, so run it after `build_folkets.py`:
+`Resources/kelly_levels.tsv` (word, part of speech, level, frequency rank) is generated from the Swedish Kelly list by `scripts/build_kelly.py`. It keeps only words found in the two dictionary files, so run it after `build_folkets.py`:
 
 ```
 curl -LO https://svn.spraakbanken.gu.se/sb-arkiv/pub/lmf/kelly/kelly.xml

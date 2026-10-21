@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var speech: SpeechService
+    @EnvironmentObject private var dictionary: DictionaryService
     @Query(sort: \SavedWord.word) private var words: [SavedWord]
     @AppStorage(AppSettings.dailyGoal) private var dailyGoal = 20
     @AppStorage(AppSettings.sessionSize) private var sessionSize = 30
@@ -16,6 +17,8 @@ struct SettingsView: View {
     @AppStorage(AppSettings.reminderTime) private var reminderTime = 19 * 3600.0 // seconds after midnight
     @AppStorage(AppSettings.skippedWords) private var skippedWords = ""
     @State private var notificationsDenied = false
+    @State private var showImporter = false
+    @State private var importMessage: String?
 
     private var reminderDate: Binding<Date> {
         Binding(
@@ -86,14 +89,59 @@ struct SettingsView: View {
                     Button("Show skipped words again in Learn") { skippedWords = "" }
                         .disabled(skippedWords.isEmpty)
                 }
+
+                Section {
+                    ForEach(dictionary.customDecks) { deck in
+                        HStack {
+                            Text(deck.name)
+                            Spacer()
+                            Text("\(deck.entries.count) words").foregroundStyle(.secondary)
+                        }
+                        .deleteDisabled(!deck.isImported)
+                    }
+                    .onDelete { offsets in
+                        offsets.map { dictionary.customDecks[$0] }.forEach(dictionary.deleteDeck)
+                    }
+                    Button {
+                        showImporter = true
+                    } label: {
+                        Label("Import word list…", systemImage: "square.and.arrow.down")
+                    }
+                } header: {
+                    Text("Word lists")
+                } footer: {
+                    Text("Import a .tsv, .csv or .txt file with one word per line: Swedish, English, and optionally part of speech, example and chapter (a header row is optional). Lists appear in Learn new words. Swipe to delete an imported list.")
+                }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 Button("Done") { dismiss() }
             }
+            .fileImporter(isPresented: $showImporter,
+                          allowedContentTypes: [.tabSeparatedText, .commaSeparatedText, .plainText]) { result in
+                importList(result)
+            }
+            .alert("Import word list", isPresented: Binding(get: { importMessage != nil },
+                                                           set: { if !$0 { importMessage = nil } })) {
+                Button("OK") {}
+            } message: {
+                Text(importMessage ?? "")
+            }
             .onChange(of: reminderEnabled) { updateReminder() }
             .onChange(of: reminderTime) { updateReminder() }
+        }
+    }
+
+    private func importList(_ result: Result<URL, Error>) {
+        do {
+            let url = try result.get()
+            let scoped = url.startAccessingSecurityScopedResource()
+            defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+            let count = try dictionary.importDeck(from: url)
+            importMessage = "Imported \(count) words from “\(url.deletingPathExtension().lastPathComponent)”. Find the list in Learn new words."
+        } catch {
+            importMessage = error.localizedDescription
         }
     }
 

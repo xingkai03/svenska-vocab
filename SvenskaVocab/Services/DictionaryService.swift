@@ -9,15 +9,21 @@ final class DictionaryService: ObservableObject {
     /// The curated, frequency-ordered core vocabulary only (word of the day, Discover, quiz distractors).
     @Published private(set) var coreEntries: [DictionaryEntry] = []
 
+    /// Extra word lists: bundled deck_*.tsv files and imported lists.
+    @Published private(set) var customDecks: [WordDeck] = []
+    /// False until the full dictionary, levels and word lists have loaded.
+    @Published private(set) var isLoaded = false
+
     /// CEFR levels of the Kelly word lists.
     static let levels = ["A1", "A2", "B1", "B2", "C1", "C2"]
 
     private var index = SearchIndex(entries: [], coreCount: 0)
     private var decks: [String: [DictionaryEntry]] = [:]
+    private var filler: DeckFiller?
 
     init() {
         // The small core list loads synchronously so the Today screen has its word straight away;
-        // the ~36 000 Folkets entries and the Kelly levels are parsed and indexed off the main thread.
+        // the ~36 000 Folkets entries, the Kelly levels and word lists are parsed and indexed off the main thread.
         let core = Self.parse(resource: "core_vocabulary")
         coreEntries = core
         entries = core
@@ -28,11 +34,16 @@ final class DictionaryService: ObservableObject {
             let decks = Self.applyLevels(to: &loaded)
             let all = loaded
             let fullIndex = SearchIndex(entries: all, coreCount: core.count)
+            let filler = DeckFiller(entries: all)
+            let custom = WordDecks.loadAll(filler: filler)
             await MainActor.run {
                 self.coreEntries = Array(all.prefix(core.count))
                 self.entries = all
                 self.index = fullIndex
                 self.decks = decks
+                self.filler = filler
+                self.customDecks = custom
+                self.isLoaded = true
             }
         }
     }
@@ -57,7 +68,7 @@ final class DictionaryService: ObservableObject {
         return result
     }
 
-    /// Sets `level` from kelly_levels.tsv (word, pos, level, rank) and returns the entries of each level in Kelly rank order.
+    /// Sets `level` from kelly_levels.tsv (word, pos, level, rank) and returns the entries of each level in frequency order.
     private nonisolated static func applyLevels(to entries: inout [DictionaryEntry]) -> [String: [DictionaryEntry]] {
         guard let url = Bundle.main.url(forResource: "kelly_levels", withExtension: "tsv"),
               let text = try? String(contentsOf: url, encoding: .utf8) else { return [:] }
@@ -79,6 +90,21 @@ final class DictionaryService: ObservableObject {
     /// Kelly words of one CEFR level ("A1" … "C2"), most useful first.
     func deck(_ level: String) -> [DictionaryEntry] {
         decks[level] ?? []
+    }
+
+    /// Imports a TSV/CSV word list as a new deck and returns its word count.
+    func importDeck(from url: URL) throws -> Int {
+        let count = try WordDecks.importList(from: url)
+        if let filler {
+            customDecks = WordDecks.loadAll(filler: filler)
+        }
+        return count
+    }
+
+    func deleteDeck(_ deck: WordDeck) {
+        guard deck.isImported else { return }
+        try? FileManager.default.removeItem(at: deck.url)
+        customDecks.removeAll { $0.id == deck.id }
     }
 
     /// Ranked search in both directions. Exact Swedish spelling ranks above diacritic-folded matches.
