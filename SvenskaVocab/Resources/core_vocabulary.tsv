@@ -1,0 +1,715 @@
+# word	pos	gender	forms	translation	example	example_en
+och	conjunction			and	Jag dricker kaffe och äter en smörgås.	I drink coffee and eat a sandwich.
+att	conjunction			that; to (infinitive marker)	Jag vet att du har rätt.	I know that you are right.
+i	preposition			in	Katten sover i soffan.	The cat is sleeping on the sofa.
+det	pronoun			it; that	Det regnar idag.	It's raining today.
+som	pronoun			who; which; that; as	Mannen som bor här är läkare.	The man who lives here is a doctor.
+en	numeral			one; a, an	Jag har en bror och två systrar.	I have one brother and two sisters.
+på	preposition			on; at	Boken ligger på bordet.	The book is on the table.
+är	verb			is, am, are (present of vara)	Hon är lärare.	She is a teacher.
+jag	pronoun		mig, min, mitt, mina	I	Jag heter Anna.	My name is Anna.
+du	pronoun		dig, din, ditt, dina	you (singular)	Var bor du?	Where do you live?
+han	pronoun		honom, hans	he	Han kommer från Göteborg.	He comes from Gothenburg.
+hon	pronoun		henne, hennes	she	Hon läser en bok.	She is reading a book.
+vi	pronoun		oss, vår, vårt, våra	we	Vi ses imorgon!	See you tomorrow!
+ni	pronoun		er, er, ert, era	you (plural)	Vill ni ha något att dricka?	Would you like something to drink?
+de	pronoun		dem, deras	they	De bor i en liten stad.	They live in a small town.
+den	pronoun			it (en-words); the	Var är min jacka? Den hänger där.	Where is my jacket? It's hanging there.
+inte	adverb			not	Jag förstår inte.	I don't understand.
+med	preposition			with	Kan jag betala med kort?	Can I pay by card?
+för	preposition			for; because; too	Tack för hjälpen!	Thanks for the help!
+av	preposition			of; by; off	Huset är byggt av trä.	The house is built of wood.
+till	preposition			to	Vi åker till Stockholm imorgon.	We're going to Stockholm tomorrow.
+från	preposition			from	Var kommer du från?	Where are you from?
+om	preposition			about; if; in (time)	Vi pratar om filmen.	We're talking about the film.
+men	conjunction			but	Det är kallt men soligt.	It's cold but sunny.
+eller	conjunction			or	Vill du ha te eller kaffe?	Do you want tea or coffee?
+så	adverb			so; then	Det var så roligt!	It was so much fun!
+när	adverb			when	När börjar filmen?	When does the film start?
+var	adverb			where	Var ligger stationen?	Where is the station?
+vad	pronoun			what	Vad gör du?	What are you doing?
+vem	pronoun			who	Vem är det?	Who is it?
+varför	adverb			why	Varför är du ledsen?	Why are you sad?
+hur	adverb			how	Hur mår du?	How are you?
+vilken	pronoun		vilket, vilka	which	Vilken buss ska jag ta?	Which bus should I take?
+här	adverb			here	Kom hit! Jag är här.	Come here! I'm here.
+där	adverb			there	Bor du där?	Do you live there?
+nu	adverb			now	Jag måste gå nu.	I have to go now.
+då	adverb			then; at that time	Då ses vi på fredag.	Then we'll see each other on Friday.
+också	adverb			also, too	Jag vill också följa med.	I want to come along too.
+bara	adverb			only, just	Det tar bara fem minuter.	It only takes five minutes.
+mycket	adverb			much, very; a lot	Tack så mycket!	Thank you very much!
+lite	adverb			a little, a bit	Jag talar lite svenska.	I speak a little Swedish.
+många	adjective			many	Det finns många sjöar i Sverige.	There are many lakes in Sweden.
+alla	pronoun			all; everyone	Alla är välkomna.	Everyone is welcome.
+någon	pronoun		något, några	someone; any; some	Är det någon hemma?	Is anyone home?
+ingen	pronoun		inget, inga	no one; no, none	Det finns ingen mjölk kvar.	There's no milk left.
+allt	pronoun			everything	Allt går bra.	Everything is going well.
+ja	interjection			yes	Ja, gärna!	Yes, please!
+nej	interjection			no	Nej tack.	No, thank you.
+hej	interjection			hi, hello	Hej! Hur är läget?	Hi! How's it going?
+hej då	phrase			goodbye	Hej då, vi ses!	Bye, see you!
+tack	interjection			thanks, thank you; please	Tack för maten!	Thanks for the meal!
+förlåt	interjection			sorry; excuse me	Förlåt, jag är sen.	Sorry, I'm late.
+ursäkta	interjection			excuse me	Ursäkta, var är toaletten?	Excuse me, where is the toilet?
+varsågod	interjection			here you are; you're welcome	Varsågod, här är ditt kaffe.	Here you are, here's your coffee.
+välkommen	adjective		välkommet, välkomna	welcome	Välkommen till Sverige!	Welcome to Sweden!
+fika	noun	en	fikan, fikor, fikorna	coffee break (with something sweet)	Ska vi ta en fika?	Shall we have a fika?
+lagom	adverb			just right, not too much or too little	Kaffet är lagom varmt.	The coffee is just the right temperature.
+mysig	adjective		mysigt, mysiga	cosy, pleasant	Vilket mysigt kafé!	What a cosy café!
+vara	verb		är, var, varit, var!	to be	Det kommer att vara kallt imorgon.	It will be cold tomorrow.
+ha	verb		har, hade, haft, ha!	to have	Har du syskon?	Do you have siblings?
+kunna	verb		kan, kunde, kunnat	can, to be able to	Kan du hjälpa mig?	Can you help me?
+ska	verb		skulle	shall, will; to be going to	Vad ska du göra i helgen?	What are you going to do this weekend?
+vilja	verb		vill, ville, velat	to want	Jag vill lära mig svenska.	I want to learn Swedish.
+måste	verb		måste, var tvungen	must, have to	Jag måste jobba imorgon.	I have to work tomorrow.
+få	verb		får, fick, fått	to get; may, be allowed to	Får jag sitta här?	May I sit here?
+bli	verb		blir, blev, blivit, bli!	to become; to be (passive)	Det blir kallt i natt.	It's going to be cold tonight.
+göra	verb		gör, gjorde, gjort, gör!	to do; to make	Vad gör du i kväll?	What are you doing tonight?
+komma	verb		kommer, kom, kommit, kom!	to come	När kommer bussen?	When is the bus coming?
+gå	verb		går, gick, gått, gå!	to go; to walk	Vi går till skolan varje dag.	We walk to school every day.
+se	verb		ser, såg, sett, se!	to see	Jag ser dig imorgon.	I'll see you tomorrow.
+säga	verb		säger, sa (sade), sagt, säg!	to say	Vad sa du?	What did you say?
+ta	verb		tar, tog, tagit, ta!	to take	Jag tar tåget till jobbet.	I take the train to work.
+ge	verb		ger, gav, gett (givit), ge!	to give	Kan du ge mig saltet?	Can you give me the salt?
+veta	verb		vet, visste, vetat	to know (a fact)	Jag vet inte.	I don't know.
+känna	verb		känner, kände, känt, känn!	to feel; to know (a person)	Känner du Erik?	Do you know Erik?
+tycka	verb		tycker, tyckte, tyckt	to think (have an opinion)	Vad tycker du om filmen?	What do you think of the film?
+tro	verb		tror, trodde, trott, tro!	to believe, to think	Jag tror att det blir regn.	I think it's going to rain.
+tänka	verb		tänker, tänkte, tänkt, tänk!	to think	Jag tänker på dig.	I'm thinking of you.
+heta	verb		heter, hette, hetat	to be called	Vad heter du?	What's your name?
+bo	verb		bor, bodde, bott, bo!	to live, to reside	Jag bor i Uppsala.	I live in Uppsala.
+leva	verb		lever, levde, levt, lev!	to live, to be alive	Han lever ett lugnt liv.	He lives a quiet life.
+arbeta	verb		arbetar, arbetade, arbetat, arbeta!	to work	Hon arbetar på ett sjukhus.	She works at a hospital.
+jobba	verb		jobbar, jobbade, jobbat, jobba!	to work (informal)	Jobbar du i helgen?	Are you working this weekend?
+tala	verb		talar, talade, talat, tala!	to speak	Talar du engelska?	Do you speak English?
+prata	verb		pratar, pratade, pratat, prata!	to talk, to chat	Vi pratade i flera timmar.	We talked for several hours.
+fråga	verb		frågar, frågade, frågat, fråga!	to ask	Får jag fråga en sak?	May I ask something?
+svara	verb		svarar, svarade, svarat, svara!	to answer	Han svarade inte på mitt mejl.	He didn't answer my email.
+förstå	verb		förstår, förstod, förstått, förstå!	to understand	Förstår du vad jag menar?	Do you understand what I mean?
+lära	verb		lär, lärde, lärt, lär!	to teach; lära sig: to learn	Jag lär mig svenska.	I'm learning Swedish.
+läsa	verb		läser, läste, läst, läs!	to read; to study	Hon läser en bok varje vecka.	She reads a book every week.
+skriva	verb		skriver, skrev, skrivit, skriv!	to write	Skriv ditt namn här.	Write your name here.
+höra	verb		hör, hörde, hört, hör!	to hear	Jag hör inte vad du säger.	I can't hear what you're saying.
+lyssna	verb		lyssnar, lyssnade, lyssnat, lyssna!	to listen	Lyssna på mig!	Listen to me!
+titta	verb		tittar, tittade, tittat, titta!	to look, to watch	Vi tittar på tv.	We're watching TV.
+äta	verb		äter, åt, ätit, ät!	to eat	Vad ska vi äta till middag?	What shall we eat for dinner?
+dricka	verb		dricker, drack, druckit, drick!	to drink	Jag dricker inte alkohol.	I don't drink alcohol.
+sova	verb		sover, sov, sovit, sov!	to sleep	Har du sovit gott?	Did you sleep well?
+vakna	verb		vaknar, vaknade, vaknat, vakna!	to wake up	Jag vaknar klockan sju.	I wake up at seven.
+stå	verb		står, stod, stått, stå!	to stand	Bussen står vid hållplatsen.	The bus is standing at the stop.
+sitta	verb		sitter, satt, suttit, sitt!	to sit	Sitt ner, är du snäll.	Sit down, please.
+ligga	verb		ligger, låg, legat, ligg!	to lie; to be located	Stockholm ligger vid Östersjön.	Stockholm lies on the Baltic Sea.
+sätta	verb		sätter, satte, satt, sätt!	to put, to place (upright); sätta sig: sit down	Sätt dig här.	Sit down here.
+ställa	verb		ställer, ställde, ställt, ställ!	to put, to place (standing)	Ställ flaskan i kylen.	Put the bottle in the fridge.
+lägga	verb		lägger, la (lade), lagt, lägg!	to lay, to put (lying)	Lägg boken på bordet.	Put the book on the table.
+hitta	verb		hittar, hittade, hittat, hitta!	to find	Jag kan inte hitta mina nycklar.	I can't find my keys.
+söka	verb		söker, sökte, sökt, sök!	to search, to apply for	Hon söker ett nytt jobb.	She is applying for a new job.
+leta	verb		letar, letade, letat, leta!	to look for, to search	Vad letar du efter?	What are you looking for?
+köpa	verb		köper, köpte, köpt, köp!	to buy	Jag ska köpa mjölk.	I'm going to buy milk.
+sälja	verb		säljer, sålde, sålt, sälj!	to sell	De sålde sitt hus.	They sold their house.
+betala	verb		betalar, betalade, betalat, betala!	to pay	Jag betalar för maten.	I'll pay for the food.
+kosta	verb		kostar, kostade, kostat	to cost	Vad kostar det?	How much does it cost?
+öppna	verb		öppnar, öppnade, öppnat, öppna!	to open	Affären öppnar klockan nio.	The shop opens at nine.
+stänga	verb		stänger, stängde, stängt, stäng!	to close	Kan du stänga fönstret?	Can you close the window?
+börja	verb		börjar, började, börjat, börja!	to begin, to start	Lektionen börjar nu.	The lesson starts now.
+sluta	verb		slutar, slutade, slutat, sluta!	to stop; to end; to quit	Sluta!	Stop it!
+fortsätta	verb		fortsätter, fortsatte, fortsatt, fortsätt!	to continue	Fortsätt rakt fram.	Continue straight ahead.
+vänta	verb		väntar, väntade, väntat, vänta!	to wait	Vänta lite!	Wait a moment!
+hjälpa	verb		hjälper, hjälpte, hjälpt, hjälp!	to help	Kan jag hjälpa dig?	Can I help you?
+behöva	verb		behöver, behövde, behövt	to need	Jag behöver vila.	I need to rest.
+använda	verb		använder, använde, använt, använd!	to use	Får jag använda din telefon?	May I use your phone?
+försöka	verb		försöker, försökte, försökt, försök!	to try	Försök igen!	Try again!
+glömma	verb		glömmer, glömde, glömt, glöm!	to forget	Jag glömde min plånbok.	I forgot my wallet.
+komma ihåg	verb		kommer ihåg, kom ihåg, kommit ihåg	to remember	Kommer du ihåg mig?	Do you remember me?
+minnas	verb		minns, mindes, mints	to remember, to recall	Jag minns sommaren 2010.	I remember the summer of 2010.
+älska	verb		älskar, älskade, älskat, älska!	to love	Jag älskar dig.	I love you.
+gilla	verb		gillar, gillade, gillat	to like	Gillar du sushi?	Do you like sushi?
+tycka om	verb		tycker om, tyckte om, tyckt om	to like	Jag tycker om att simma.	I like swimming.
+hata	verb		hatar, hatade, hatat	to hate	Jag hatar att vänta.	I hate waiting.
+vinna	verb		vinner, vann, vunnit, vinn!	to win	Vilket lag vann?	Which team won?
+förlora	verb		förlorar, förlorade, förlorat	to lose	Vi förlorade matchen.	We lost the match.
+spela	verb		spelar, spelade, spelat, spela!	to play (games, music)	Spelar du gitarr?	Do you play the guitar?
+leka	verb		leker, lekte, lekt, lek!	to play (children)	Barnen leker i parken.	The children are playing in the park.
+resa	verb		reser, reste, rest, res!	to travel	Vi reser till Norge i sommar.	We're travelling to Norway this summer.
+åka	verb		åker, åkte, åkt, åk!	to go (by vehicle), to ride	Vi åker buss till stan.	We take the bus into town.
+köra	verb		kör, körde, kört, kör!	to drive	Kan du köra bil?	Can you drive a car?
+flyga	verb		flyger, flög, flugit, flyg!	to fly	Vi flyger till Kiruna.	We're flying to Kiruna.
+springa	verb		springer, sprang, sprungit, spring!	to run	Hon springer fem kilometer varje morgon.	She runs five kilometres every morning.
+simma	verb		simmar, simmade, simmat, simma!	to swim	Vi simmade i sjön.	We swam in the lake.
+cykla	verb		cyklar, cyklade, cyklat, cykla!	to cycle	Jag cyklar till jobbet.	I cycle to work.
+laga	verb		lagar, lagade, lagat, laga!	to cook; to repair	Han lagar mat varje kväll.	He cooks every evening.
+handla	verb		handlar, handlade, handlat, handla!	to shop; to act	Vi måste handla mat.	We have to shop for food.
+städa	verb		städar, städade, städat, städa!	to clean, to tidy	Jag städar på lördagar.	I clean on Saturdays.
+tvätta	verb		tvättar, tvättade, tvättat, tvätta!	to wash	Tvätta händerna!	Wash your hands!
+duscha	verb		duschar, duschade, duschat, duscha!	to shower	Jag duschar på morgonen.	I shower in the morning.
+klä på sig	verb		klär på sig, klädde på sig, klätt på sig	to get dressed	Klä på dig, vi ska gå!	Get dressed, we're leaving!
+ringa	verb		ringer, ringde, ringt, ring!	to call, to phone; to ring	Jag ringer dig senare.	I'll call you later.
+skicka	verb		skickar, skickade, skickat, skicka!	to send	Skicka ett sms när du är framme.	Send a text when you arrive.
+träffa	verb		träffar, träffade, träffat, träffa!	to meet	Var träffades ni?	Where did you meet?
+besöka	verb		besöker, besökte, besökt, besök!	to visit	Vi besökte mormor i helgen.	We visited grandma at the weekend.
+visa	verb		visar, visade, visat, visa!	to show	Kan du visa mig vägen?	Can you show me the way?
+bära	verb		bär, bar, burit, bär!	to carry; to wear	Han bär en tung väska.	He's carrying a heavy bag.
+hålla	verb		håller, höll, hållit, håll!	to hold; to keep	Håll i dig!	Hold on!
+falla	verb		faller, föll, fallit	to fall	Löven faller på hösten.	The leaves fall in autumn.
+dö	verb		dör, dog, dött	to die	Hans hund dog förra året.	His dog died last year.
+födas	verb		föds, föddes, fötts	to be born	Jag föddes i Kina.	I was born in China.
+växa	verb		växer, växte, vuxit	to grow	Barnen växer så fort.	The children grow so fast.
+hända	verb		händer, hände, hänt	to happen	Vad hände?	What happened?
+finnas	verb		finns, fanns, funnits	to exist, there is/are	Finns det kaffe kvar?	Is there any coffee left?
+verka	verb		verkar, verkade, verkat	to seem	Han verkar trevlig.	He seems nice.
+betyda	verb		betyder, betydde, betytt	to mean	Vad betyder det här ordet?	What does this word mean?
+mena	verb		menar, menade, menat	to mean (intend)	Vad menar du?	What do you mean?
+kännas	verb		känns, kändes, känts	to feel (seem)	Det känns bra.	It feels good.
+må	verb		mår, mådde, mått	to feel (health)	Jag mår bra, tack.	I'm fine, thanks.
+skratta	verb		skrattar, skrattade, skrattat, skratta!	to laugh	Vi skrattade hela kvällen.	We laughed all evening.
+gråta	verb		gråter, grät, gråtit, gråt!	to cry	Varför gråter du?	Why are you crying?
+le	verb		ler, log, lett, le!	to smile	Hon log mot mig.	She smiled at me.
+sjunga	verb		sjunger, sjöng, sjungit, sjung!	to sing	Vi sjunger i kör.	We sing in a choir.
+dansa	verb		dansar, dansade, dansat, dansa!	to dance	Kan du dansa?	Can you dance?
+vila	verb		vilar, vilade, vilat, vila!	to rest	Du borde vila lite.	You should rest a bit.
+bestämma	verb		bestämmer, bestämde, bestämt, bestäm!	to decide	Har du bestämt dig?	Have you made up your mind?
+välja	verb		väljer, valde, valt, välj!	to choose	Välj en färg.	Choose a colour.
+låna	verb		lånar, lånade, lånat, låna!	to borrow; to lend	Får jag låna din penna?	May I borrow your pen?
+byta	verb		byter, bytte, bytt, byt!	to change, to exchange	Vi måste byta tåg i Malmö.	We have to change trains in Malmö.
+flytta	verb		flyttar, flyttade, flyttat, flytta!	to move	Vi flyttade till Sverige 2020.	We moved to Sweden in 2020.
+stanna	verb		stannar, stannade, stannat, stanna!	to stay; to stop	Stanna en stund till!	Stay a while longer!
+lämna	verb		lämnar, lämnade, lämnat, lämna!	to leave	Hon lämnade rummet.	She left the room.
+gifta sig	verb		gifter sig, gifte sig, gift sig	to get married	De gifte sig i juni.	They got married in June.
+dag	noun	en	dagen, dagar, dagarna	day	Ha en bra dag!	Have a nice day!
+år	noun	ett	året, år, åren	year	Gott nytt år!	Happy New Year!
+tid	noun	en	tiden, tider, tiderna	time	Har du tid imorgon?	Do you have time tomorrow?
+människa	noun	en	människan, människor, människorna	human being, person	Hon är en fin människa.	She is a good person.
+person	noun	en	personen, personer, personerna	person	Bordet är för fyra personer.	The table is for four people.
+man	noun	en	mannen, män, männen	man	Mannen i hatten är min pappa.	The man in the hat is my dad.
+kvinna	noun	en	kvinnan, kvinnor, kvinnorna	woman	Kvinnan talar tre språk.	The woman speaks three languages.
+barn	noun	ett	barnet, barn, barnen	child	De har tre barn.	They have three children.
+pojke	noun	en	pojken, pojkar, pojkarna	boy	Pojken spelar fotboll.	The boy is playing football.
+flicka	noun	en	flickan, flickor, flickorna	girl	Flickan läser en serietidning.	The girl is reading a comic.
+tjej	noun	en	tjejen, tjejer, tjejerna	girl (informal)	Hon är en glad tjej.	She is a cheerful girl.
+kille	noun	en	killen, killar, killarna	guy, boy (informal)	Vem är killen där borta?	Who is that guy over there?
+vän	noun	en	vännen, vänner, vännerna	friend	Hon är min bästa vän.	She is my best friend.
+kompis	noun	en	kompisen, kompisar, kompisarna	mate, buddy	Jag ska träffa en kompis.	I'm going to meet a friend.
+familj	noun	en	familjen, familjer, familjerna	family	Min familj bor i Lund.	My family lives in Lund.
+mamma	noun	en	mamman, mammor, mammorna	mum, mother	Min mamma är sjuksköterska.	My mum is a nurse.
+pappa	noun	en	pappan, pappor, papporna	dad, father	Pappa lagar middag.	Dad is making dinner.
+förälder	noun	en	föräldern, föräldrar, föräldrarna	parent	Mina föräldrar bor på landet.	My parents live in the countryside.
+bror	noun	en	brodern (brorn), bröder, bröderna	brother	Min bror är äldre än jag.	My brother is older than me.
+syster	noun	en	systern, systrar, systrarna	sister	Har du någon syster?	Do you have a sister?
+syskon	noun	ett	syskonet, syskon, syskonen	sibling	Jag har två syskon.	I have two siblings.
+son	noun	en	sonen, söner, sönerna	son	Deras son är fem år.	Their son is five years old.
+dotter	noun	en	dottern, döttrar, döttrarna	daughter	Min dotter går i skolan.	My daughter goes to school.
+mormor	noun	en	mormodern (mormorn), mormödrar	grandmother (mother's mother)	Mormor bakar kanelbullar.	Grandma bakes cinnamon buns.
+farfar	noun	en	farfadern (farfarn), farfäder	grandfather (father's father)	Farfar var fiskare.	Grandpa was a fisherman.
+make	noun	en	maken, makar, makarna	husband, spouse	Hennes make heter Lars.	Her husband's name is Lars.
+fru	noun	en	frun, fruar, fruarna	wife	Det här är min fru.	This is my wife.
+sambo	noun	en	sambon, sambor, samborna	live-in partner	Jag bor med min sambo.	I live with my partner.
+pojkvän	noun	en	pojkvännen, pojkvänner, pojkvännerna	boyfriend	Hennes pojkvän är från Finland.	Her boyfriend is from Finland.
+flickvän	noun	en	flickvännen, flickvänner, flickvännerna	girlfriend	Han reser med sin flickvän.	He's travelling with his girlfriend.
+granne	noun	en	grannen, grannar, grannarna	neighbour	Våra grannar är trevliga.	Our neighbours are nice.
+hus	noun	ett	huset, hus, husen	house	De bor i ett rött hus.	They live in a red house.
+hem	noun	ett	hemmet, hem, hemmen	home	Välkommen hem!	Welcome home!
+lägenhet	noun	en	lägenheten, lägenheter, lägenheterna	apartment, flat	Jag hyr en lägenhet i centrum.	I rent a flat in the centre.
+rum	noun	ett	rummet, rum, rummen	room	Lägenheten har tre rum.	The flat has three rooms.
+kök	noun	ett	köket, kök, köken	kitchen	Vi äter i köket.	We eat in the kitchen.
+sovrum	noun	ett	sovrummet, sovrum, sovrummen	bedroom	Sovrummet är stort.	The bedroom is big.
+badrum	noun	ett	badrummet, badrum, badrummen	bathroom	Badrummet är upptaget.	The bathroom is occupied.
+dörr	noun	en	dörren, dörrar, dörrarna	door	Stäng dörren, tack.	Close the door, please.
+fönster	noun	ett	fönstret, fönster, fönstren	window	Öppna fönstret!	Open the window!
+bord	noun	ett	bordet, bord, borden	table	Maten står på bordet.	The food is on the table.
+stol	noun	en	stolen, stolar, stolarna	chair	Är den här stolen ledig?	Is this chair free?
+säng	noun	en	sängen, sängar, sängarna	bed	Jag går och lägger mig i sängen.	I'm going to bed.
+soffa	noun	en	soffan, soffor, sofforna	sofa	Katten sover i soffan.	The cat sleeps on the sofa.
+nyckel	noun	en	nyckeln, nycklar, nycklarna	key	Har du nyckeln?	Do you have the key?
+telefon	noun	en	telefonen, telefoner, telefonerna	telephone	Min telefon är död.	My phone is dead.
+mobil	noun	en	mobilen, mobiler, mobilerna	mobile phone	Stäng av mobilen.	Turn off your mobile.
+dator	noun	en	datorn, datorer, datorerna	computer	Min dator är långsam.	My computer is slow.
+bok	noun	en	boken, böcker, böckerna	book	Vilken bok läser du?	Which book are you reading?
+tidning	noun	en	tidningen, tidningar, tidningarna	newspaper	Han läser tidningen på morgonen.	He reads the paper in the morning.
+brev	noun	ett	brevet, brev, breven	letter	Jag fick ett brev idag.	I got a letter today.
+penna	noun	en	pennan, pennor, pennorna	pen, pencil	Har du en penna?	Do you have a pen?
+papper	noun	ett	papperet (pappret), papper, papperen	paper	Skriv på papperet.	Write on the paper.
+väska	noun	en	väskan, väskor, väskorna	bag	Min väska är tung.	My bag is heavy.
+plånbok	noun	en	plånboken, plånböcker, plånböckerna	wallet	Jag har tappat min plånbok.	I've lost my wallet.
+pengar	noun		pengarna	money (plural)	Jag har inga pengar.	I have no money.
+krona	noun	en	kronan, kronor, kronorna	krona (Swedish currency); crown	Det kostar femtio kronor.	It costs fifty kronor.
+kort	noun	ett	kortet, kort, korten	card	Tar ni kort?	Do you take cards?
+mat	noun	en	maten	food	Maten är god.	The food is good.
+frukost	noun	en	frukosten, frukostar, frukostarna	breakfast	Vad äter du till frukost?	What do you eat for breakfast?
+lunch	noun	en	lunchen, luncher, luncherna	lunch	Ska vi äta lunch tillsammans?	Shall we have lunch together?
+middag	noun	en	middagen, middagar, middagarna	dinner	Middagen är klar!	Dinner is ready!
+bröd	noun	ett	brödet, bröd, bröden	bread	Jag köper bröd på bageriet.	I buy bread at the bakery.
+smör	noun	ett	smöret	butter	Kan du skicka smöret?	Can you pass the butter?
+ost	noun	en	osten, ostar, ostarna	cheese	Jag vill ha en smörgås med ost.	I'd like a cheese sandwich.
+smörgås	noun	en	smörgåsen, smörgåsar, smörgåsarna	sandwich (open)	Han äter en smörgås.	He's eating a sandwich.
+ägg	noun	ett	ägget, ägg, äggen	egg	Jag äter ett kokt ägg.	I'm eating a boiled egg.
+mjölk	noun	en	mjölken	milk	Vill du ha mjölk i kaffet?	Do you want milk in your coffee?
+kaffe	noun	ett	kaffet	coffee	En kopp kaffe, tack.	A cup of coffee, please.
+te	noun	ett	teet	tea	Jag dricker te med honung.	I drink tea with honey.
+vatten	noun	ett	vattnet	water	Kan jag få ett glas vatten?	Can I have a glass of water?
+juice	noun	en	juicen, juicer, juicerna	juice	Ett glas apelsinjuice, tack.	A glass of orange juice, please.
+öl	noun	en/ett	ölen/ölet, öl, ölen	beer	Två öl, tack.	Two beers, please.
+vin	noun	ett	vinet, viner, vinerna	wine	Vill du ha rött eller vitt vin?	Would you like red or white wine?
+kött	noun	ett	köttet	meat	Jag äter inte kött.	I don't eat meat.
+fisk	noun	en	fisken, fiskar, fiskarna	fish	Vi äter fisk på fredagar.	We eat fish on Fridays.
+kyckling	noun	en	kycklingen, kycklingar, kycklingarna	chicken	Kyckling med ris är gott.	Chicken with rice is tasty.
+potatis	noun	en	potatisen, potatisar, potatisarna	potato	Sill och potatis är typiskt svenskt.	Herring and potatoes are typically Swedish.
+ris	noun	ett	riset	rice	Kokar du riset?	Are you cooking the rice?
+grönsak	noun	en	grönsaken, grönsaker, grönsakerna	vegetable	Ät mer grönsaker!	Eat more vegetables!
+frukt	noun	en	frukten, frukter, frukterna	fruit	Jag äter frukt varje dag.	I eat fruit every day.
+äpple	noun	ett	äpplet, äpplen, äpplena	apple	Ett äpple om dagen.	An apple a day.
+banan	noun	en	bananen, bananer, bananerna	banana	Bananen är gul.	The banana is yellow.
+jordgubbe	noun	en	jordgubben, jordgubbar, jordgubbarna	strawberry	Jordgubbar hör till midsommar.	Strawberries belong to midsummer.
+socker	noun	ett	sockret	sugar	Tar du socker i teet?	Do you take sugar in your tea?
+salt	noun	ett	saltet	salt	Det behövs mer salt.	It needs more salt.
+kaka	noun	en	kakan, kakor, kakorna	cake, biscuit, cookie	Vill du ha en kaka?	Would you like a cookie?
+tårta	noun	en	tårtan, tårtor, tårtorna	cake (layer cake)	Vi har köpt en tårta till födelsedagen.	We've bought a cake for the birthday.
+bulle	noun	en	bullen, bullar, bullarna	bun	Kanelbullar är gott till kaffet.	Cinnamon buns go well with coffee.
+glass	noun	en	glassen, glassar, glassarna	ice cream	Barnen vill ha glass.	The children want ice cream.
+glas	noun	ett	glaset, glas, glasen	glass	Ett glas vin, tack.	A glass of wine, please.
+kopp	noun	en	koppen, koppar, kopparna	cup	En kopp te?	A cup of tea?
+tallrik	noun	en	tallriken, tallrikar, tallrikarna	plate	Ställ tallrikarna på bordet.	Put the plates on the table.
+kniv	noun	en	kniven, knivar, knivarna	knife	Kniven är vass.	The knife is sharp.
+gaffel	noun	en	gaffeln, gafflar, gafflarna	fork	Jag behöver en gaffel.	I need a fork.
+sked	noun	en	skeden, skedar, skedarna	spoon	En sked socker, tack.	A spoon of sugar, please.
+restaurang	noun	en	restaurangen, restauranger, restaurangerna	restaurant	Vi går på restaurang ikväll.	We're going to a restaurant tonight.
+kafé	noun	ett	kaféet, kaféer, kaféerna	café	Vi ses på kaféet.	See you at the café.
+affär	noun	en	affären, affärer, affärerna	shop; business, deal	Affären stänger klockan sex.	The shop closes at six.
+butik	noun	en	butiken, butiker, butikerna	shop, store	Butiken ligger vid torget.	The shop is by the square.
+mataffär	noun	en	mataffären, mataffärer, mataffärerna	grocery store	Jag går till mataffären.	I'm going to the grocery store.
+stad	noun	en	staden, städer, städerna	city, town	Göteborg är en vacker stad.	Gothenburg is a beautiful city.
+by	noun	en	byn, byar, byarna	village	Hon växte upp i en liten by.	She grew up in a small village.
+land	noun	ett	landet, länder, länderna	country; land	Sverige är ett stort land.	Sweden is a big country.
+landet	noun			the countryside	Vi har ett sommarhus på landet.	We have a summer house in the countryside.
+gata	noun	en	gatan, gator, gatorna	street	Vad heter gatan?	What's the name of the street?
+väg	noun	en	vägen, vägar, vägarna	road, way	Kan du visa mig vägen?	Can you show me the way?
+torg	noun	ett	torget, torg, torgen	square, marketplace	Vi möts på torget.	We meet in the square.
+park	noun	en	parken, parker, parkerna	park	Vi tar en promenad i parken.	We take a walk in the park.
+skola	noun	en	skolan, skolor, skolorna	school	Barnen går i skolan.	The children go to school.
+universitet	noun	ett	universitetet, universitet, universiteten	university	Hon studerar vid universitetet.	She studies at the university.
+arbete	noun	ett	arbetet, arbeten, arbetena	work, job	Jag cyklar till arbetet.	I cycle to work.
+jobb	noun	ett	jobbet, jobb, jobben	job	Jag har fått ett nytt jobb!	I've got a new job!
+kontor	noun	ett	kontoret, kontor, kontoren	office	Hon jobbar på ett kontor.	She works in an office.
+sjukhus	noun	ett	sjukhuset, sjukhus, sjukhusen	hospital	Han ligger på sjukhus.	He's in hospital.
+läkare	noun	en	läkaren, läkare, läkarna	doctor	Jag måste gå till läkaren.	I need to go to the doctor.
+lärare	noun	en	läraren, lärare, lärarna	teacher	Vår lärare är från Umeå.	Our teacher is from Umeå.
+elev	noun	en	eleven, elever, eleverna	pupil, student	Klassen har tjugo elever.	The class has twenty pupils.
+student	noun	en	studenten, studenter, studenterna	(university) student	Han är student i Lund.	He is a student in Lund.
+station	noun	en	stationen, stationer, stationerna	station	Var ligger stationen?	Where is the station?
+tåg	noun	ett	tåget, tåg, tågen	train	Tåget är försenat.	The train is delayed.
+buss	noun	en	bussen, bussar, bussarna	bus	Bussen går var tionde minut.	The bus runs every ten minutes.
+bil	noun	en	bilen, bilar, bilarna	car	Vi har en röd bil.	We have a red car.
+cykel	noun	en	cykeln, cyklar, cyklarna	bicycle	Min cykel är stulen.	My bike has been stolen.
+flygplan	noun	ett	flygplanet, flygplan, flygplanen	aeroplane	Flygplanet landar klockan tre.	The plane lands at three.
+båt	noun	en	båten, båtar, båtarna	boat	Vi tar båten till Gotland.	We take the boat to Gotland.
+biljett	noun	en	biljetten, biljetter, biljetterna	ticket	En biljett till Uppsala, tack.	A ticket to Uppsala, please.
+resa	noun	en	resan, resor, resorna	journey, trip	Trevlig resa!	Have a nice trip!
+semester	noun	en	semestern, semestrar, semestrarna	holiday, vacation	Vi har semester i juli.	We're on holiday in July.
+hotell	noun	ett	hotellet, hotell, hotellen	hotel	Hotellet ligger nära havet.	The hotel is near the sea.
+stor	adjective		stort, stora; större, störst	big, large	Det är ett stort hus.	It's a big house.
+liten	adjective		litet, lilla, små; mindre, minst	small, little	Vi har en liten hund.	We have a small dog.
+ny	adjective		nytt, nya	new	Jag har köpt en ny jacka.	I've bought a new jacket.
+gammal	adjective		gammalt, gamla; äldre, äldst	old	Hur gammal är du?	How old are you?
+ung	adjective		ungt, unga; yngre, yngst	young	Hon är för ung för att köra bil.	She's too young to drive.
+bra	adjective		bra; bättre, bäst	good, fine	Det låter bra!	That sounds good!
+dålig	adjective		dåligt, dåliga; sämre, sämst	bad	Vädret är dåligt idag.	The weather is bad today.
+god	adjective		gott, goda	good (taste); kind	Maten var jättegod!	The food was really good!
+fin	adjective		fint, fina	nice, fine, pretty	Vilken fin klänning!	What a pretty dress!
+vacker	adjective		vackert, vackra	beautiful	Det är en vacker dag.	It's a beautiful day.
+snygg	adjective		snyggt, snygga	good-looking, stylish	Snygg tröja!	Nice jumper!
+ful	adjective		fult, fula	ugly	Huset är ganska fult.	The house is rather ugly.
+lång	adjective		långt, långa; längre, längst	long; tall	Han är lång och smal.	He is tall and slim.
+kort	adjective		kort, korta	short	Hon har kort hår.	She has short hair.
+hög	adjective		högt, höga; högre, högst	high, tall; loud	Kebnekaise är Sveriges högsta berg.	Kebnekaise is Sweden's highest mountain.
+låg	adjective		lågt, låga	low	Bordet är för lågt.	The table is too low.
+varm	adjective		varmt, varma	warm, hot	Det är varmt idag.	It's warm today.
+kall	adjective		kallt, kalla	cold	Vintern är kall i Sverige.	The winter is cold in Sweden.
+het	adjective		hett, heta	hot	Akta, kaffet är hett!	Careful, the coffee is hot!
+glad	adjective		glatt, glada	happy, glad	Jag är så glad att du kom.	I'm so glad you came.
+ledsen	adjective		ledset, ledsna	sad; sorry	Varför är du ledsen?	Why are you sad?
+arg	adjective		argt, arga	angry	Var inte arg på mig!	Don't be angry with me!
+trött	adjective		trött, trötta	tired	Jag är så trött idag.	I'm so tired today.
+hungrig	adjective		hungrigt, hungriga	hungry	Är du hungrig?	Are you hungry?
+törstig	adjective		törstigt, törstiga	thirsty	Jag är törstig.	I'm thirsty.
+sjuk	adjective		sjukt, sjuka	ill, sick	Hon är sjuk idag.	She's ill today.
+frisk	adjective		friskt, friska	healthy; fresh	Är du frisk nu?	Are you well again now?
+rädd	adjective		rätt, rädda	afraid, scared	Jag är rädd för spindlar.	I'm afraid of spiders.
+trevlig	adjective		trevligt, trevliga	nice, pleasant	Trevlig helg!	Have a nice weekend!
+snäll	adjective		snällt, snälla	kind, nice	Vad snällt av dig!	How kind of you!
+rolig	adjective		roligt, roliga	fun; funny	Det var en rolig film.	That was a funny film.
+tråkig	adjective		tråkigt, tråkiga	boring; sad, unfortunate	Vilken tråkig föreläsning.	What a boring lecture.
+intressant	adjective		intressant, intressanta	interesting	Boken är mycket intressant.	The book is very interesting.
+lätt	adjective		lätt, lätta	easy; light	Svenska är inte så lätt.	Swedish isn't that easy.
+svår	adjective		svårt, svåra	difficult	Uttalet är svårt.	The pronunciation is difficult.
+enkel	adjective		enkelt, enkla	simple; single (ticket)	En enkel biljett, tack.	A single ticket, please.
+tung	adjective		tungt, tunga; tyngre, tyngst	heavy	Väskan är tung.	The bag is heavy.
+billig	adjective		billigt, billiga	cheap	Det var billigt!	That was cheap!
+dyr	adjective		dyrt, dyra	expensive	Sverige är ett dyrt land.	Sweden is an expensive country.
+snabb	adjective		snabbt, snabba	fast, quick	Tåget är snabbt.	The train is fast.
+långsam	adjective		långsamt, långsamma	slow	Internet är långsamt idag.	The internet is slow today.
+tidig	adjective		tidigt, tidiga	early	Jag går upp tidigt.	I get up early.
+sen	adjective		sent, sena	late	Förlåt, jag är sen.	Sorry, I'm late.
+ren	adjective		rent, rena	clean	Är handduken ren?	Is the towel clean?
+smutsig	adjective		smutsigt, smutsiga	dirty	Mina skor är smutsiga.	My shoes are dirty.
+full	adjective		fullt, fulla	full; drunk	Bussen är full.	The bus is full.
+tom	adjective		tomt, tomma	empty	Kylskåpet är tomt.	The fridge is empty.
+öppen	adjective		öppet, öppna	open	Är affären öppen?	Is the shop open?
+stängd	adjective		stängt, stängda	closed	Museet är stängt på måndagar.	The museum is closed on Mondays.
+ledig	adjective		ledigt, lediga	free, available; off work	Är du ledig på fredag?	Are you off on Friday?
+upptagen	adjective		upptaget, upptagna	busy, occupied	Jag är upptagen just nu.	I'm busy right now.
+viktig	adjective		viktigt, viktiga	important	Det är viktigt att sova.	It's important to sleep.
+möjlig	adjective		möjligt, möjliga	possible	Är det möjligt?	Is it possible?
+riktig	adjective		riktigt, riktiga	real, proper; correct	Det är en riktig vän.	That's a real friend.
+rätt	adjective		rätt, rätta	right, correct	Du har rätt.	You're right.
+fel	adjective			wrong	Det är fel svar.	That's the wrong answer.
+samma	adjective			same	Vi bor på samma gata.	We live on the same street.
+annan	adjective		annat, andra	other, another	Har du en annan färg?	Do you have another colour?
+egen	adjective		eget, egna	own	Hon har ett eget rum.	She has her own room.
+hel	adjective		helt, hela	whole, entire	Jag har väntat hela dagen.	I've waited all day.
+halv	adjective		halvt, halva	half	Klockan är halv tre.	It's half past two.
+färdig	adjective		färdigt, färdiga	ready, finished	Är du färdig?	Are you done?
+klar	adjective		klart, klara	ready, done; clear	Maten är klar!	The food is ready!
+säker	adjective		säkert, säkra	sure, safe	Är du säker?	Are you sure?
+nöjd	adjective		nöjt, nöjda	satisfied, pleased	Jag är nöjd med resultatet.	I'm pleased with the result.
+kär	adjective		kärt, kära	in love; dear	Han är kär i henne.	He's in love with her.
+duktig	adjective		duktigt, duktiga	good, skilled, clever	Du är duktig på svenska!	You're good at Swedish!
+smart	adjective		smart, smarta	smart, clever	Det var en smart idé.	That was a clever idea.
+stark	adjective		starkt, starka	strong	Kaffet är starkt.	The coffee is strong.
+svag	adjective		svagt, svaga	weak	Signalen är svag här.	The signal is weak here.
+mörk	adjective		mörkt, mörka	dark	Det blir mörkt tidigt på vintern.	It gets dark early in winter.
+ljus	adjective		ljust, ljusa	light, bright	Sommarnätterna är ljusa.	Summer nights are light.
+tyst	adjective		tyst, tysta	quiet, silent	Var tyst, barnet sover.	Be quiet, the baby is sleeping.
+röd	adjective		rött, röda	red	Ett rött hus med vita knutar.	A red house with white corners.
+blå	adjective		blått, blå(a)	blue	Himlen är blå.	The sky is blue.
+gul	adjective		gult, gula	yellow	Den svenska flaggan är blå och gul.	The Swedish flag is blue and yellow.
+grön	adjective		grönt, gröna	green	Gräset är grönt.	The grass is green.
+vit	adjective		vitt, vita	white	Snön är vit.	The snow is white.
+svart	adjective		svart, svarta	black	Jag dricker kaffet svart.	I drink my coffee black.
+grå	adjective		grått, grå(a)	grey	En grå novemberdag.	A grey November day.
+brun	adjective		brunt, bruna	brown	Hon har bruna ögon.	She has brown eyes.
+rosa	adjective			pink	En rosa tröja.	A pink sweater.
+orange	adjective			orange	Hösten är full av orange löv.	Autumn is full of orange leaves.
+svensk	adjective		svenskt, svenska	Swedish	Är du svensk?	Are you Swedish?
+svenska	noun	en	svenskan	Swedish (language)	Jag pratar lite svenska.	I speak a little Swedish.
+engelska	noun	en	engelskan	English (language)	Kan du engelska?	Do you know English?
+språk	noun	ett	språket, språk, språken	language	Hur många språk talar du?	How many languages do you speak?
+ord	noun	ett	ordet, ord, orden	word	Vad betyder det här ordet?	What does this word mean?
+mening	noun	en	meningen, meningar, meningarna	sentence; meaning, opinion	Skriv en mening med ordet.	Write a sentence with the word.
+fråga	noun	en	frågan, frågor, frågorna	question	Får jag ställa en fråga?	May I ask a question?
+svar	noun	ett	svaret, svar, svaren	answer	Jag vet inte svaret.	I don't know the answer.
+namn	noun	ett	namnet, namn, namnen	name	Vad är ditt namn?	What is your name?
+nummer	noun	ett	numret, nummer, numren	number	Vad har du för telefonnummer?	What's your phone number?
+problem	noun	ett	problemet, problem, problemen	problem	Inga problem!	No problem!
+idé	noun	en	idén, idéer, idéerna	idea	Bra idé!	Good idea!
+sak	noun	en	saken, saker, sakerna	thing, matter	Jag har många saker att göra.	I have lots of things to do.
+liv	noun	ett	livet, liv, liven	life	Livet är kort.	Life is short.
+värld	noun	en	världen, världar, världarna	world	Hon vill resa jorden runt och se världen.	She wants to travel around the globe and see the world.
+kropp	noun	en	kroppen, kroppar, kropparna	body	Träning är bra för kroppen.	Exercise is good for the body.
+huvud	noun	ett	huvudet, huvuden, huvudena	head	Jag har ont i huvudet.	I have a headache.
+hand	noun	en	handen, händer, händerna	hand	Tvätta händerna före maten.	Wash your hands before eating.
+fot	noun	en	foten, fötter, fötterna	foot	Jag har ont i foten.	My foot hurts.
+öga	noun	ett	ögat, ögon, ögonen	eye	Hon har blå ögon.	She has blue eyes.
+öra	noun	ett	örat, öron, öronen	ear	Jag har ont i örat.	I have an earache.
+mun	noun	en	munnen, munnar, munnarna	mouth	Öppna munnen, tack.	Open your mouth, please.
+näsa	noun	en	näsan, näsor, näsorna	nose	Min näsa rinner.	My nose is running.
+hår	noun	ett	håret, hår, håren	hair	Hon har långt hår.	She has long hair.
+hjärta	noun	ett	hjärtat, hjärtan, hjärtana	heart	Tack av hela mitt hjärta.	Thank you with all my heart.
+mage	noun	en	magen, magar, magarna	stomach, belly	Jag har ont i magen.	I have a stomach ache.
+arm	noun	en	armen, armar, armarna	arm	Han bröt armen.	He broke his arm.
+ben	noun	ett	benet, ben, benen	leg; bone	Mina ben är trötta.	My legs are tired.
+tand	noun	en	tanden, tänder, tänderna	tooth	Borsta tänderna!	Brush your teeth!
+kläder	noun		kläderna	clothes	Jag måste tvätta kläder.	I need to wash clothes.
+jacka	noun	en	jackan, jackor, jackorna	jacket	Ta på dig jackan, det är kallt.	Put your jacket on, it's cold.
+tröja	noun	en	tröjan, tröjor, tröjorna	sweater, top	En varm tröja.	A warm sweater.
+byxor	noun		byxorna	trousers	Mina byxor är för långa.	My trousers are too long.
+sko	noun	en	skon, skor, skorna	shoe	Ta av dig skorna, tack.	Take off your shoes, please.
+klänning	noun	en	klänningen, klänningar, klänningarna	dress	Hon har en röd klänning.	She's wearing a red dress.
+mössa	noun	en	mössan, mössor, mössorna	woolly hat, beanie	Glöm inte mössan!	Don't forget your hat!
+väder	noun	ett	vädret	weather	Hur är vädret?	What's the weather like?
+sol	noun	en	solen, solar, solarna	sun	Solen skiner.	The sun is shining.
+regn	noun	ett	regnet	rain	Det blir regn i eftermiddag.	There will be rain this afternoon.
+snö	noun	en	snön	snow	Det ligger snö på marken.	There's snow on the ground.
+vind	noun	en	vinden, vindar, vindarna	wind	Vinden är kall.	The wind is cold.
+himmel	noun	en	himlen, himlar, himlarna	sky; heaven	Himlen är molnfri.	The sky is cloudless.
+moln	noun	ett	molnet, moln, molnen	cloud	Det är moln idag.	It's cloudy today.
+hav	noun	ett	havet, hav, haven	sea, ocean	Vi bor nära havet.	We live near the sea.
+sjö	noun	en	sjön, sjöar, sjöarna	lake	Sverige har nästan hundratusen sjöar.	Sweden has almost a hundred thousand lakes.
+skog	noun	en	skogen, skogar, skogarna	forest	Vi plockar svamp i skogen.	We pick mushrooms in the forest.
+träd	noun	ett	trädet, träd, träden	tree	Träden är gröna.	The trees are green.
+blomma	noun	en	blomman, blommor, blommorna	flower	Han gav henne blommor.	He gave her flowers.
+berg	noun	ett	berget, berg, bergen	mountain	Vi vandrade upp på berget.	We hiked up the mountain.
+ö	noun	en	ön, öar, öarna	island	Stockholm ligger på fjorton öar.	Stockholm is built on fourteen islands.
+strand	noun	en	stranden, stränder, stränderna	beach	Ska vi gå till stranden?	Shall we go to the beach?
+natur	noun	en	naturen	nature	Svenskarna älskar naturen.	Swedes love nature.
+djur	noun	ett	djuret, djur, djuren	animal	Vilket är ditt favoritdjur?	What's your favourite animal?
+hund	noun	en	hunden, hundar, hundarna	dog	Hunden skäller.	The dog is barking.
+katt	noun	en	katten, katter, katterna	cat	Katten sover hela dagen.	The cat sleeps all day.
+fågel	noun	en	fågeln, fåglar, fåglarna	bird	Fåglarna sjunger.	The birds are singing.
+häst	noun	en	hästen, hästar, hästarna	horse	Hon rider på en häst.	She is riding a horse.
+ko	noun	en	kon, kor, korna	cow	Korna står på ängen.	The cows are standing in the meadow.
+älg	noun	en	älgen, älgar, älgarna	moose, elk	Vi såg en älg i skogen!	We saw a moose in the forest!
+idag	adverb			today	Vad gör du idag?	What are you doing today?
+imorgon	adverb			tomorrow	Vi ses imorgon!	See you tomorrow!
+igår	adverb			yesterday	Igår regnade det hela dagen.	Yesterday it rained all day.
+ikväll	adverb			this evening, tonight	Vad ska vi göra ikväll?	What shall we do tonight?
+alltid	adverb			always	Han kommer alltid för sent.	He's always late.
+aldrig	adverb			never	Jag har aldrig varit i Kiruna.	I've never been to Kiruna.
+ofta	adverb			often	Vi äter ofta pasta.	We often eat pasta.
+ibland	adverb			sometimes	Ibland tar jag bussen.	Sometimes I take the bus.
+sällan	adverb			seldom, rarely	Jag dricker sällan kaffe på kvällen.	I rarely drink coffee in the evening.
+redan	adverb			already	Har du redan ätit?	Have you already eaten?
+ännu	adverb			yet; still; even	Har bussen inte kommit ännu?	Hasn't the bus come yet?
+fortfarande	adverb			still	Bor du fortfarande i Malmö?	Do you still live in Malmö?
+snart	adverb			soon	Vi är snart framme.	We'll be there soon.
+sedan	adverb			then, afterwards; since, ago	Först äter vi, sedan går vi på bio.	First we eat, then we go to the cinema.
+efter	preposition			after	Vi ses efter jobbet.	See you after work.
+före	preposition			before	Tvätta händerna före maten.	Wash your hands before eating.
+innan	conjunction			before	Ring mig innan du går.	Call me before you leave.
+under	preposition			under; during	Katten ligger under bordet.	The cat is lying under the table.
+över	preposition			over, above; past (time)	Klockan är kvart över tre.	It's quarter past three.
+mellan	preposition			between	Mellan klockan nio och fem.	Between nine and five o'clock.
+bakom	preposition			behind	Parkeringen ligger bakom huset.	The car park is behind the house.
+framför	preposition			in front of	Vi ses framför biografen.	See you in front of the cinema.
+bredvid	preposition			next to, beside	Får jag sitta bredvid dig?	May I sit next to you?
+utan	preposition			without	Kaffe utan socker, tack.	Coffee without sugar, please.
+hos	preposition			at (someone's place), with	Vi äter middag hos mina föräldrar.	We're having dinner at my parents'.
+vid	preposition			at, by	Vi ses vid stationen.	See you at the station.
+mot	preposition			towards; against	Han gick mot dörren.	He walked towards the door.
+genom	preposition			through	Vi gick genom skogen.	We walked through the forest.
+utanför	preposition			outside	Det står en bil utanför huset.	There's a car outside the house.
+inne	adverb			inside, in	Är du inne?	Are you inside?
+ute	adverb			outside, out	Barnen leker ute.	The children are playing outside.
+hemma	adverb			at home	Är du hemma ikväll?	Are you at home tonight?
+hem	adverb			home (direction)	Jag går hem nu.	I'm going home now.
+borta	adverb			away; gone	Mina nycklar är borta.	My keys are gone.
+nära	adverb			near, close	Bor du nära?	Do you live nearby?
+långt	adverb			far	Är det långt till stationen?	Is it far to the station?
+uppe	adverb			up; awake	Är du uppe redan?	Are you up already?
+upp	adverb			up (direction)	Gå upp för trappan.	Go up the stairs.
+ner	adverb			down (direction)	Sätt dig ner.	Sit down.
+tillbaka	adverb			back	Jag kommer tillbaka snart.	I'll be back soon.
+tillsammans	adverb			together	Vi reser tillsammans.	We're travelling together.
+kanske	adverb			maybe, perhaps	Kanske imorgon.	Maybe tomorrow.
+självklart	adverb			of course	Självklart kan du komma!	Of course you can come!
+gärna	adverb			gladly, with pleasure	Ja, gärna!	Yes, I'd love to!
+verkligen	adverb			really	Jag gillar verkligen Sverige.	I really like Sweden.
+jättebra	adjective			great, really good	Det låter jättebra!	That sounds great!
+väldigt	adverb			very, extremely	Det är väldigt kallt ute.	It's very cold outside.
+ganska	adverb			quite, rather	Filmen var ganska bra.	The film was quite good.
+för	adverb			too	Det är för dyrt.	It's too expensive.
+nog	adverb			probably; enough	Det blir nog bra.	It'll probably be fine.
+precis	adverb			exactly, just	Precis!	Exactly!
+särskilt	adverb			especially	Jag gillar särskilt hösten.	I especially like autumn.
+tyvärr	adverb			unfortunately	Tyvärr kan jag inte komma.	Unfortunately I can't come.
+eftersom	conjunction			since, because	Jag stannar hemma eftersom jag är sjuk.	I'm staying at home because I'm ill.
+därför	adverb			therefore, that's why	Jag var trött, därför gick jag hem.	I was tired, so I went home.
+fast	conjunction			although, but	Han kom, fast han var sjuk.	He came, although he was ill.
+medan	conjunction			while	Jag lyssnar på musik medan jag jobbar.	I listen to music while I work.
+om	conjunction			if; whether	Om det regnar stannar vi hemma.	If it rains we'll stay at home.
+klocka	noun	en	klockan, klockor, klockorna	clock, watch; klockan: the time, o'clock	Vad är klockan?	What time is it?
+timme	noun	en	timmen, timmar, timmarna	hour	Resan tar två timmar.	The journey takes two hours.
+minut	noun	en	minuten, minuter, minuterna	minute	Vänta fem minuter.	Wait five minutes.
+sekund	noun	en	sekunden, sekunder, sekunderna	second	Det tar bara en sekund.	It only takes a second.
+vecka	noun	en	veckan, veckor, veckorna	week	Vi ses nästa vecka.	See you next week.
+månad	noun	en	månaden, månader, månaderna	month	Hyran betalas varje månad.	The rent is paid every month.
+helg	noun	en	helgen, helger, helgerna	weekend; holiday	Vad gör du i helgen?	What are you doing this weekend?
+morgon	noun	en	morgonen, morgnar, morgnarna	morning	God morgon!	Good morning!
+förmiddag	noun	en	förmiddagen, förmiddagar, förmiddagarna	morning (late), forenoon	Jag jobbar på förmiddagen.	I work in the morning.
+eftermiddag	noun	en	eftermiddagen, eftermiddagar, eftermiddagarna	afternoon	Vi ses i eftermiddag.	See you this afternoon.
+kväll	noun	en	kvällen, kvällar, kvällarna	evening	God kväll!	Good evening!
+natt	noun	en	natten, nätter, nätterna	night	God natt!	Good night!
+måndag	noun	en	måndagen, måndagar, måndagarna	Monday	Kursen börjar på måndag.	The course starts on Monday.
+tisdag	noun	en	tisdagen, tisdagar, tisdagarna	Tuesday	Vi har möte på tisdag.	We have a meeting on Tuesday.
+onsdag	noun	en	onsdagen, onsdagar, onsdagarna	Wednesday	På onsdagar spelar jag tennis.	On Wednesdays I play tennis.
+torsdag	noun	en	torsdagen, torsdagar, torsdagarna	Thursday	På torsdag äter vi ärtsoppa.	On Thursday we eat pea soup.
+fredag	noun	en	fredagen, fredagar, fredagarna	Friday	Äntligen fredag!	Finally Friday!
+lördag	noun	en	lördagen, lördagar, lördagarna	Saturday	På lördag ska vi på fest.	On Saturday we're going to a party.
+söndag	noun	en	söndagen, söndagar, söndagarna	Sunday	På söndag vilar jag.	On Sunday I rest.
+vår	noun	en	våren, vårar, vårarna	spring	På våren blommar körsbärsträden.	In spring the cherry trees blossom.
+sommar	noun	en	sommaren, somrar, somrarna	summer	Den svenska sommaren är kort men ljus.	The Swedish summer is short but light.
+höst	noun	en	hösten, höstar, höstarna	autumn	Löven blir gula på hösten.	The leaves turn yellow in autumn.
+vinter	noun	en	vintern, vintrar, vintrarna	winter	På vintern åker vi skidor.	In winter we go skiing.
+jul	noun	en	julen, jular, jularna	Christmas	God jul!	Merry Christmas!
+midsommar	noun	en	midsommaren	Midsummer	På midsommar dansar vi runt midsommarstången.	At Midsummer we dance around the maypole.
+födelsedag	noun	en	födelsedagen, födelsedagar, födelsedagarna	birthday	Grattis på födelsedagen!	Happy birthday!
+fest	noun	en	festen, fester, festerna	party	Kommer du på festen?	Are you coming to the party?
+noll	numeral			zero	Det är noll grader ute.	It's zero degrees outside.
+ett	numeral			one (ett-words); a, an	Jag har ett barn.	I have one child.
+två	numeral			two	Två kaffe, tack.	Two coffees, please.
+tre	numeral			three	Vi har tre katter.	We have three cats.
+fyra	numeral			four	Bussen går klockan fyra.	The bus leaves at four o'clock.
+fem	numeral			five	Fem minuter kvar.	Five minutes left.
+sex	numeral			six	Jag vaknade klockan sex.	I woke up at six.
+sju	numeral			seven	En vecka har sju dagar.	A week has seven days.
+åtta	numeral			eight	Jag sover åtta timmar.	I sleep eight hours.
+nio	numeral			nine	Affären öppnar klockan nio.	The shop opens at nine.
+tio	numeral			ten	Det tar tio minuter.	It takes ten minutes.
+elva	numeral			eleven	Ett fotbollslag har elva spelare.	A football team has eleven players.
+tolv	numeral			twelve	Vi äter lunch klockan tolv.	We have lunch at twelve.
+tjugo	numeral			twenty	Hon är tjugo år gammal.	She is twenty years old.
+trettio	numeral			thirty	Det tar trettio minuter.	It takes thirty minutes.
+hundra	numeral			hundred	Det kostar hundra kronor.	It costs a hundred kronor.
+tusen	numeral			thousand	Tusen tack!	Thanks a lot! (lit. a thousand thanks)
+första	numeral			first	Det är första gången jag är här.	It's the first time I'm here.
+andra	numeral			second	Vi bor på andra våningen.	We live on the second floor.
+gång	noun	en	gången, gånger, gångerna	time, occasion	Hur många gånger har du varit här?	How many times have you been here?
+del	noun	en	delen, delar, delarna	part	En stor del av Sverige är skog.	A large part of Sweden is forest.
+sätt	noun	ett	sättet, sätt, sätten	way, manner	Det finns många sätt att lära sig.	There are many ways to learn.
+plats	noun	en	platsen, platser, platserna	place; seat; space	Är den här platsen ledig?	Is this seat free?
+ställe	noun	ett	stället, ställen, ställena	place, spot	Det här är mitt favoritställe.	This is my favourite place.
+början	noun	en	början	beginning	I början var det svårt.	At the beginning it was difficult.
+slut	noun	ett	slutet, slut, sluten	end	Filmen hade ett lyckligt slut.	The film had a happy ending.
+hjälp	noun	en	hjälpen	help	Tack för hjälpen!	Thanks for the help!
+kärlek	noun	en	kärleken	love	Kärlek är allt.	Love is everything.
+lycka	noun	en	lyckan	happiness; luck	Lycka till!	Good luck!
+hälsa	noun	en	hälsan	health	Hälsan är viktigast.	Health is most important.
+musik	noun	en	musiken	music	Vilken musik gillar du?	What music do you like?
+film	noun	en	filmen, filmer, filmerna	film, movie	Ska vi se en film?	Shall we watch a film?
+bio	noun	en	bion	cinema	Vi går på bio ikväll.	We're going to the cinema tonight.
+sport	noun	en	sporten, sporter, sporterna	sport	Vilken sport tycker du om?	Which sport do you like?
+fotboll	noun	en	fotbollen, fotbollar, fotbollarna	football, soccer	Han spelar fotboll varje lördag.	He plays football every Saturday.
+spel	noun	ett	spelet, spel, spelen	game	Vi spelar ett spel.	We're playing a game.
+bild	noun	en	bilden, bilder, bilderna	picture, image	Får jag ta en bild?	May I take a picture?
+färg	noun	en	färgen, färger, färgerna	colour; paint	Vilken färg gillar du?	What colour do you like?
+pris	noun	ett	priset, priser, priserna	price; prize	Priset är för högt.	The price is too high.
+present	noun	en	presenten, presenter, presenterna	present, gift	Tack för presenten!	Thanks for the present!
+nyhet	noun	en	nyheten, nyheter, nyheterna	news item	Har du hört nyheterna?	Have you heard the news?
+historia	noun	en	historien, historier, historierna	history; story	Berätta en historia!	Tell a story!
+fel	noun	ett	felet, fel, felen	mistake, fault	Det var mitt fel.	It was my fault.
+läsk	noun	en	läsken, läskar, läskarna	soft drink, soda	En läsk och en korv, tack.	A soda and a hot dog, please.
+korv	noun	en	korven, korvar, korvarna	sausage, hot dog	Vi grillar korv.	We're grilling sausages.
+köttbulle	noun	en	köttbullen, köttbullar, köttbullarna	meatball	Köttbullar med lingonsylt.	Meatballs with lingonberry jam.
+sill	noun	en	sillen, sillar, sillarna	herring	Inlagd sill äter man på midsommar.	Pickled herring is eaten at Midsummer.
+lax	noun	en	laxen, laxar, laxarna	salmon	Lax med dillsås är gott.	Salmon with dill sauce is tasty.
+kanelbulle	noun	en	kanelbullen, kanelbullar, kanelbullarna	cinnamon bun	Den fjärde oktober är kanelbullens dag.	The fourth of October is Cinnamon Bun Day.
+soppa	noun	en	soppan, soppor, sopporna	soup	Soppan är för varm.	The soup is too hot.
+sallad	noun	en	salladen, sallader, salladerna	salad; lettuce	Jag tar en sallad.	I'll have a salad.
+godis	noun	ett	godiset	sweets, candy	Barnen får godis på lördagar.	The children get sweets on Saturdays.
+nota	noun	en	notan, notor, notorna	bill (restaurant)	Kan vi få notan, tack?	Can we have the bill, please?
+kvitto	noun	ett	kvittot, kvitton, kvittona	receipt	Vill du ha kvittot?	Do you want the receipt?
+toalett	noun	en	toaletten, toaletter, toaletterna	toilet	Var är toaletten?	Where is the toilet?
+apotek	noun	ett	apoteket, apotek, apoteken	pharmacy	Apoteket ligger vid torget.	The pharmacy is by the square.
+bank	noun	en	banken, banker, bankerna	bank	Banken är stängd.	The bank is closed.
+bibliotek	noun	ett	biblioteket, bibliotek, biblioteken	library	Jag lånar böcker på biblioteket.	I borrow books from the library.
+kyrka	noun	en	kyrkan, kyrkor, kyrkorna	church	Kyrkan är från 1200-talet.	The church is from the 13th century.
+museum	noun	ett	museet, museer, museerna	museum	Vasamuseet är fantastiskt.	The Vasa Museum is fantastic.
+polis	noun	en	polisen, poliser, poliserna	police; police officer	Ring polisen!	Call the police!
+flygplats	noun	en	flygplatsen, flygplatser, flygplatserna	airport	Hur kommer jag till flygplatsen?	How do I get to the airport?
+hållplats	noun	en	hållplatsen, hållplatser, hållplatserna	(bus) stop	Var är närmaste hållplats?	Where is the nearest stop?
+tunnelbana	noun	en	tunnelbanan, tunnelbanor, tunnelbanorna	underground, metro	Vi tar tunnelbanan.	We take the metro.
+höger	adverb			right	Sväng till höger.	Turn right.
+vänster	adverb			left	Sväng till vänster vid kyrkan.	Turn left at the church.
+rakt fram	phrase			straight ahead	Gå rakt fram.	Go straight ahead.
+norr	noun		norra	north	Kiruna ligger långt i norr.	Kiruna is far in the north.
+söder	noun		södra	south	Skåne ligger i söder.	Skåne is in the south.
+öster	noun		östra	east	Solen går upp i öster.	The sun rises in the east.
+väster	noun		västra	west	Göteborg ligger i väster.	Gothenburg is in the west.
+ont	adverb			pain; ha ont: to hurt	Jag har ont i ryggen.	My back hurts.
+feber	noun	en	febern	fever	Barnet har feber.	The child has a fever.
+förkylning	noun	en	förkylningen, förkylningar, förkylningarna	cold (illness)	Jag har en förkylning.	I have a cold.
+medicin	noun	en	medicinen, mediciner, medicinerna	medicine	Ta medicinen två gånger om dagen.	Take the medicine twice a day.
+olycka	noun	en	olyckan, olyckor, olyckorna	accident	Det har hänt en olycka.	There has been an accident.
+vardag	noun	en	vardagen, vardagar, vardagarna	weekday; everyday life	Vardagen är ganska lugn.	Everyday life is fairly quiet.
+semla	noun	en	semlan, semlor, semlorna	semla (cream bun eaten before Lent)	Har du ätit en semla i år?	Have you had a semla this year?
+allemansrätt	noun	en	allemansrätten	right of public access (to nature)	Allemansrätten låter alla vandra i naturen.	The right of public access lets everyone roam in nature.
+stuga	noun	en	stugan, stugor, stugorna	cottage, cabin	Vi hyr en stuga vid sjön.	We're renting a cabin by the lake.
+lördagsgodis	noun	ett	lördagsgodiset	Saturday sweets	Barnen väntar på lördagsgodiset.	The children are waiting for their Saturday sweets.
+fika	verb		fikar, fikade, fikat, fika!	to have a coffee break	Ska vi fika?	Shall we have coffee?
+promenera	verb		promenerar, promenerade, promenerat, promenera!	to take a walk	Vi promenerar längs vattnet.	We walk along the water.
+träna	verb		tränar, tränade, tränat, träna!	to train, to work out	Jag tränar tre gånger i veckan.	I work out three times a week.
+studera	verb		studerar, studerade, studerat, studera!	to study	Hon studerar medicin.	She studies medicine.
+plugga	verb		pluggar, pluggade, pluggat, plugga!	to study (informal)	Jag måste plugga till provet.	I have to study for the test.
+öva	verb		övar, övade, övat, öva!	to practise	Öva varje dag!	Practise every day!
+upprepa	verb		upprepar, upprepade, upprepat, upprepa!	to repeat	Kan du upprepa, tack?	Can you repeat that, please?
+uttala	verb		uttalar, uttalade, uttalat, uttala!	to pronounce	Hur uttalar man det här ordet?	How do you pronounce this word?
+stava	verb		stavar, stavade, stavat, stava!	to spell	Hur stavas ditt namn?	How is your name spelled?
+översätta	verb		översätter, översatte, översatt, översätt!	to translate	Kan du översätta den här meningen?	Can you translate this sentence?
+berätta	verb		berättar, berättade, berättat, berätta!	to tell	Berätta om din dag!	Tell me about your day!
+förklara	verb		förklarar, förklarade, förklarat, förklara!	to explain	Kan du förklara igen?	Can you explain again?
+hälsa	verb		hälsar, hälsade, hälsat, hälsa!	to greet; to say hello	Hälsa till din mamma!	Say hello to your mum!
+bjuda	verb		bjuder, bjöd, bjudit, bjud!	to invite; to treat	Jag bjuder på kaffe.	The coffee's on me.
+tacka	verb		tackar, tackade, tackat, tacka!	to thank	Jag vill tacka alla.	I want to thank everyone.
+önska	verb		önskar, önskade, önskat, önska!	to wish	Jag önskar dig en god jul.	I wish you a merry Christmas.
+hoppas	verb		hoppas, hoppades, hoppats	to hope	Jag hoppas att du mår bra.	I hope you're well.
+oroa sig	verb		oroar sig, oroade sig, oroat sig	to worry	Oroa dig inte!	Don't worry!
+skynda sig	verb		skyndar sig, skyndade sig, skyndat sig	to hurry	Skynda dig, tåget går snart!	Hurry, the train leaves soon!
+gå upp	verb		går upp, gick upp, gått upp	to get up; to go up	Jag går upp klockan sex.	I get up at six.
+lägga sig	verb		lägger sig, la sig, lagt sig	to go to bed, to lie down	Jag lägger mig tidigt ikväll.	I'm going to bed early tonight.
+ta på sig	verb		tar på sig, tog på sig, tagit på sig	to put on (clothes)	Ta på dig mössan!	Put your hat on!
+ta av sig	verb		tar av sig, tog av sig, tagit av sig	to take off (clothes)	Ta av dig skorna.	Take off your shoes.
+stänga av	verb		stänger av, stängde av, stängt av	to turn off	Stäng av tv:n.	Turn off the TV.
+sätta på	verb		sätter på, satte på, satt på	to turn on	Kan du sätta på radion?	Can you turn on the radio?
+tycka synd om	phrase			to feel sorry for	Jag tycker synd om honom.	I feel sorry for him.
+baka	verb		bakar, bakade, bakat, baka!	to bake	Vi bakar bullar på söndag.	We're baking buns on Sunday.
+koka	verb		kokar, kokade, kokat, koka!	to boil	Vattnet kokar.	The water is boiling.
+steka	verb		steker, stekte, stekt, stek!	to fry	Hon steker fisk.	She's frying fish.
+skära	verb		skär, skar, skurit, skär!	to cut	Skär brödet, tack.	Cut the bread, please.
+smaka	verb		smakar, smakade, smakat, smaka!	to taste	Smaka på soppan!	Taste the soup!
+beställa	verb		beställer, beställde, beställt, beställ!	to order	Får jag beställa?	May I order?
+boka	verb		bokar, bokade, bokat, boka!	to book	Jag vill boka ett bord för två.	I'd like to book a table for two.
+hyra	verb		hyr, hyrde, hyrt, hyr!	to rent	Vi hyr en bil på semestern.	We're renting a car on holiday.
+bygga	verb		bygger, byggde, byggt, bygg!	to build	De bygger ett nytt hus.	They're building a new house.
+måla	verb		målar, målade, målat, måla!	to paint	Vi målar huset rött.	We're painting the house red.
+rita	verb		ritar, ritade, ritat, rita!	to draw	Barnet ritar en katt.	The child is drawing a cat.
+fotografera	verb		fotograferar, fotograferade, fotograferat	to photograph	Han fotograferar fåglar.	He photographs birds.
+plocka	verb		plockar, plockade, plockat, plocka!	to pick	Vi plockar blåbär i skogen.	We pick blueberries in the forest.
+vandra	verb		vandrar, vandrade, vandrat, vandra!	to hike	Vi vandrade Kungsleden.	We hiked the King's Trail.
+åka skidor	phrase		åker skidor, åkte skidor, åkt skidor	to ski	Vi åker skidor i fjällen.	We go skiing in the mountains.
+kasta	verb		kastar, kastade, kastat, kasta!	to throw	Kasta inte skräp!	Don't throw litter!
+dra	verb		drar, drog, dragit, dra!	to pull	Dra i dörren.	Pull the door.
+trycka	verb		trycker, tryckte, tryckt, tryck!	to press, to push	Tryck på knappen.	Press the button.
+tappa	verb		tappar, tappade, tappat, tappa!	to drop; to lose	Jag tappade mina nycklar.	I dropped my keys.
+gömma	verb		gömmer, gömde, gömt, göm!	to hide	Var gömde du presenten?	Where did you hide the present?
+fylla	verb		fyller, fyllde, fyllt, fyll!	to fill; fylla år: to have a birthday	Jag fyller trettio idag.	I turn thirty today.
+räcka	verb		räcker, räckte, räckt	to be enough; to pass	Det räcker!	That's enough!
+passa	verb		passar, passade, passat, passa!	to suit, to fit; to look after	Passar det på fredag?	Does Friday suit you?
+gälla	verb		gäller, gällde, gällt	to apply, to concern; to be valid	Biljetten gäller i en timme.	The ticket is valid for one hour.
+undra	verb		undrar, undrade, undrat	to wonder	Jag undrar vad klockan är.	I wonder what time it is.
+märka	verb		märker, märkte, märkt	to notice	Märkte du något?	Did you notice anything?
+jämföra	verb		jämför, jämförde, jämfört, jämför!	to compare	Jämför priserna!	Compare the prices!
+lova	verb		lovar, lovade, lovat, lova!	to promise	Jag lovar!	I promise!
+ljuga	verb		ljuger, ljög, ljugit, ljug!	to lie (tell untruths)	Ljug inte för mig!	Don't lie to me!
+sjunka	verb		sjunker, sjönk, sjunkit	to sink	Vasaskeppet sjönk 1628.	The Vasa ship sank in 1628.
+skina	verb		skiner, sken, skinit	to shine	Solen skiner idag.	The sun is shining today.
+regna	verb		regnar, regnade, regnat	to rain	Det regnar igen.	It's raining again.
+snöa	verb		snöar, snöade, snöat	to snow	Det snöade hela natten.	It snowed all night.
+blåsa	verb		blåser, blåste, blåst	to blow; to be windy	Det blåser mycket idag.	It's very windy today.
+frysa	verb		fryser, frös, frusit	to freeze; to be cold	Jag fryser!	I'm freezing!
+svettas	verb		svettas, svettades, svettats	to sweat	Jag svettas i värmen.	I'm sweating in the heat.
+hosta	verb		hostar, hostade, hostat	to cough	Han hostar mycket.	He coughs a lot.
+lugn	adjective		lugnt, lugna	calm, quiet	Ta det lugnt!	Take it easy!
+nervös	adjective		nervöst, nervösa	nervous	Jag är nervös inför intervjun.	I'm nervous about the interview.
+stolt	adjective		stolt, stolta	proud	Jag är stolt över dig.	I'm proud of you.
+lycklig	adjective		lyckligt, lyckliga	happy	De levde lyckliga i alla sina dagar.	They lived happily ever after.
+ensam	adjective		ensamt, ensamma	alone, lonely	Bor du ensam?	Do you live alone?
+söt	adjective		sött, söta	sweet; cute	Vilken söt hund!	What a cute dog!
+sur	adjective		surt, sura	sour; grumpy	Varför är du så sur?	Why are you so grumpy?
+salt	adjective		salt, salta	salty	Soppan är för salt.	The soup is too salty.
+gott	adverb			well; good (taste)	Sov gott!	Sleep well!
+läcker	adjective		läckert, läckra	delicious	Vilken läcker tårta!	What a delicious cake!
+äkta	adjective			genuine, real	Är det äkta guld?	Is it real gold?
+modern	adjective		modernt, moderna	modern	Lägenheten är modern.	The flat is modern.
+vanlig	adjective		vanligt, vanliga	usual, common, ordinary	Det är en vanlig dag.	It's an ordinary day.
+konstig	adjective		konstigt, konstiga	strange, weird	Vilket konstigt ljud!	What a strange noise!
+underbar	adjective		underbart, underbara	wonderful	Vi hade en underbar semester.	We had a wonderful holiday.
+fantastisk	adjective		fantastiskt, fantastiska	fantastic	Utsikten är fantastisk.	The view is fantastic.
+hemsk	adjective		hemskt, hemska	terrible, awful	Vilket hemskt väder!	What terrible weather!
+farlig	adjective		farligt, farliga	dangerous	Det är farligt att simma här.	It's dangerous to swim here.
+gratis	adjective			free (of charge)	Inträdet är gratis.	Admission is free.
+nästa	adjective			next	Vi ses nästa vecka.	See you next week.
+förra	adjective			last, previous	Förra året var jag i Italien.	Last year I was in Italy.
+sista	adjective			last, final	Det här är sista bussen.	This is the last bus.
+bäst	adjective			best	Du är bäst!	You're the best!
+jättegod	adjective		jättegott, jättegoda	really tasty	Middagen var jättegod.	Dinner was really tasty.
+grattis	interjection			congratulations	Grattis på födelsedagen!	Happy birthday!
+skål	interjection			cheers	Skål!	Cheers!
+hur är läget	phrase			how's it going	Hej! Hur är läget?	Hi! How's it going?
+ha det bra	phrase			take care	Ha det bra, vi hörs!	Take care, speak soon!
+vi ses	phrase			see you	Vi ses imorgon!	See you tomorrow!
+vi hörs	phrase			talk to you later	Vi hörs i helgen!	Talk to you at the weekend!
+det gör inget	phrase			it doesn't matter, no worries	– Förlåt! – Det gör inget.	– Sorry! – No worries.
+jag förstår inte	phrase			I don't understand	Förlåt, jag förstår inte.	Sorry, I don't understand.
+kan du prata långsammare	phrase			can you speak more slowly	Kan du prata långsammare, tack?	Can you speak more slowly, please?
+vad kostar det	phrase			how much does it cost	Ursäkta, vad kostar det?	Excuse me, how much does it cost?
+jag skulle vilja ha	phrase			I would like (to have)	Jag skulle vilja ha en kaffe.	I would like a coffee.
+lycka till	phrase			good luck	Lycka till på provet!	Good luck on the test!
