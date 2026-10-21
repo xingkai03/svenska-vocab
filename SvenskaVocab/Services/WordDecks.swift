@@ -21,7 +21,7 @@ struct WordDeck: Identifiable, Sendable {
 
     static let myLists = "My lists"
     /// Picker sections in display order; groups not listed here come after them.
-    static let groupOrder = ["Coursebook", "Spoken frequency", "Topics", myLists]
+    static let groupOrder = ["Coursebook", "Spoken frequency", "Topics", "Special lists", myLists]
 
     func entries(inChapter chapter: String) -> [DictionaryEntry] {
         guard !chapter.isEmpty else { return entries }
