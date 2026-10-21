@@ -30,6 +30,8 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                AccountSection()
+
                 Section("Daily goal") {
                     Stepper("\(dailyGoal) reviews or new words", value: $dailyGoal, in: 5...200, step: 5)
                     Stepper("\(sessionSize) cards per session", value: $sessionSize, in: 10...200, step: 10)

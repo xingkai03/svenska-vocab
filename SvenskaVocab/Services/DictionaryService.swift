@@ -101,6 +101,13 @@ final class DictionaryService: ObservableObject {
         return count
     }
 
+    /// Re-reads the word list files, e.g. after a sync added or removed imported lists.
+    func reloadDecks() {
+        if let filler {
+            customDecks = WordDecks.loadAll(filler: filler)
+        }
+    }
+
     func deleteDeck(_ deck: WordDeck) {
         guard deck.isImported else { return }
         try? FileManager.default.removeItem(at: deck.url)

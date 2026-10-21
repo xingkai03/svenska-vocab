@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Copy to SvenskaVocab/Config/Supabase.plist (git-ignored) and fill in from
+	     Supabase dashboard › Project Settings › API. Use the anon / publishable key, never the service_role / secret key. -->
+	<key>SUPABASE_URL</key>
+	<string>https://YOUR-PROJECT.supabase.co</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>YOUR-ANON-OR-PUBLISHABLE-KEY</string>
+</dict>
+</plist>
