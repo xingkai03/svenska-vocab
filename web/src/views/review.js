@@ -1,6 +1,7 @@
 import { html, useEffect, useRef, useState } from "../../vendor/preact-htm.js";
-import { dictionary, fold, formList, headword, shortPos } from "../dictionary.js";
+import { dictionary, formList, headword, shortPos } from "../dictionary.js";
 import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../scheduler.js";
+import { checkSpelling as check } from "../spelling.js";
 import { speak } from "../speech.js";
 import { store } from "../store.js";
 import { Kbd, useKeys } from "../keys.js";
@@ -91,16 +92,11 @@ export function ReviewView({ modeId, practice }) {
   };
 
   const checkSpelling = () => {
-    const strip = (s) => {
-      let t = s.trim().toLowerCase();
-      for (const prefix of ["en ", "ett ", "att "]) if (t.startsWith(prefix)) t = t.slice(prefix.length);
-      return t;
-    };
-    const given = strip(card.typed);
-    if (!given) return;
-    const target = word.word.toLowerCase();
-    const spelling = given === target ? { grade: GOOD, message: "Rätt! Correct." }
-      : fold(given) === fold(target) ? { grade: HARD, message: `Almost — mind the å, ä, ö: ${word.word}` }
+    if (!card.typed.trim()) return;
+    const { kind, form } = check(card.typed, word.word, formList(word));
+    const spelling = kind === "correct" ? { grade: GOOD, message: form ? `Rätt! ${form} is a form of ${word.word}.` : "Rätt! Correct." }
+      : kind === "diacritics" ? { grade: HARD, message: `Almost — mind the å, ä, ö: ${word.word}` }
+      : kind === "typo" ? { grade: HARD, message: form ? `Almost — small typo. It's spelled ${form}, a form of ${word.word}.` : `Almost — small typo. It's spelled ${word.word}.` }
       : { grade: AGAIN, message: `Answer: ${word.word}` };
     setCard((c) => ({ ...c, spelling }));
     speak(word.word);
