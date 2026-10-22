@@ -22,6 +22,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 - **Forgetting curve** – each word has a modelled recall probability R(t) = 0.9^(t / interval), shown as a memory-strength bar and a curve on its detail page.
 - **Review modes** – flashcards, English → Swedish, multiple choice, listening, and spelling (with å/ä/ö keys and "almost right" detection). When nothing is due you can practise without changing the schedule.
 - **Daily check-in** – set a daily goal (reviews + new words). Once you reach it you can check in. Streak counter, a week strip, and a daily reminder notification.
+- **Daily reading** – every day the Today screen has a short Swedish story or topic introduction built around six words you learned or reviewed in the last two weeks. Your words are highlighted; tap one to open it. Listen to the whole text, show an English translation, or ask for a new story or topic. On iOS 26 devices with Apple Intelligence the text is written on the device (free, nothing leaves the phone); elsewhere a simple offline version is made from sentence templates and the words' example sentences.
 - **Summary** – words, mastered, current and best streak, total reviews, 30-day accuracy, a 14-day activity chart, mastery breakdown, a forgetting curve for your whole collection, a 7-day review forecast, a check-in calendar, and your trickiest words.
 
 ## Requirements

@@ -4,6 +4,8 @@ import SwiftUI
 struct TodayView: View {
     @Environment(\.modelContext) private var context
     @EnvironmentObject private var dictionary: DictionaryService
+    @Environment(\.scenePhase) private var scenePhase
+    @StateObject private var dailyStory = DailyStoryStore()
     @Query private var words: [SavedWord]
     @Query(sort: \ReviewLog.date, order: .reverse) private var logs: [ReviewLog]
     @Query(sort: \CheckIn.day) private var checkIns: [CheckIn]
@@ -26,6 +28,7 @@ struct TodayView: View {
                     checkInCard
                     reviewCard
                     learnCard
+                    DailyStoryCard(store: dailyStory, hasWords: !words.isEmpty)
                     wordOfTheDayCard
                 }
                 .padding()
@@ -37,6 +40,11 @@ struct TodayView: View {
                     .accessibilityLabel("Settings")
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .task { dailyStory.refreshIfNeeded(from: words) }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { dailyStory.refreshIfNeeded(from: words) }
+            }
+            .onChange(of: words.isEmpty) { dailyStory.refreshIfNeeded(from: words) }
         }
     }
 
