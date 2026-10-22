@@ -49,7 +49,7 @@ export function WordDetailView({ id }) {
             <span class="title" style="flex:1">${headword(entry)}</span><${PosTag} entry=${entry} /><${LevelBadge} level=${level} />
           </div>
           <div class="title3">${entry.translation}</div>
-          <div class="row" style="gap:16px"><${SpeakButton} text=${entry.word} size="big" /><${SpeakButton} text=${entry.word} slow size="big" /></div>
+          <div class="row" style="gap:16px"><${SpeakButton} text=${entry.word} size="big" hotkey="p" /><${SpeakButton} text=${entry.word} slow size="big" hotkey="P" /></div>
         </div></div>
       <//>
 
@@ -63,7 +63,7 @@ export function WordDetailView({ id }) {
         <div class="cell"><div class="cell-main">
           <span class="italic">${entry.example}</span>
           ${entry.exampleTranslation ? html`<span class="subheadline secondary">${entry.exampleTranslation}</span>` : null}
-        </div><${SpeakButton} text=${entry.example} /></div>
+        </div><${SpeakButton} text=${entry.example} hotkey="x" /></div>
       <//>` : null}
 
       ${saved ? html`<${Memory} word=${saved} />

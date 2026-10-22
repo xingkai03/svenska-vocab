@@ -48,6 +48,12 @@ function keyName(e) {
   return e.metaKey || e.ctrlKey ? `Mod+${key.length === 1 ? key.toLowerCase() : key}` : key;
 }
 
+/** The Swedish word of the selected list row, or of the first row: for P in Lookup and My words. */
+export function selectedWord() {
+  const row = document.activeElement?.closest?.("main a.cell") ?? document.querySelector("main .list a.cell");
+  return row?.querySelector(".headline")?.textContent ?? null;
+}
+
 /** Links and buttons in the page's lists and cards, in screen order. */
 function listItems() {
   return [...document.querySelectorAll("main a.cell, main button.cell:not(:disabled), main a.card-link")]

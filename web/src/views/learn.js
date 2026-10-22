@@ -55,7 +55,7 @@ export function LearnView() {
     [["ArrowLeft", "x"], "I know it", entry && skip],
     [["p"], "Pronounce", entry && (() => speak(entry.word))],
     [["P"], "Pronounce slowly", entry && (() => speak(entry.word, { slow: true }))],
-    [["e"], "Pronounce the example", entry?.example && (() => speak(entry.example))],
+    [["x"], "Pronounce the example", entry?.example && (() => speak(entry.example))],
     [["]"], "Next word type", () => cycleType(1)],
     [["["], "Previous word type", () => cycleType(-1)],
   ]);
@@ -91,14 +91,14 @@ export function LearnView() {
         <div class="flashcard slide-in" key=${entry.id}>
           <div class="row" style="gap:6px"><${PosTag} entry=${entry} /><${LevelBadge} level=${entry.level} /></div>
           <div class="big-word">${headword(entry)}</div>
-          <div class="row" style="gap:24px"><${SpeakButton} text=${entry.word} size="big" /><${SpeakButton} text=${entry.word} slow size="big" /></div>
+          <div class="row" style="gap:24px"><${SpeakButton} text=${entry.word} size="big" hotkey="p" /><${SpeakButton} text=${entry.word} slow size="big" hotkey="P" /></div>
           <div class="title3">${entry.translation}</div>
           <${HintLines} word=${entry.word} partOfSpeech=${entry.partOfSpeech} />
           ${formList(entry).length ? html`<div class="subheadline secondary">${formList(entry).join(" · ")}</div>` : null}
           ${entry.example ? html`<hr />
             <div class="italic">${entry.example}</div>
             <div class="subheadline secondary">${entry.exampleTranslation}</div>
-            <${SpeakButton} text=${entry.example} />` : null}
+            <${SpeakButton} text=${entry.example} hotkey="x" />` : null}
         </div>
         <div class="row" style="gap:16px">
           <button class="btn large full" onClick=${skip}>✓ I know it<${Kbd} k="ArrowLeft" /></button>

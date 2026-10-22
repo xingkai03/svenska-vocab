@@ -130,7 +130,7 @@ function WordOfTheDay() {
     <div class="caption bold secondary">Word of the day</div>
     <div class="row" style="gap:4px">
       <span class="title">${headword(entry)}</span>
-      <${SpeakButton} text=${entry.word} />
+      <${SpeakButton} text=${entry.word} hotkey="p" />
       <span class="spacer"></span>
       <button class="icon-button" disabled=${saved} onClick=${() => store.addToCollection(entry)}
         aria-label=${saved ? "In your collection" : "Add to collection"} title=${saved ? "In your collection" : "Add to collection"}>

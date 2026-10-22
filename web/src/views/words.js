@@ -1,7 +1,8 @@
 import { html, useState } from "../../vendor/preact-htm.js";
 import { fold, LEVELS } from "../dictionary.js";
 import { formatInterval, isDue, isToday, mastery, retention, startOfDay, DAY } from "../scheduler.js";
-import { useKeys } from "../keys.js";
+import { selectedWord, useKeys } from "../keys.js";
+import { speak } from "../speech.js";
 import { store } from "../store.js";
 import { EmptyState, HintCaption, Icon, LevelBadge, MemoryBar, NavBar, Segmented, go, href } from "../ui.js";
 
@@ -43,6 +44,8 @@ export function WordsView() {
     [["o"], "Change the sort order", () => set({ sort: SORTS[(SORTS.findIndex((x) => x[0] === view.sort) + 1) % SORTS.length][0] })],
     [["r"], "Review", words.length && (() => go("review", "flashcards", anyDue ? {} : { practice: 1 }))],
     [["n"], "Add a word", () => go("new")],
+    [["p"], "Pronounce the selected word", visible.length && (() => speak(selectedWord()))],
+    [["P"], "Pronounce it slowly", visible.length && (() => speak(selectedWord(), { slow: true }))],
   ]);
 
   return html`

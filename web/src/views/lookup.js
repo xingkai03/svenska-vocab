@@ -1,6 +1,7 @@
 import { html, useEffect, useRef, useState } from "../../vendor/preact-htm.js";
 import { dictionary } from "../dictionary.js";
-import { useKeys } from "../keys.js";
+import { selectedWord, useKeys } from "../keys.js";
+import { speak } from "../speech.js";
 import { local, store } from "../store.js";
 import { EntryRow, Icon, NavBar, Section, go, href } from "../ui.js";
 
@@ -31,7 +32,10 @@ export function LookupView({ query: initial = "" }) {
   const results = query.trim() ? dictionary.search(query) : null;
   const recent = local.get("recentSearches", []);
   const first = results && (results.englishFirst ? results.english[0] ?? results.swedish[0] : results.swedish[0] ?? results.english[0]);
-  useKeys([[["n"], "Add your own word", () => go("new", query.trim() ? { prefill: query.trim() } : {})]]);
+  useKeys([
+    [["p"], "Pronounce the selected word", results && (() => speak(selectedWord()))],
+    [["P"], "Pronounce it slowly", results && (() => speak(selectedWord(), { slow: true }))],
+    [["n"], "Add your own word", () => go("new", query.trim() ? { prefill: query.trim() } : {})]]);
 
   return html`
     <${NavBar} title="Lookup" large right=${html`

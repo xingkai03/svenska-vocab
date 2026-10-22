@@ -329,3 +329,5 @@ kbd.hint { margin-left: 6px; background: rgba(127, 127, 127, 0.18); color: inher
   .tab-key { display: inline-block; margin-left: auto; font-size: 12px; color: var(--tertiary); }
   .tab .badge + .tab-key, .tab .badge ~ .tab-key { margin-left: 6px; }
 }
+.speak { display: inline-flex; align-items: center; }
+.speak kbd.hint { margin-left: 0; }

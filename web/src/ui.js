@@ -2,6 +2,7 @@
 
 import { html } from "../vendor/preact-htm.js";
 import { dictionary, headword, HINT_LANGUAGES, hintSentence, shortPos } from "./dictionary.js";
+import { Kbd } from "./keys.js";
 import { speak } from "./speech.js";
 
 // MARK: - Icons (24 × 24, drawn with the current text color)
@@ -109,11 +110,13 @@ export function NavBar({ title, large = false, backTo, backLabel = "Back", left,
 
 // MARK: - Small views
 
-export function SpeakButton({ text, slow = false, size = "" }) {
-  return html`<button class=${`icon-button ${size}`} onClick=${(e) => { e.stopPropagation(); e.preventDefault(); speak(text, { slow }); }}
-    aria-label=${slow ? "Pronounce slowly" : "Pronounce"} title=${slow ? "Pronounce slowly" : "Pronounce"}>
+/** Speaker button; `hotkey` names its keyboard shortcut, shown next to it on computers. */
+export function SpeakButton({ text, slow = false, size = "", hotkey }) {
+  const label = slow ? "Pronounce slowly" : "Pronounce";
+  return html`<span class="speak"><button class=${`icon-button ${size}`} onClick=${(e) => { e.stopPropagation(); e.preventDefault(); speak(text, { slow }); }}
+    aria-label=${label} title=${hotkey ? `${label} (${hotkey === "P" ? "Shift+P" : hotkey.toUpperCase()})` : label}>
     <${Icon} name=${slow ? "slow" : "speaker"} />
-  </button>`;
+  </button>${hotkey ? html`<${Kbd} k=${hotkey} />` : null}</span>`;
 }
 
 export function PosTag({ entry }) {

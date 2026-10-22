@@ -107,8 +107,12 @@ export function ReviewView({ modeId, practice }) {
     ...GRADES.map((g) => [[String(g.value + 1)], g.title, flip && card.revealed && (() => answer(g.value))]),
     ...card.options.map((o, i) => [[String(i + 1)], `Answer ${i + 1}`, choice && card.picked == null && (() => pick(o))]),
     [["Space", "Enter"], "Continue", proceed],
-    [["p"], "Play the word", () => speak(word.word)],
-    [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
+    // In English → Swedish and spelling, the word is the answer: it plays only once it's shown.
+    ...(mode.id === "reverse" || mode.id === "spelling") && !(card.revealed || card.spelling) ? [] : [
+      [["p"], "Play the word", () => speak(word.word)],
+      [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
+    ],
+    [["x"], "Play the example", word.example && (card.revealed || card.picked != null || card.spelling) && (() => speak(word.example))],
   ] : [[["Space", "Enter"], "Done", () => back("today")]]);
 
   const title = practice ? `${mode.title} · practice` : mode.title;
@@ -136,7 +140,7 @@ export function ReviewView({ modeId, practice }) {
 function SwedishHeader({ word }) {
   return html`<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
     <div class="review-word">${headword(word)}</div>
-    <${SpeakButton} text=${word.word} size="big" />
+    <${SpeakButton} text=${word.word} size="big" hotkey="p" />
   </div>`;
 }
 
@@ -144,8 +148,8 @@ function Prompt({ mode, word, card }) {
   if (mode === "flashcards" || mode === "choice") return html`<${SwedishHeader} word=${word} />`;
   if (mode === "listening") {
     return html`<div class="row" style="gap:32px;padding:16px">
-        <button class="icon-button huge" onClick=${() => speak(word.word)} aria-label="Play again"><${Icon} name="speaker" /></button>
-        <button class="icon-button big" onClick=${() => speak(word.word, { slow: true })} aria-label="Play slowly"><${Icon} name="slow" /></button>
+        <span class="speak"><button class="icon-button huge" onClick=${() => speak(word.word)} aria-label="Play again" title="Play again (P)"><${Icon} name="speaker" /></button><${Kbd} k="p" /></span>
+        <span class="speak"><button class="icon-button big" onClick=${() => speak(word.word, { slow: true })} aria-label="Play slowly" title="Play slowly (Shift+P)"><${Icon} name="slow" /></button><${Kbd} k="P" /></span>
       </div>
       ${card.picked != null ? html`<${SwedishHeader} word=${word} />` : null}`;
   }
@@ -162,7 +166,7 @@ function Details({ mode, word }) {
     ${word.example ? html`<div class="fade-in" style="display:flex;flex-direction:column;align-items:center;gap:4px">
       <div class="italic">${word.example}</div>
       <div class="subheadline secondary">${word.exampleTranslation}</div>
-      <${SpeakButton} text=${word.example} /></div>` : null}
+      <${SpeakButton} text=${word.example} hotkey="x" /></div>` : null}
     ${word.note ? html`<div class="footnote secondary fade-in"><${Icon} name="note" /> ${word.note}</div>` : null}`;
 }
 
