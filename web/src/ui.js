@@ -144,12 +144,12 @@ export function HintCaption({ word, partOfSpeech }) {
     ${hints.map((h) => `${HINT_LANGUAGES[h.language].flag} ${h.word}`).join(" · ")}</div>`;
 }
 
-/** "🇩🇪 Like German Fenster" lines, for learn and review cards. */
+/** "🇩🇪 Fenster · 🇫🇷 fenêtre" under the translation, for learn and review cards. */
 export function HintLines({ word, partOfSpeech }) {
   const hints = dictionary.hints(word, partOfSpeech);
   if (!hints.length) return null;
-  return html`<div class="subheadline secondary" style="display:flex;flex-direction:column;gap:4px">
-    ${hints.map((h) => html`<div>${HINT_LANGUAGES[h.language].flag} ${hintSentence(h)}</div>`)}</div>`;
+  return html`<div class="subheadline secondary" aria-label=${hints.map(hintSentence).join(". ")}>
+    ${hints.map((h) => `${HINT_LANGUAGES[h.language].flag} ${h.word}`).join(" · ")}</div>`;
 }
 
 /** A list row for a dictionary entry. */
