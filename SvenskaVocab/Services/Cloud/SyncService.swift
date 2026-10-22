@@ -564,6 +564,8 @@ struct SettingsData: Codable, Equatable {
     var onlineLookup: Bool?
     var skippedWords: String?
     var discoverDeck: String?
+    var knowsGerman: Bool?
+    var knowsFrench: Bool?
 
     static func fromDefaults(_ d: UserDefaults = .standard) -> SettingsData {
         SettingsData(dailyGoal: d.object(forKey: AppSettings.dailyGoal) as? Int,
@@ -572,14 +574,17 @@ struct SettingsData: Codable, Equatable {
                      autoSpeak: d.object(forKey: AppSettings.autoSpeak) as? Bool,
                      onlineLookup: d.object(forKey: AppSettings.onlineLookup) as? Bool,
                      skippedWords: d.string(forKey: AppSettings.skippedWords),
-                     discoverDeck: d.string(forKey: AppSettings.discoverDeck))
+                     discoverDeck: d.string(forKey: AppSettings.discoverDeck),
+                     knowsGerman: d.object(forKey: AppSettings.knowsGerman) as? Bool,
+                     knowsFrench: d.object(forKey: AppSettings.knowsFrench) as? Bool)
     }
 
     func applyToDefaults(_ d: UserDefaults = .standard) {
         let values: [String: Any?] = [AppSettings.dailyGoal: dailyGoal, AppSettings.sessionSize: sessionSize,
                                       AppSettings.speechRate: speechRate, AppSettings.autoSpeak: autoSpeak,
                                       AppSettings.onlineLookup: onlineLookup, AppSettings.skippedWords: skippedWords,
-                                      AppSettings.discoverDeck: discoverDeck]
+                                      AppSettings.discoverDeck: discoverDeck, AppSettings.knowsGerman: knowsGerman,
+                                      AppSettings.knowsFrench: knowsFrench]
         for case let (key, value?) in values { d.set(value, forKey: key) }
     }
 }
