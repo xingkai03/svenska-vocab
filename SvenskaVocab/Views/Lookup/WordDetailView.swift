@@ -41,6 +41,8 @@ struct WordDetailView: View {
                 .padding(.vertical, 4)
             }
 
+            LanguageHintSection(word: shown.word, partOfSpeech: shown.partOfSpeech)
+
             if !shown.formList.isEmpty {
                 Section("Forms") {
                     ForEach(shown.formList, id: \.self) { form in

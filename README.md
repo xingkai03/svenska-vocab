@@ -17,6 +17,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
   - **Topics** – 16 everyday themes (greetings, family, body & health, food, home, clothes, weather, time, numbers, travel, city, work & school, shopping, nature, feelings, hobbies), 30–50 words each.
   The picker shows learned / total for every list.
 - **Word lists** – import your own lists (Settings › Word lists › Import word list…, from Files on the iPhone) as .tsv, .csv or .txt with Swedish, English and optionally part of speech, example and chapter. They appear in Learn new words with a chapter filter; missing grammar and examples are filled in from the dictionary.
+- **German and French memory hints** – in Settings › Languages I know, turn on German and/or French. About 8 000 Swedish words then show a look-alike German word and 3 000 a French one ("fönster" – 🇩🇪 Fenster, "biljett" – 🇫🇷 billet), in Lookup, Learn new words, your collection, the word page and on review cards after you answer. Built from Wiktionary translations and etymologies; only words with the same meaning that look alike are kept, so false friends such as "snäll" / "schnell" are left out.
 - **CEFR levels** – about 7 500 words carry a level badge (A1–C2) in search results, word details and your collection, which you can filter by level.
 - **Spaced repetition** – an SM-2 scheduler with Again / Hard / Good / Easy grading and interval previews. Forgotten words come back in the same session.
 - **Forgetting curve** – each word has a modelled recall probability R(t) = 0.9^(t / interval), shown as a memory-strength bar and a curve on its detail page.
@@ -47,10 +48,10 @@ SvenskaVocab/
   Models/         SwiftData models (SavedWord, ReviewLog, CheckIn) and DictionaryEntry
   Services/       Dictionary (offline + Folkets lexikon), speech, scheduler, settings, reminders
   Views/          Today, Lookup, Collection, Review, Summary
-  Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv and kelly_levels.tsv (generated)
+  Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv, kelly_levels.tsv, language_hints.tsv (generated)
     Decks/        open word lists (deck_*.tsv)
     Private/      your personal lists (git-ignored)
-scripts/          build_folkets.py, build_kelly.py, build_open_decks.py
+scripts/          build_folkets.py, build_kelly.py, build_open_decks.py, build_language_hints.py
 ```
 
 ### Extending the built-in vocabulary
@@ -115,3 +116,4 @@ Spoken frequency lists: [FrequencyWords](https://github.com/hermitdave/Frequency
 Academic words: Akademisk ordlista, Ribeck, Jansson & Sköldberg (2016), [Språkbanken](https://spraakbanken.gu.se/en/resources/ao), licensed CC BY 4.0.
 Expressions: [Swe-MWELex](https://spraakbanken.gu.se/en/resources/swe-mwelex), Språkbanken, University of Gothenburg, licensed CC BY 4.0 (the .xlsx release).
 CEFR levels come from the Swedish Kelly list, [Språkbanken](https://spraakbanken.gu.se/en/resources/kelly), University of Gothenburg, licensed CC BY 4.0.
+German and French memory hints: Wiktionary contributors, via [WikDict](https://www.wikdict.com/) (Swedish–German and Swedish–French translations) and [kaikki.org](https://kaikki.org/dictionary/Swedish/) (etymologies), licensed CC BY-SA 4.0. The generated `language_hints.tsv` is a derivative work under the same licence.
