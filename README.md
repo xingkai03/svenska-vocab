@@ -59,7 +59,7 @@ It is plain JavaScript modules with no build step (Preact + htm are vendored in 
 
 ```
 python3 scripts/build_web.py           # copies the dictionary and open word lists into web/data
-python3 -m http.server -d web 8000     # then open http://localhost:8000
+python3 scripts/serve_web.py           # then open http://localhost:8000 (served without caching)
 ```
 
 `web/config.js` holds the Supabase URL and publishable key (public by design; the tables are protected by row-level security). `.github/workflows/web.yml` publishes the site to GitHub Pages on every push to `main` that touches it: in the repository settings › Pages, set Source to "GitHub Actions". The build only copies `Resources/Decks`, never `Resources/Private`. For confirmation emails to open the web version, add its URL under Supabase › Authentication › URL Configuration.
