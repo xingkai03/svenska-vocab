@@ -34,7 +34,7 @@ struct LanguageHintCaption: View {
     }
 }
 
-/// "🇩🇪 Like German Fenster" lines, for review cards.
+/// "🇩🇪 Fenster" lines, for review cards.
 struct LanguageHintLines: View {
     let word: String
     let partOfSpeech: String
@@ -45,7 +45,8 @@ struct LanguageHintLines: View {
         if !hints.isEmpty {
             VStack(spacing: 4) {
                 ForEach(hints, id: \.self) { hint in
-                    Text("\(hint.language.flag) \(hint.sentence)")
+                    Text("\(hint.language.flag) \(hint.word)")
+                        .accessibilityLabel(hint.sentence)
                 }
             }
             .font(.subheadline)
@@ -66,27 +67,15 @@ struct LanguageHintSection: View {
         if !hints.isEmpty {
             Section {
                 ForEach(hints, id: \.self) { hint in
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(hint.language.flag)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(hint.word).font(.headline)
-                            Text(explanation(hint)).font(.subheadline).foregroundStyle(.secondary)
-                        }
-                    }
+                    Text("\(hint.language.flag) \(hint.word)")
+                        .font(.headline)
+                        .accessibilityLabel(hint.sentence)
                 }
             } header: {
                 Text("Memory hint")
             } footer: {
                 Text("Look-alike words from Wiktionary (WikDict, kaikki.org), CC BY-SA 4.0.")
             }
-        }
-    }
-
-    private func explanation(_ hint: LanguageHint) -> String {
-        switch hint.kind {
-        case .same: "Spelled the same in \(hint.language.name), same meaning."
-        case .similar: "\(hint.language.name) word with the same meaning that looks alike."
-        case .from: "Swedish borrowed “\(word)” from this \(hint.language.name) word."
         }
     }
 }

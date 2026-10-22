@@ -21,7 +21,7 @@ struct LanguageHint: Hashable {
     let word: String
     let kind: Kind
 
-    /// "Same as German Hund", "Like French école", "From French billet".
+    /// Spoken by VoiceOver: "Same as German Hund", "Like French école", "From French billet".
     var sentence: String {
         switch kind {
         case .same: "Same as \(language.name) \(word)"
