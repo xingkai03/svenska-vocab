@@ -1,5 +1,6 @@
 import { html, useEffect, useRef, useState } from "../../vendor/preact-htm.js";
 import { dictionary } from "../dictionary.js";
+import { useKeys } from "../keys.js";
 import { local, store } from "../store.js";
 import { EntryRow, Icon, NavBar, Section, go, href } from "../ui.js";
 
@@ -29,6 +30,8 @@ export function LookupView({ query: initial = "" }) {
 
   const results = query.trim() ? dictionary.search(query) : null;
   const recent = local.get("recentSearches", []);
+  const first = results && (results.englishFirst ? results.english[0] ?? results.swedish[0] : results.swedish[0] ?? results.english[0]);
+  useKeys([[["n"], "Add your own word", () => go("new", query.trim() ? { prefill: query.trim() } : {})]]);
 
   return html`
     <${NavBar} title="Lookup" large right=${html`
@@ -37,7 +40,12 @@ export function LookupView({ query: initial = "" }) {
         <${Icon} name="search" />
         <input ref=${input} type="search" placeholder="Swedish or English" value=${query} autocomplete="off" autocapitalize="off"
           spellcheck=${false} onInput=${(e) => update(e.currentTarget.value)}
-          onKeyDown=${(e) => e.key === "Enter" && remember(query)} aria-label="Search the dictionary" />
+          onKeyDown=${(e) => {
+            // Enter opens the top result; ↓ moves into the list.
+            if (e.key !== "Enter") return;
+            remember(query);
+            if (first) location.hash = href("word", first.id);
+          }} aria-label="Search the dictionary" />
       </label></div>
     <//>
     <div class="page">

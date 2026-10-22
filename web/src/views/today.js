@@ -2,6 +2,8 @@ import { html } from "../../vendor/preact-htm.js";
 import { useState } from "../../vendor/preact-htm.js";
 import { dictionary, headword } from "../dictionary.js";
 import { addDays, currentStreak, dayString, isDue, isToday, startOfDay } from "../scheduler.js";
+import { Kbd, useKeys } from "../keys.js";
+import { speak } from "../speech.js";
 import { entryId, store } from "../store.js";
 import { Icon, NavBar, SpeakButton, go, href } from "../ui.js";
 import { REVIEW_MODES } from "./review.js";
@@ -34,6 +36,17 @@ export function TodayView() {
     setTimeout(() => setCelebrate(0), 1600);
   };
 
+  const wotd = dictionary.wordOfTheDay();
+  useKeys([
+    [["r"], dueCount ? "Start review" : "Practice", words.length && (() => go("review", "flashcards", dueCount ? {} : { practice: 1 }))],
+    ...REVIEW_MODES.map((m, i) => [[String(i + 1)], m.title, words.length && (() => go("review", m.id, dueCount ? {} : { practice: 1 }))]),
+    [["n"], "Learn new words", () => go("learn")],
+    [["c"], "Check in", !checkedInToday && doneToday >= dailyGoal && checkIn],
+    [["p"], "Pronounce the word of the day", wotd && (() => speak(wotd.word))],
+    [["b"], "Save the word of the day", wotd && !store.words.has(entryId(wotd)) && (() => store.addToCollection(wotd))],
+    [["d"], "Word of the day details", wotd && (() => go("word", wotd.id))],
+  ]);
+
   const progress = Math.min(1, doneToday / Math.max(dailyGoal, 1));
   const circumference = 2 * Math.PI * 32;
 
@@ -56,7 +69,7 @@ export function TodayView() {
             ${checkedInToday
               ? html`<div class="subheadline bold green"><${Icon} name="checkCircle" /> Checked in today</div>`
               : html`<div><button class="btn prominent small" disabled=${doneToday < dailyGoal} onClick=${checkIn}>
-                  ${doneToday >= dailyGoal ? "Check in" : "Reach your goal to check in"}</button></div>`}
+                  ${doneToday >= dailyGoal ? html`Check in<${Kbd} k="c" />` : "Reach your goal to check in"}</button></div>`}
           </div>
         </div>
         <${WeekStrip} days=${days} />
@@ -69,12 +82,12 @@ export function TodayView() {
             <div class="subheadline secondary">${words.length === 0 ? "Your collection is empty"
               : dueCount === 0 ? "All caught up — nothing due" : `${dueCount} words due now`}</div>
           </div>
-          ${dueCount > 0 ? html`<a class="btn prominent" href=${href("review", "flashcards")}>Start</a>` : null}
+          ${dueCount > 0 ? html`<a class="btn prominent" href=${href("review", "flashcards")}>Start<${Kbd} k="r" /></a>` : null}
         </div>
         ${words.length ? html`
           <div class="mode-grid">
-            ${REVIEW_MODES.map((m) => html`<button onClick=${() => go("review", m.id, dueCount === 0 ? { practice: 1 } : {})}>
-              <${Icon} name=${m.icon} />${m.title}</button>`)}
+            ${REVIEW_MODES.map((m, i) => html`<button onClick=${() => go("review", m.id, dueCount === 0 ? { practice: 1 } : {})}>
+              <${Icon} name=${m.icon} />${m.title}<${Kbd} k=${String(i + 1)} /></button>`)}
           </div>
           ${dueCount === 0 ? html`<div class="caption2 secondary">Practice mode: reviewing ahead of schedule won't change due dates.</div>` : null}` : null}
       </div>
@@ -83,7 +96,7 @@ export function TodayView() {
         <div class="row">
           <span class="purple title3"><${Icon} name="sparkles" /></span>
           <div style="flex:1">
-            <div class="headline">Learn new words</div>
+            <div class="headline">Learn new words<${Kbd} k="n" /></div>
             <div class="caption secondary">Core words, CEFR levels A1–C2, coursebook, spoken and topic lists</div>
           </div>
           <span class="tertiary"><${Icon} name="chevronRight" /></span>
@@ -91,6 +104,7 @@ export function TodayView() {
       </a>
 
       <${WordOfTheDay} />
+      <div class="shortcut-tip caption secondary">Press <kbd>?</kbd> for keyboard shortcuts</div>
     </div></div>
     ${celebrate ? html`<div class="celebrate"><div>Bra jobbat! 🎉</div></div>` : null}`;
 }

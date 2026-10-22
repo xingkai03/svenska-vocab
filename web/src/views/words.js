@@ -1,6 +1,7 @@
 import { html, useState } from "../../vendor/preact-htm.js";
 import { fold, LEVELS } from "../dictionary.js";
 import { formatInterval, isDue, isToday, mastery, retention, startOfDay, DAY } from "../scheduler.js";
+import { useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { EmptyState, Icon, LevelBadge, MemoryBar, NavBar, Segmented, go, href } from "../ui.js";
 
@@ -37,6 +38,12 @@ export function WordsView() {
   else if (view.sort === "weakest") visible = visible.sort((a, b) => retention(a, now) - retention(b, now));
 
   const anyDue = words.some((w) => isDue(w, now));
+  useKeys([
+    ...FILTERS.map(([v, t], i) => [[String(i + 1)], `Show ${t === "★" ? "favorites" : t.toLowerCase()}`, () => set({ filter: v })]),
+    [["o"], "Change the sort order", () => set({ sort: SORTS[(SORTS.findIndex((x) => x[0] === view.sort) + 1) % SORTS.length][0] })],
+    [["r"], "Review", words.length && (() => go("review", "flashcards", anyDue ? {} : { practice: 1 }))],
+    [["n"], "Add a word", () => go("new")],
+  ]);
 
   return html`
     <${NavBar} title="My words" large

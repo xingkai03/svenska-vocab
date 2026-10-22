@@ -3,6 +3,7 @@ import { BarChart, LineChart } from "../charts.js";
 import {
   addDays, bestStreak, currentStreak, dayString, isSameDay, mastery, MASTERY, retention, retentionAfter, startOfDay, DAY,
 } from "../scheduler.js";
+import { useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { Icon, NavBar, href } from "../ui.js";
 
@@ -134,6 +135,10 @@ function CheckInCalendar({ days }) {
   const cells = [...Array(leading).fill(null), ...[...Array(count)].map((_, i) => new Date(first.getFullYear(), first.getMonth(), i + 1).getTime())];
   const isCurrentMonth = first.getFullYear() === new Date().getFullYear() && first.getMonth() === new Date().getMonth();
   const shift = (n) => setMonth(new Date(first.getFullYear(), first.getMonth() + n, 1).getTime());
+  useKeys([
+    [["["], "Previous month", () => shift(-1)],
+    [["]"], "Next month", !isCurrentMonth && (() => shift(1))],
+  ]);
   const inMonth = cells.filter((d) => d != null && days.has(dayString(d))).length;
   return html`<div class="card">
     <div class="row">

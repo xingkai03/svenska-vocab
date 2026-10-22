@@ -1,6 +1,7 @@
 import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { deckEntries, dictionary, formList, GROUP_ORDER, headword, LEVELS } from "../dictionary.js";
 import { speak } from "../speech.js";
+import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { EmptyState, LevelBadge, NavBar, PosTag, Segmented, SpeakButton } from "../ui.js";
 
@@ -48,6 +49,17 @@ export function LearnView() {
     setAdded((n) => n + 1);
   };
 
+  const cycleType = (step) => setType(TYPES[(TYPES.findIndex((t) => t[0] === type) + step + TYPES.length) % TYPES.length][0]);
+  useKeys([
+    [["ArrowRight", "Enter"], "Learn", entry && learn],
+    [["ArrowLeft", "x"], "I know it", entry && skip],
+    [["p"], "Pronounce", entry && (() => speak(entry.word))],
+    [["P"], "Pronounce slowly", entry && (() => speak(entry.word, { slow: true }))],
+    [["e"], "Pronounce the example", entry?.example && (() => speak(entry.example))],
+    [["]"], "Next word type", () => cycleType(1)],
+    [["["], "Previous word type", () => cycleType(-1)],
+  ]);
+
   return html`
     <${NavBar} title="Learn new words" backTo="today" backLabel="Today" />
     <div class="page"><div class="stack" style="gap:20px">
@@ -88,8 +100,8 @@ export function LearnView() {
             <${SpeakButton} text=${entry.example} />` : null}
         </div>
         <div class="row" style="gap:16px">
-          <button class="btn large full" onClick=${skip}>✓ I know it</button>
-          <button class="btn large full prominent" onClick=${learn}>+ Learn</button>
+          <button class="btn large full" onClick=${skip}>✓ I know it<${Kbd} k="ArrowLeft" /></button>
+          <button class="btn large full prominent" onClick=${learn}>+ Learn<${Kbd} k="ArrowRight" /></button>
         </div>`
       : html`<${EmptyState} icon="seal" title="You've seen them all">Look up more words or reset skipped words in Settings.<//>`}
     </div></div>`;

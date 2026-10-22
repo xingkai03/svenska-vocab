@@ -2,8 +2,9 @@ import { html, useRef, useState } from "../../vendor/preact-htm.js";
 import { cloud } from "../cloud.js";
 import { convertList, dictionary, MY_LISTS } from "../dictionary.js";
 import { hasSpeech, hasSwedishVoice, speak } from "../speech.js";
+import { useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { Icon, NavBar, Section, Stepper, Toggle, href, relative } from "../ui.js";
+import { Icon, NavBar, Section, Stepper, Toggle, go, href, relative } from "../ui.js";
 
 export function SyncStatus() {
   if (cloud.isSyncing) return html`<span>Syncing…</span>`;
@@ -49,6 +50,12 @@ export function SettingsView() {
   const rate = store.get("speechRate");
   // Personal lists: imported ones (the open lists that ship with the app are in Learn new words).
   const myLists = dictionary.customDecks.filter((d) => d.group === MY_LISTS);
+
+  useKeys([
+    [["a"], cloud.session ? "Account" : "Sign in", cloud.isConfigured && (() => go(cloud.session ? "account" : "signin"))],
+    [["i"], "Import a word list", () => fileInput.current.click()],
+    [["p"], "Test pronunciation", () => speak("Hej, hur mår du?")],
+  ]);
 
   const importList = async (file) => {
     if (!file) return;

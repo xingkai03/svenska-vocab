@@ -3,6 +3,7 @@ import { LineChart } from "../charts.js";
 import { dictionary, formList, headword } from "../dictionary.js";
 import { isDue, mastery, retention, retentionAfter, DAY } from "../scheduler.js";
 import { speak } from "../speech.js";
+import { useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { EmptyState, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, relative } from "../ui.js";
 
@@ -13,6 +14,17 @@ export function WordDetailView({ id }) {
   useEffect(() => {
     if (entry && store.get("autoSpeak")) speak(entry.word);
   }, [id]);
+
+  useKeys(entry ? [
+    [["p"], "Pronounce", () => speak(entry.word)],
+    [["P"], "Pronounce slowly", () => speak(entry.word, { slow: true })],
+    [["x"], "Pronounce the example", entry.example && (() => speak(entry.example))],
+    [["a"], "Add to my words", !saved && (() => store.addToCollection(entry))],
+    [["f"], "Favorite", saved && (() => store.updateWord(id, { isFavorite: !saved.isFavorite }))],
+    [["e"], "Edit", saved && (() => go("edit", id))],
+    [["m"], "Write a note", saved && (() => document.querySelector("main textarea")?.focus())],
+    [["Delete", "Backspace"], "Remove from my words", saved && (() => remove())],
+  ] : []);
 
   if (!entry) {
     return html`<${NavBar} title="Word" backTo="lookup" />

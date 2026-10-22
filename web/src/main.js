@@ -1,5 +1,6 @@
 import { html, render, useEffect, useState } from "../vendor/preact-htm.js";
 import { cloud } from "./cloud.js";
+import { ShortcutHelp } from "./keys.js";
 import { dictionary } from "./dictionary.js";
 import { isDue } from "./scheduler.js";
 import { store } from "./store.js";
@@ -73,11 +74,12 @@ function App() {
       <div class="brand"><img src="icon-180.png" alt="" />Svenska</div>
       ${TABS.map((t) => html`<a class=${`tab ${lastTab === t.name ? "active" : ""}`} href=${href(t.name)}
         aria-current=${route.name === t.name ? "page" : undefined}>
-        <${Icon} name=${t.icon} /><span>${t.title}</span>
+        <${Icon} name=${t.icon} /><span>${t.title}</span><span class="tab-key">${t.title[0]}</span>
         ${t.name === "words" && due > 0 ? html`<span class="badge">${due}</span>` : null}
       </a>`)}
     </nav>
     <main class="main"><${Page} route=${route} /></main>
+    <${ShortcutHelp} />
   </div>`;
 }
 

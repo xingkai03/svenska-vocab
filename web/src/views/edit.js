@@ -1,5 +1,6 @@
-import { html, useState } from "../../vendor/preact-htm.js";
+import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { POS_ALL } from "../dictionary.js";
+import { useKeys } from "../keys.js";
 import { entryId, store } from "../store.js";
 import { back, NavBar, Section, Segmented } from "../ui.js";
 
@@ -26,6 +27,9 @@ export function EditWordView({ id, prefill = "" }) {
     }
   };
 
+  useEffect(() => document.querySelector("main input.text")?.focus(), []);
+  useKeys([[["Mod+Enter", "Mod+s"], "Save", canSave && save]]);
+
   const field = (name, placeholder, multiline = false) => multiline
     ? html`<textarea class="text" rows="2" placeholder=${placeholder} value=${form[name]} onInput=${(e) => set({ [name]: e.currentTarget.value })}></textarea>`
     : html`<input class="text" placeholder=${placeholder} value=${form[name]} autocapitalize="off" onInput=${(e) => set({ [name]: e.currentTarget.value })} />`;
@@ -33,7 +37,7 @@ export function EditWordView({ id, prefill = "" }) {
   return html`
     <${NavBar} title=${existing ? "Edit word" : "New word"}
       left=${html`<button class="bar-button" onClick=${() => back(existing ? "words" : "lookup")}>Cancel</button>`}
-      right=${html`<button class="bar-button bold" disabled=${!canSave} onClick=${save}>Save</button>`} />
+      right=${html`<button class="bar-button bold" disabled=${!canSave} onClick=${save} title="Save (⌘/Ctrl+Enter)">Save</button>`} />
     <div class="page">
       <${Section} header="Swedish">
         ${field("word", "Word")}
