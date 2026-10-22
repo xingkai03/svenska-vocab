@@ -3,7 +3,8 @@ import { deckEntries, dictionary, formList, GROUP_ORDER, headword, LEVELS } from
 import { speak } from "../speech.js";
 import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { EmptyState, HintLines, LevelBadge, NavBar, PosTag, Segmented, SpeakButton } from "../ui.js";
+import { knownIds, setKnownIds } from "./known.js";
+import { EmptyState, HintLines, LevelBadge, NavBar, PosTag, Segmented, SpeakButton, go, href } from "../ui.js";
 
 const TYPES = [["all", "All"], ["noun", "Nouns"], ["verb", "Verbs"], ["adjective", "Adjectives"], ["other", "Other"]];
 
@@ -18,6 +19,8 @@ export function LearnView() {
   const [chapter, setChapter] = useState("");
   const [type, setType] = useState("all");
   const [added, setAdded] = useState(0);
+  /** The word just marked "I know it", until the next answer. */
+  const [lastKnown, setLastKnown] = useState(null);
 
   const decks = dictionary.customDecks;
   // "core", a CEFR level ("A1" … "C2") or a word list id. A list that isn't on the web (e.g. a private list on
@@ -27,7 +30,7 @@ export function LearnView() {
   const deck = chosen === "core" || LEVELS.includes(chosen) || customDeck ? chosen : "core";
   const all = deck === "core" ? dictionary.coreEntries : customDeck ? deckEntries(customDeck, chapter) : dictionary.deck(deck);
 
-  const skipped = new Set(store.get("skippedWords").split("\n").filter(Boolean));
+  const skipped = new Set(knownIds());
   const saved = store.words;
   const remaining = all.filter((e) => !saved.has(e.id) && !skipped.has(e.id) && matchesType(e, type));
   const learned = all.filter((e) => saved.has(e.id)).length;
@@ -43,16 +46,26 @@ export function LearnView() {
   const order = (g) => (GROUP_ORDER.includes(g) ? GROUP_ORDER.indexOf(g) : GROUP_ORDER.length);
   const groupNames = [...groups.keys()].sort((a, b) => order(a) - order(b) || a.localeCompare(b));
 
-  const skip = () => store.set("skippedWords", [...store.get("skippedWords").split("\n").filter(Boolean), entry.id].join("\n"));
+  const skip = () => {
+    setKnownIds([...knownIds(), entry.id]);
+    setLastKnown(entry);
+  };
+  const undo = () => {
+    setKnownIds(knownIds().filter((id) => id !== lastKnown.id));
+    setLastKnown(null);
+  };
   const learn = () => {
     store.addToCollection(entry);
     setAdded((n) => n + 1);
+    setLastKnown(null);
   };
 
   const cycleType = (step) => setType(TYPES[(TYPES.findIndex((t) => t[0] === type) + step + TYPES.length) % TYPES.length][0]);
   useKeys([
     [["ArrowRight", "Enter"], "Learn", entry && learn],
-    [["ArrowLeft", "x"], "I know it", entry && skip],
+    [["ArrowLeft", "i"], "I know it", entry && skip],
+    [["z", "Mod+z"], "Undo “I know it”", lastKnown && undo],
+    [["K"], "Known words", () => go("known")],
     [["p"], "Pronounce", entry && (() => speak(entry.word))],
     [["P"], "Pronounce slowly", entry && (() => speak(entry.word, { slow: true }))],
     [["x"], "Pronounce the example", entry?.example && (() => speak(entry.example))],
@@ -87,7 +100,8 @@ export function LearnView() {
       </div>` : null}
 
       ${entry ? html`
-        <div class="caption secondary center">${remaining.length} words left · ${added} added this session</div>
+        <div class="caption secondary center">${remaining.length} words left · ${added} added this session ·${" "}<a href=${href("known")}>Known words (${knownIds().length})</a></div>
+        ${lastKnown ? html`<div class="caption secondary center fade-in">Marked “${lastKnown.word}” as known ·${" "}<button class="btn plain caption" style="color:var(--accent)" onClick=${undo}>Undo<${Kbd} k="z" /></button></div>` : null}
         <div class="flashcard slide-in" key=${entry.id}>
           <div class="row" style="gap:6px"><${PosTag} entry=${entry} /><${LevelBadge} level=${entry.level} /></div>
           <div class="big-word">${headword(entry)}</div>
@@ -104,6 +118,6 @@ export function LearnView() {
           <button class="btn large full" onClick=${skip}>✓ I know it<${Kbd} k="ArrowLeft" /></button>
           <button class="btn large full prominent" onClick=${learn}>+ Learn<${Kbd} k="ArrowRight" /></button>
         </div>`
-      : html`<${EmptyState} icon="seal" title="You've seen them all">Look up more words or reset skipped words in Settings.<//>`}
+      : html`<${EmptyState} icon="seal" title="You've seen them all">Look up more words, or put words you marked “I know it” back from <a href=${href("known")}>Known words</a>.<//>`}
     </div></div>`;
 }

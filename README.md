@@ -53,7 +53,7 @@ The project uses Xcode 16's folder-synchronised groups, so new files you add und
 
 `web/` is a browser version with the same tabs and features (lookup, Learn new words, reviews in all five modes, check-ins, summary, settings, imported lists) and sv-SE pronunciation through the browser's speech voices. It signs in to the same Supabase accounts and syncs the same tables with the same merge rules as the app, so you can learn on the web and on the iPhone with one account. Without an account it keeps everything in the browser (IndexedDB).
 
-On a computer everything works from the keyboard: T / L / W / S switch tabs, `/` searches, J / K or the arrow keys move through lists, Space and 1–4 answer reviews, ← / → skip or learn new words, P pronounces the word (Shift+P slowly, X the example; in Lookup and My words the selected row), Esc goes back, and `?` lists every shortcut for the current screen. In spelling, `[`, `'` and `;` type å, ä and ö (where they sit on a Swedish keyboard).
+On a computer everything works from the keyboard: T / L / W / S switch tabs, `/` searches, J / K or the arrow keys move through lists, Space and 1–4 answer reviews, ← / → mark new words known or learn them (Z undoes), P pronounces the word (Shift+P slowly, X the example; in Lookup and My words the selected row), Esc goes back, and `?` lists every shortcut for the current screen. In spelling, `[`, `'` and `;` type å, ä and ö (where they sit on a Swedish keyboard).
 
 It is plain JavaScript modules with no build step (Preact + htm are vendored in `web/vendor/`). To run it locally:
 

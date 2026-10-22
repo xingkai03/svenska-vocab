@@ -56,7 +56,7 @@ export function selectedWord() {
 
 /** Links and buttons in the page's lists and cards, in screen order. */
 function listItems() {
-  return [...document.querySelectorAll("main a.cell, main button.cell:not(:disabled), main a.card-link")]
+  return [...document.querySelectorAll("main a.cell, main button.cell:not(:disabled), main a.card-link, main [data-id] > a")]
     .filter((el) => el.offsetParent !== null);
 }
 

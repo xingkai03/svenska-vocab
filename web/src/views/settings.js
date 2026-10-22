@@ -4,6 +4,7 @@ import { convertList, dictionary, MY_LISTS } from "../dictionary.js";
 import { hasSpeech, hasSwedishVoice, speak } from "../speech.js";
 import { useKeys } from "../keys.js";
 import { store } from "../store.js";
+import { knownIds } from "./known.js";
 import { Icon, NavBar, Section, Stepper, Toggle, go, href, relative } from "../ui.js";
 
 export function SyncStatus() {
@@ -110,7 +111,8 @@ export function SettingsView() {
 
       <${Section} header="Data">
         <button class="cell action" disabled=${!store.words.size} onClick=${csvExport}><${Icon} name="upload" /> Export collection as CSV</button>
-        <button class="cell action" disabled=${!store.get("skippedWords")} onClick=${() => store.set("skippedWords", "")}>Show skipped words again in Learn</button>
+        <a class="cell" href=${href("known")}><span class="cell-main">Known words</span>
+          <span class="secondary">${knownIds().length}</span><span class="chevron"><${Icon} name="chevronRight" /></span></a>
       <//>
 
       <${Section} header="Word lists" footer="Import a .tsv, .csv or .txt file with one word per line: Swedish, English, and optionally part of speech, example and chapter (a header row is optional). Lists appear in Learn new words, here and in the app.">

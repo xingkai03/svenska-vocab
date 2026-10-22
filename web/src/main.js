@@ -8,6 +8,7 @@ import { Icon, href, parseRoute } from "./ui.js";
 import { AccountView, SignInView } from "./views/account.js";
 import { WordDetailView } from "./views/detail.js";
 import { EditWordView } from "./views/edit.js";
+import { KnownWordsView } from "./views/known.js";
 import { LearnView } from "./views/learn.js";
 import { LookupView } from "./views/lookup.js";
 import { ReviewView } from "./views/review.js";
@@ -32,6 +33,7 @@ function Page({ route }) {
     case "words": return html`<${WordsView} />`;
     case "summary": return html`<${SummaryView} />`;
     case "learn": return html`<${LearnView} />`;
+    case "known": return html`<${KnownWordsView} />`;
     case "review": return html`<${ReviewView} key=${location.hash} modeId=${args[0]} practice=${query.practice === "1"} />`;
     case "word": return html`<${WordDetailView} key=${args[0]} id=${args[0]} />`;
     case "new": return html`<${EditWordView} key=${location.hash} prefill=${query.prefill ?? ""} />`;
