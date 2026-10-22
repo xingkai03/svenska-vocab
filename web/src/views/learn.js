@@ -3,8 +3,7 @@ import { deckEntries, dictionary, formList, GROUP_ORDER, headword, LEVELS } from
 import { speak } from "../speech.js";
 import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { knownIds, setKnownIds } from "./known.js";
-import { EmptyState, HintLines, LevelBadge, NavBar, PosTag, Segmented, SpeakButton, go, href } from "../ui.js";
+import { EmptyState, HintLines, LevelBadge, NavBar, PosTag, Segmented, SpeakButton } from "../ui.js";
 
 const TYPES = [["all", "All"], ["noun", "Nouns"], ["verb", "Verbs"], ["adjective", "Adjectives"], ["other", "Other"]];
 
@@ -14,12 +13,15 @@ function matchesType(e, type) {
   return e.partOfSpeech === type;
 }
 
+/** Familiar or Mastered: reviewed, and remembered for at least a week. Words marked "I know it" count too. */
+const isMastered = (w) => w.reviewCount > 0 && w.interval >= 7;
+
 /** Learn new words from the core vocabulary, a Kelly CEFR list or another word list, optionally one chapter at a time. */
 export function LearnView() {
   const [chapter, setChapter] = useState("");
   const [type, setType] = useState("all");
   const [added, setAdded] = useState(0);
-  /** The word just marked "I know it", until the next answer. */
+  /** The word just marked "I know it" (saved as mastered), until the next answer. */
   const [lastKnown, setLastKnown] = useState(null);
 
   const decks = dictionary.customDecks;
@@ -30,28 +32,41 @@ export function LearnView() {
   const deck = chosen === "core" || LEVELS.includes(chosen) || customDeck ? chosen : "core";
   const all = deck === "core" ? dictionary.coreEntries : customDeck ? deckEntries(customDeck, chapter) : dictionary.deck(deck);
 
-  const skipped = new Set(knownIds());
   const saved = store.words;
-  const remaining = all.filter((e) => !saved.has(e.id) && !skipped.has(e.id) && matchesType(e, type));
-  const learned = all.filter((e) => saved.has(e.id)).length;
+  const remaining = all.filter((e) => !saved.has(e.id) && matchesType(e, type));
+  const progress = (entries) => {
+    let mastered = 0, learning = 0;
+    for (const e of entries) {
+      const w = saved.get(e.id);
+      if (!w) continue;
+      if (isMastered(w)) mastered += 1;
+      else learning += 1;
+    }
+    return { mastered, learning };
+  };
+  const { mastered, learning } = progress(all);
   const entry = remaining[0];
 
   useEffect(() => {
     if (entry && store.get("autoSpeak")) speak(entry.word);
   }, [entry?.id]);
 
-  const label = (name, entries) => entries.length ? `${name} · ${entries.filter((e) => saved.has(e.id)).length}/${entries.length}` : name;
+  const label = (name, entries) => {
+    if (!entries.length) return name;
+    const p = progress(entries);
+    return `${name} · ${p.mastered} mastered · ${p.learning} learning / ${entries.length}`;
+  };
   const groups = new Map();
   for (const d of decks) groups.set(d.group, [...(groups.get(d.group) ?? []), d]);
   const order = (g) => (GROUP_ORDER.includes(g) ? GROUP_ORDER.indexOf(g) : GROUP_ORDER.length);
   const groupNames = [...groups.keys()].sort((a, b) => order(a) - order(b) || a.localeCompare(b));
 
   const skip = () => {
-    setKnownIds([...knownIds(), entry.id]);
+    store.markKnown(entry);
     setLastKnown(entry);
   };
   const undo = () => {
-    setKnownIds(knownIds().filter((id) => id !== lastKnown.id));
+    store.deleteWord(lastKnown.id);
     setLastKnown(null);
   };
   const learn = () => {
@@ -65,7 +80,6 @@ export function LearnView() {
     [["ArrowRight", "Enter"], "Learn", entry && learn],
     [["ArrowLeft", "i"], "I know it", entry && skip],
     [["z", "Mod+z"], "Undo “I know it”", lastKnown && undo],
-    [["K"], "Known words", () => go("known")],
     [["p"], "Pronounce", entry && (() => speak(entry.word))],
     [["P"], "Pronounce slowly", entry && (() => speak(entry.word, { slow: true }))],
     [["x"], "Pronounce the example", entry?.example && (() => speak(entry.example))],
@@ -95,13 +109,12 @@ export function LearnView() {
       <${Segmented} label="Type" options=${TYPES} value=${type} onChange=${setType} />
 
       ${all.length ? html`<div style="display:flex;flex-direction:column;gap:4px">
-        <div class="progress"><div style=${{ width: `${(learned / all.length) * 100}%` }}></div></div>
-        <div class="caption secondary center">${learned} of ${all.length} learned</div>
+        <div class="progress"><div style=${{ width: `${((mastered + learning) / all.length) * 100}%` }}></div></div>
+        <div class="caption secondary center">${mastered} mastered · ${learning} learning · ${all.length} words</div>
       </div>` : null}
 
       ${entry ? html`
-        <div class="caption secondary center">${remaining.length} words left · ${added} added this session ·${" "}<a href=${href("known")}>Known words (${knownIds().length})</a></div>
-        ${lastKnown ? html`<div class="caption secondary center fade-in">Marked “${lastKnown.word}” as known ·${" "}<button class="btn plain caption" style="color:var(--accent)" onClick=${undo}>Undo<${Kbd} k="z" /></button></div>` : null}
+        <div class="caption secondary center">${remaining.length} words left · ${added} added this session${lastKnown ? html` ·${" "}<button class="btn plain caption" style="color:var(--accent)" onClick=${undo}>Undo “I know it”<${Kbd} k="z" /></button>` : null}</div>
         <div class="flashcard slide-in" key=${entry.id}>
           <div class="row" style="gap:6px"><${PosTag} entry=${entry} /><${LevelBadge} level=${entry.level} /></div>
           <div class="big-word">${headword(entry)}</div>
@@ -118,6 +131,6 @@ export function LearnView() {
           <button class="btn large full" onClick=${skip}>✓ I know it<${Kbd} k="ArrowLeft" /></button>
           <button class="btn large full prominent" onClick=${learn}>+ Learn<${Kbd} k="ArrowRight" /></button>
         </div>`
-      : html`<${EmptyState} icon="seal" title="You've seen them all">Look up more words, or put words you marked “I know it” back from <a href=${href("known")}>Known words</a>.<//>`}
+      : html`<${EmptyState} icon="seal" title="You've seen them all">Look up more words, or pick another word list.<//>`}
     </div></div>`;
 }

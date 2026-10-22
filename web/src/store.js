@@ -2,7 +2,7 @@
 // word lists. Kept in IndexedDB so the web version works without an account and offline, like the app;
 // sync.js reconciles it with the cloud.
 
-import { dayString } from "./scheduler.js";
+import { addDays, dayString, startOfDay } from "./scheduler.js";
 
 const DB_NAME = "svenska-vocab";
 
@@ -137,16 +137,53 @@ class Store {
   addToCollection(entry, now = Date.now()) {
     const key = entryId(entry);
     if (this.words.has(key)) return this.words.get(key);
-    const word = {
-      key, word: entry.word, partOfSpeech: entry.partOfSpeech, gender: entry.gender ?? "",
+    const word = this.#newWord(entry, now);
+    this.words.set(key, word);
+    this.changed(["words"]);
+    return word;
+  }
+
+  /**
+   * "I know it" in Learn new words: saves the entry as a word already known for a month (like the app), so it counts
+   * as mastered and comes back for a review in 30 days. Does nothing if the word is already saved.
+   */
+  markKnown(entry, now = Date.now()) {
+    if (!this.#addKnown(entry, now)) return;
+    this.changed(["words"]);
+  }
+
+  /**
+   * Older versions kept "I know it" words in the skippedWords setting; saves them as known words (ids no longer in
+   * the dictionary are dropped) and clears the setting. Runs on load and whenever the setting changes, e.g. after a
+   * sync from an older app.
+   */
+  migrateSkippedWords(lookup, now = Date.now()) {
+    const ids = this.get("skippedWords").split("\n").filter(Boolean);
+    if (!ids.length) return;
+    this.settings = { ...this.settings, skippedWords: "" };
+    for (const id of ids) {
+      const entry = lookup(id);
+      if (entry) this.#addKnown(entry, now);
+    }
+    this.changed(["words", "settings"]);
+  }
+
+  #addKnown(entry, now) {
+    const key = entryId(entry);
+    if (this.words.has(key)) return false;
+    this.words.set(key, { ...this.#newWord(entry, now), repetitions: 3, interval: 30, reviewCount: 1,
+      lastReviewedAt: now, dueDate: addDays(startOfDay(now), 30) });
+    return true;
+  }
+
+  #newWord(entry, now) {
+    return {
+      key: entryId(entry), word: entry.word, partOfSpeech: entry.partOfSpeech, gender: entry.gender ?? "",
       forms: entry.forms ?? "", translation: entry.translation ?? "", example: entry.example ?? "",
       exampleTranslation: entry.exampleTranslation ?? "", note: "", source: entry.source ?? "bundled",
       level: entry.level ?? "", addedAt: now, isFavorite: false,
       easeFactor: 2.5, interval: 0, repetitions: 0, lapses: 0, reviewCount: 0, dueDate: now, lastReviewedAt: null,
     };
-    this.words.set(key, word);
-    this.changed(["words"]);
-    return word;
   }
 
   updateWord(key, patch) {
