@@ -6,3 +6,5 @@ build/
 __pycache__/
 # Personal word lists (e.g. from a textbook you own): bundled into local builds only, never committed.
 SvenskaVocab/Resources/Private/
+# Supabase project URL and anon key for cloud sync (see supabase/Supabase.example.plist).
+SvenskaVocab/Config/
