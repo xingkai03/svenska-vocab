@@ -151,7 +151,8 @@ def borrowings(path):
     for line in Path(path).open(encoding="utf-8"):
         d = json.loads(line)
         pos = KAIKKI_POS.get(d.get("pos"), "")
-        for t in d["t"]:
+        # "t" is a trimmed copy holding only the etymology templates.
+        for t in d.get("t") or d.get("etymology_templates") or []:
             if t["name"] not in ("bor", "bor+", "der", "der+", "lbor", "inh", "inh+"):
                 continue
             # Only the nearest source counts: "from Middle Low German …, from Latin …" is not a French hint.
