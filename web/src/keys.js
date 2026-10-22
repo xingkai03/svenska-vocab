@@ -132,6 +132,8 @@ function onKeyDown(e) {
 }
 
 addEventListener("keydown", onKeyDown);
+// A menu keeps focus after a pick, which would swallow letter keys like P until clicking elsewhere.
+addEventListener("change", (e) => { if (e.target instanceof HTMLSelectElement) e.target.blur(); });
 
 const show = (key) => ({ Space: "Space", ArrowLeft: "←", ArrowRight: "→", ArrowUp: "↑", ArrowDown: "↓", Escape: "Esc", Enter: "Enter" }[key]
   ?? (/^[A-ZÅÄÖ]$/.test(key) ? `⇧${key}`
