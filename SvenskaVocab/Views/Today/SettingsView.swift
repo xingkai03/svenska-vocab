@@ -88,8 +88,11 @@ struct SettingsView: View {
                         Label("Export collection as CSV", systemImage: "square.and.arrow.up")
                     }
                     .disabled(words.isEmpty)
-                    Button("Show skipped words again in Learn") { skippedWords = "" }
-                        .disabled(skippedWords.isEmpty)
+                    NavigationLink {
+                        KnownWordsView()
+                    } label: {
+                        LabeledContent("Known words", value: "\(Set(KnownWords.ids(skippedWords)).count)")
+                    }
                 }
 
                 Section {

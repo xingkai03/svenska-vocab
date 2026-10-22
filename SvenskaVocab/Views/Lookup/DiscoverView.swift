@@ -15,8 +15,10 @@ struct DiscoverView: View {
     @State private var chapter = ""
     @State private var partOfSpeech = "all"
     @State private var learnedThisVisit = 0
+    /// The last word marked "I know it", until the next answer, so it can be undone.
+    @State private var lastKnown: String?
 
-    private var skipped: Set<String> { Set(skippedRaw.split(separator: "\n").map(String.init)) }
+    private var skipped: Set<String> { Set(KnownWords.ids(skippedRaw)) }
 
     private var customDeck: WordDeck? { dictionary.customDecks.first { $0.id == deck } }
 
@@ -104,9 +106,19 @@ struct DiscoverView: View {
             }
 
             if let entry = remaining.first {
-                Text("\(remaining.count) words left · \(learnedThisVisit) added this session")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text("\(remaining.count) words left · \(learnedThisVisit) added this session")
+                        .foregroundStyle(.secondary)
+                    if let lastKnown {
+                        Button("Undo “I know it”") {
+                            withAnimation {
+                                skippedRaw = KnownWords.removing([lastKnown], from: skippedRaw)
+                                self.lastKnown = nil
+                            }
+                        }
+                    }
+                }
+                .font(.caption)
 
                 card(entry)
                     .id(entry.id)
@@ -115,7 +127,10 @@ struct DiscoverView: View {
 
                 HStack(spacing: 16) {
                     Button {
-                        withAnimation { skippedRaw += (skippedRaw.isEmpty ? "" : "\n") + entry.id }
+                        withAnimation {
+                            skippedRaw = KnownWords.adding(entry.id, to: skippedRaw)
+                            lastKnown = entry.id
+                        }
                     } label: {
                         Label("I know it", systemImage: "checkmark")
                             .frame(maxWidth: .infinity)
@@ -126,6 +141,7 @@ struct DiscoverView: View {
                         withAnimation {
                             context.addToCollection(entry)
                             learnedThisVisit += 1
+                            lastKnown = nil
                         }
                     } label: {
                         Label("Learn", systemImage: "plus")
@@ -140,7 +156,7 @@ struct DiscoverView: View {
             } else {
                 ContentUnavailableView("You've seen them all",
                                        systemImage: "checkmark.seal",
-                                       description: Text("Look up more words or reset skipped words in Settings."))
+                                       description: Text("Look up more words, or put words you marked “I know it” back from Known words."))
             }
             Spacer()
         }
@@ -149,6 +165,13 @@ struct DiscoverView: View {
             // A word list that was deleted (or not part of this build) falls back to the core list.
             if dictionary.isLoaded, deck != "core", !DictionaryService.levels.contains(deck), customDeck == nil {
                 deck = "core"
+            }
+        }
+        .toolbar {
+            NavigationLink {
+                KnownWordsView()
+            } label: {
+                Label("Known words (\(skipped.count))", systemImage: "checkmark.circle")
             }
         }
         .navigationTitle("Learn new words")
