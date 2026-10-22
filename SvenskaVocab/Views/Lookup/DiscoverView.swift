@@ -26,8 +26,8 @@ struct DiscoverView: View {
     }
 
     private var candidates: [DictionaryEntry] {
-        let saved = Set(words.map(\.key))
-        return deckEntries.filter { !saved.contains($0.id) && matchesFilter($0) }
+        let saved = savedWords
+        return deckEntries.filter { saved[$0.wordKey] == nil && matchesFilter($0) }
     }
 
     /// Bundled and imported word lists by picker section, in `WordDeck.groupOrder`.
@@ -35,6 +35,17 @@ struct DiscoverView: View {
         let groups = Dictionary(grouping: dictionary.customDecks, by: \.group)
         let order = { (g: String) in WordDeck.groupOrder.firstIndex(of: g) ?? WordDeck.groupOrder.count }
         return groups.keys.sorted { (order($0), $0) < (order($1), $1) }.map { ($0, groups[$0]!) }
+    }
+
+    /// Collection words by `DictionaryEntry.wordKey` → whether they count as mastered, so a word
+    /// learned from one list counts in every list that has it.
+    private var savedWords: [String: Bool] {
+        var result: [String: Bool] = [:]
+        for w in words {
+            let key = DictionaryEntry.wordKey(w.word)
+            result[key] = (result[key] ?? false) || w.isWellKnown
+        }
+        return result
     }
 
     /// Words of a list in the collection: mastered (familiar or better) and still being learned.
@@ -45,7 +56,7 @@ struct DiscoverView: View {
     private func progress(_ entries: [DictionaryEntry], _ known: [String: Bool]) -> Progress {
         var p = Progress()
         for e in entries {
-            switch known[e.id] {
+            switch known[e.wordKey] {
             case true?: p.mastered += 1
             case false?: p.learning += 1
             case nil: break
@@ -72,8 +83,7 @@ struct DiscoverView: View {
     var body: some View {
         let remaining = candidates
         let all = deckEntries
-        // Word key → whether it counts as mastered.
-        let saved = Dictionary(words.map { ($0.key, $0.isWellKnown) }, uniquingKeysWith: { a, _ in a })
+        let saved = savedWords
         let current = progress(all, saved)
         VStack(spacing: 20) {
             HStack {
