@@ -15,7 +15,6 @@ struct SettingsView: View {
     @AppStorage(AppSettings.onlineLookup) private var onlineLookup = true
     @AppStorage(AppSettings.reminderEnabled) private var reminderEnabled = false
     @AppStorage(AppSettings.reminderTime) private var reminderTime = 19 * 3600.0 // seconds after midnight
-    @AppStorage(AppSettings.skippedWords) private var skippedWords = ""
     @State private var notificationsDenied = false
     @State private var showImporter = false
     @State private var importMessage: String?
@@ -88,11 +87,6 @@ struct SettingsView: View {
                         Label("Export collection as CSV", systemImage: "square.and.arrow.up")
                     }
                     .disabled(words.isEmpty)
-                    NavigationLink {
-                        KnownWordsView()
-                    } label: {
-                        LabeledContent("Known words", value: "\(Set(KnownWords.ids(skippedWords)).count)")
-                    }
                 }
 
                 Section {

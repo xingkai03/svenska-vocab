@@ -9,26 +9,12 @@ enum AppSettings {
     static let autoSpeak = "autoSpeak"
     static let reminderEnabled = "reminderEnabled"
     static let reminderTime = "reminderTime"
+    /// Legacy: words skipped with "I know it" before they went to the collection as mastered. Still synced,
+    /// so lists marked on the web or an older build are moved into the collection (see ContentView).
     static let skippedWords = "skippedWords"
     static let recentSearches = "recentSearches"
     static let onlineLookup = "onlineLookup"
     static let discoverDeck = "discoverDeck"
-}
-
-/// Words marked "I know it" in Learn new words, stored in `AppSettings.skippedWords` as newline-separated
-/// entry ids in the order they were marked. Synced with the other settings.
-enum KnownWords {
-    static func ids(_ raw: String) -> [String] {
-        raw.split(separator: "\n").map(String.init)
-    }
-
-    static func adding(_ id: String, to raw: String) -> String {
-        raw.isEmpty ? id : raw + "\n" + id
-    }
-
-    static func removing(_ removed: Set<String>, from raw: String) -> String {
-        ids(raw).filter { !removed.contains($0) }.joined(separator: "\n")
-    }
 }
 
 /// Daily study reminder via a repeating local notification.

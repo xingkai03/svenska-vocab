@@ -8,7 +8,6 @@ struct DiscoverView: View {
     @EnvironmentObject private var dictionary: DictionaryService
     @EnvironmentObject private var speech: SpeechService
     @Query private var words: [SavedWord]
-    @AppStorage(AppSettings.skippedWords) private var skippedRaw = ""
     @AppStorage(AppSettings.autoSpeak) private var autoSpeak = true
     /// "core", a CEFR level ("A1" … "C2") or a WordDeck id.
     @AppStorage(AppSettings.discoverDeck) private var deck = "core"
@@ -16,9 +15,7 @@ struct DiscoverView: View {
     @State private var partOfSpeech = "all"
     @State private var learnedThisVisit = 0
     /// The last word marked "I know it", until the next answer, so it can be undone.
-    @State private var lastKnown: String?
-
-    private var skipped: Set<String> { Set(KnownWords.ids(skippedRaw)) }
+    @State private var lastKnown: SavedWord?
 
     private var customDeck: WordDeck? { dictionary.customDecks.first { $0.id == deck } }
 
@@ -30,10 +27,7 @@ struct DiscoverView: View {
 
     private var candidates: [DictionaryEntry] {
         let saved = Set(words.map(\.key))
-        let skip = skipped
-        return deckEntries.filter {
-            !saved.contains($0.id) && !skip.contains($0.id) && matchesFilter($0)
-        }
+        return deckEntries.filter { !saved.contains($0.id) && matchesFilter($0) }
     }
 
     /// Bundled and imported word lists by picker section, in `WordDeck.groupOrder`.
@@ -43,10 +37,28 @@ struct DiscoverView: View {
         return groups.keys.sorted { (order($0), $0) < (order($1), $1) }.map { ($0, groups[$0]!) }
     }
 
-    /// "A1 · 120/1339": learned of total words in a list.
-    private func label(_ name: String, _ entries: [DictionaryEntry], _ saved: Set<String>) -> String {
+    /// Words of a list in the collection: mastered (familiar or better) and still being learned.
+    private struct Progress {
+        var mastered = 0, learning = 0
+    }
+
+    private func progress(_ entries: [DictionaryEntry], _ known: [String: Bool]) -> Progress {
+        var p = Progress()
+        for e in entries {
+            switch known[e.id] {
+            case true?: p.mastered += 1
+            case false?: p.learning += 1
+            case nil: break
+            }
+        }
+        return p
+    }
+
+    /// "A1 · 120 mastered · 35 learning / 1339".
+    private func label(_ name: String, _ entries: [DictionaryEntry], _ known: [String: Bool]) -> String {
         guard !entries.isEmpty else { return name }
-        return "\(name) · \(entries.filter { saved.contains($0.id) }.count)/\(entries.count)"
+        let p = progress(entries, known)
+        return "\(name) · \(p.mastered) mastered · \(p.learning) learning / \(entries.count)"
     }
 
     private func matchesFilter(_ e: DictionaryEntry) -> Bool {
@@ -60,8 +72,9 @@ struct DiscoverView: View {
     var body: some View {
         let remaining = candidates
         let all = deckEntries
-        let saved = Set(words.map(\.key))
-        let learned = all.filter { saved.contains($0.id) }.count
+        // Word key → whether it counts as mastered.
+        let saved = Dictionary(words.map { ($0.key, $0.isWellKnown) }, uniquingKeysWith: { a, _ in a })
+        let current = progress(all, saved)
         VStack(spacing: 20) {
             HStack {
                 Picker("Word list", selection: $deck) {
@@ -98,8 +111,8 @@ struct DiscoverView: View {
 
             if !all.isEmpty {
                 VStack(spacing: 4) {
-                    ProgressView(value: Double(learned), total: Double(all.count))
-                    Text("\(learned) of \(all.count) learned")
+                    ProgressView(value: Double(current.mastered + current.learning), total: Double(all.count))
+                    Text("\(current.mastered) mastered · \(current.learning) learning · \(all.count) words")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -112,7 +125,8 @@ struct DiscoverView: View {
                     if let lastKnown {
                         Button("Undo “I know it”") {
                             withAnimation {
-                                skippedRaw = KnownWords.removing([lastKnown], from: skippedRaw)
+                                context.delete(lastKnown)
+                                try? context.save()
                                 self.lastKnown = nil
                             }
                         }
@@ -127,10 +141,7 @@ struct DiscoverView: View {
 
                 HStack(spacing: 16) {
                     Button {
-                        withAnimation {
-                            skippedRaw = KnownWords.adding(entry.id, to: skippedRaw)
-                            lastKnown = entry.id
-                        }
+                        withAnimation { lastKnown = context.addAsKnown(entry) }
                     } label: {
                         Label("I know it", systemImage: "checkmark")
                             .frame(maxWidth: .infinity)
@@ -156,7 +167,7 @@ struct DiscoverView: View {
             } else {
                 ContentUnavailableView("You've seen them all",
                                        systemImage: "checkmark.seal",
-                                       description: Text("Look up more words, or put words you marked “I know it” back from Known words."))
+                                       description: Text("Look up more words, or pick another word list."))
             }
             Spacer()
         }
@@ -165,13 +176,6 @@ struct DiscoverView: View {
             // A word list that was deleted (or not part of this build) falls back to the core list.
             if dictionary.isLoaded, deck != "core", !DictionaryService.levels.contains(deck), customDeck == nil {
                 deck = "core"
-            }
-        }
-        .toolbar {
-            NavigationLink {
-                KnownWordsView()
-            } label: {
-                Label("Known words (\(skipped.count))", systemImage: "checkmark.circle")
             }
         }
         .navigationTitle("Learn new words")
