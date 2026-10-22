@@ -3,16 +3,56 @@ import SwiftUI
 
 @main
 struct SvenskaVocabApp: App {
-    @StateObject private var dictionary = DictionaryService()
+    private let container: ModelContainer
+    @StateObject private var dictionary: DictionaryService
     @StateObject private var speech = SpeechService()
+    @StateObject private var account: AccountService
+    @StateObject private var sync: SyncService
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: SavedWord.self, ReviewLog.self, CheckIn.self)
+        } catch {
+            fatalError("Could not open the word store: \(error)")
+        }
+        let dictionary = DictionaryService()
+        let account = AccountService()
+        let sync = SyncService(account: account, container: container)
+        sync.onDecksChanged = { [weak dictionary] in dictionary?.reloadDecks() }
+        self.container = container
+        _dictionary = StateObject(wrappedValue: dictionary)
+        _account = StateObject(wrappedValue: account)
+        _sync = StateObject(wrappedValue: sync)
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(dictionary)
                 .environmentObject(speech)
+                .environmentObject(account)
+                .environmentObject(sync)
+                .task(id: account.session?.userId) {
+                    // Opening the app and signing in sync straight away; after that, every few minutes.
+                    while account.isSignedIn {
+                        try? await Task.sleep(for: .seconds(180))
+                        if Task.isCancelled { return }
+                        if scenePhase == .active { await sync.sync() }
+                    }
+                }
         }
-        .modelContainer(for: [SavedWord.self, ReviewLog.self, CheckIn.self])
+        .modelContainer(container)
+        .onChange(of: scenePhase) { _, phase in
+            guard account.isSignedIn, phase != .inactive else { return }
+            // Leaving the app: ask iOS for a little time to upload the last changes.
+            let task = phase == .background ? UIApplication.shared.beginBackgroundTask(withName: "sync") : .invalid
+            Task {
+                await sync.sync()
+                if task != .invalid { UIApplication.shared.endBackgroundTask(task) }
+            }
+        }
     }
 }
 
