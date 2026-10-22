@@ -16,6 +16,15 @@ function matchesType(e, type) {
 /** Familiar or Mastered: reviewed, and remembered for at least a week. Words marked "I know it" count too. */
 const isMastered = (w) => w.reviewCount > 0 && w.interval >= 7;
 
+/** Matches a word across word lists whatever its part of speech: lowercased, without a leading en/ett/att. */
+export function wordKey(word) {
+  const t = word.toLowerCase().trim();
+  for (const prefix of ["en ", "ett ", "att "]) {
+    if (t.startsWith(prefix) && t.length > prefix.length) return t.slice(prefix.length).trim();
+  }
+  return t;
+}
+
 /** Learn new words from the core vocabulary, a Kelly CEFR list or another word list, optionally one chapter at a time. */
 export function LearnView() {
   const [chapter, setChapter] = useState("");
@@ -32,14 +41,19 @@ export function LearnView() {
   const deck = chosen === "core" || LEVELS.includes(chosen) || customDeck ? chosen : "core";
   const all = deck === "core" ? dictionary.coreEntries : customDeck ? deckEntries(customDeck, chapter) : dictionary.deck(deck);
 
-  const saved = store.words;
-  const remaining = all.filter((e) => !saved.has(e.id) && matchesType(e, type));
+  // A word saved from one list counts in every list that has it: word key → mastered.
+  const saved = new Map();
+  for (const w of store.words.values()) {
+    const k = wordKey(w.word);
+    saved.set(k, saved.get(k) || isMastered(w));
+  }
+  const remaining = all.filter((e) => !saved.has(wordKey(e.word)) && matchesType(e, type));
   const progress = (entries) => {
     let mastered = 0, learning = 0;
     for (const e of entries) {
-      const w = saved.get(e.id);
-      if (!w) continue;
-      if (isMastered(w)) mastered += 1;
+      const m = saved.get(wordKey(e.word));
+      if (m === undefined) continue;
+      if (m) mastered += 1;
       else learning += 1;
     }
     return { mastered, learning };
