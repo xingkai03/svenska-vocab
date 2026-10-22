@@ -1,0 +1,12 @@
+{
+  "name": "Svenska",
+  "short_name": "Svenska",
+  "start_url": "./#/today",
+  "display": "standalone",
+  "background_color": "#f2f2f7",
+  "theme_color": "#005293",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
