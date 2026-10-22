@@ -23,6 +23,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 - **Forgetting curve** – each word has a modelled recall probability R(t) = 0.9^(t / interval), shown as a memory-strength bar and a curve on its detail page.
 - **Review modes** – flashcards, English → Swedish, multiple choice, listening, and spelling (with å/ä/ö keys and "almost right" detection). When nothing is due you can practise without changing the schedule.
 - **Daily check-in** – set a daily goal (reviews + new words). Once you reach it you can check in. Streak counter, a week strip, and a daily reminder notification.
+- **Account & cloud sync** – optional sign-in (email and password, via [Supabase](https://supabase.com)). Your saved words with their review state, review history, check-ins, settings and imported word lists are backed up and kept in sync across devices; the dictionary and built-in lists stay on the device. The app works fully offline and syncs when it opens, closes and every few minutes. Words already on the device are merged into the account on first sign-in.
 - **Summary** – words, mastered, current and best streak, total reviews, 30-day accuracy, a 14-day activity chart, mastery breakdown, a forgetting curve for your whole collection, a 7-day review forecast, a check-in calendar, and your trickiest words.
 
 ## Requirements
@@ -36,6 +37,15 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 2. Select the **SvenskaVocab** target › Signing & Capabilities and choose your team. If the bundle ID is taken, change `com.xingkai03.SvenskaVocab`.
 3. Run on a simulator or a device.
 
+### Cloud sync (optional)
+
+Without configuration the app is offline-only. To turn on accounts:
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. In the dashboard › SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). It creates the tables with row-level security, so each account can only read and write its own rows.
+3. Copy `supabase/Supabase.example.plist` to `SvenskaVocab/Config/Supabase.plist` and fill in the project URL and the **anon / publishable** key from Project Settings › API. `SvenskaVocab/Config/` is git-ignored. Never put the service_role / secret key in the app.
+4. Optional: under Authentication › Sign In / Providers › Email, turn off "Confirm email" to skip the confirmation email when creating an account.
+
 For the best pronunciation, download an enhanced Swedish voice on the device: Settings › Accessibility › Spoken Content › Voices › Swedish.
 
 The project uses Xcode 16's folder-synchronised groups, so new files you add under `SvenskaVocab/` are picked up automatically. On older Xcode, regenerate the project with [XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`.
@@ -47,6 +57,7 @@ SvenskaVocab/
   App/            App entry point and tab bar
   Models/         SwiftData models (SavedWord, ReviewLog, CheckIn) and DictionaryEntry
   Services/       Dictionary (offline + Folkets lexikon), speech, scheduler, settings, reminders
+    Cloud/        Supabase auth client and sync
   Views/          Today, Lookup, Collection, Review, Summary
   Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv, kelly_levels.tsv, language_hints.tsv (generated)
     Decks/        open word lists (deck_*.tsv)
