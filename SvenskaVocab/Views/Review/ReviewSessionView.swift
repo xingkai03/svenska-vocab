@@ -337,21 +337,19 @@ struct ReviewSessionView: View {
     }
 
     private func checkSpelling(_ word: SavedWord) {
-        func strip(_ s: String) -> String {
-            var t = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            for prefix in ["en ", "ett ", "att "] where t.hasPrefix(prefix) {
-                t = String(t.dropFirst(prefix.count))
-            }
-            return t
-        }
-        let given = strip(typed)
-        guard !given.isEmpty else { return }
-        let target = word.word.lowercased()
-        if given == target {
+        guard !typed.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        switch SpellingChecker.check(typed, word: word.word, forms: word.entry.formList) {
+        case .correct(nil):
             spelling = SpellingResult(grade: .good, message: "Rätt! Correct.")
-        } else if given.searchFolded == target.searchFolded {
+        case .correct(let form?):
+            spelling = SpellingResult(grade: .good, message: "Rätt! \(form) is a form of \(word.word).")
+        case .diacritics:
             spelling = SpellingResult(grade: .hard, message: "Almost — mind the å, ä, ö: \(word.word)")
-        } else {
+        case .typo(nil):
+            spelling = SpellingResult(grade: .hard, message: "Almost — small typo. It's spelled \(word.word).")
+        case .typo(let form?):
+            spelling = SpellingResult(grade: .hard, message: "Almost — small typo. It's spelled \(form), a form of \(word.word).")
+        case .wrong:
             spelling = SpellingResult(grade: .again, message: "Answer: \(word.word)")
         }
         speech.speak(word.word)
