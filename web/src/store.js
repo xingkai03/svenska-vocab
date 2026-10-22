@@ -47,6 +47,8 @@ export const SETTING_DEFAULTS = {
   onlineLookup: true,
   skippedWords: "",
   discoverDeck: "core",
+  knowsGerman: false,
+  knowsFrench: false,
 };
 
 /** Key of a word in the collection: the same as DictionaryEntry.id in the app. */

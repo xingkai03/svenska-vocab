@@ -3,7 +3,7 @@ import { fold, LEVELS } from "../dictionary.js";
 import { formatInterval, isDue, isToday, mastery, retention, startOfDay, DAY } from "../scheduler.js";
 import { useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { EmptyState, Icon, LevelBadge, MemoryBar, NavBar, Segmented, go, href } from "../ui.js";
+import { EmptyState, HintCaption, Icon, LevelBadge, MemoryBar, NavBar, Segmented, go, href } from "../ui.js";
 
 const FILTERS = [["all", "All"], ["due", "Due"], ["learning", "Learning"], ["mastered", "Mastered"], ["favorites", "★"]];
 const SORTS = [["recent", "Recently added"], ["alphabetical", "A–Z"], ["due", "Next review"], ["weakest", "Weakest memory"]];
@@ -88,6 +88,7 @@ function WordRow({ word, now }) {
         <span class=${`caption mono ${due ? "red" : "secondary"}`}>${when}</span>
       </div>
       <div class="subheadline secondary clamp1">${word.translation}</div>
+      <${HintCaption} word=${word.word} partOfSpeech=${word.partOfSpeech} />
       <${MemoryBar} retention=${retention(word, now)} />
     </div>
     <span class="chevron"><${Icon} name="chevronRight" /></span>

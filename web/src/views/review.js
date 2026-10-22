@@ -4,7 +4,7 @@ import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../
 import { speak } from "../speech.js";
 import { store } from "../store.js";
 import { Kbd, useKeys } from "../keys.js";
-import { back, Icon, NavBar, SpeakButton } from "../ui.js";
+import { back, HintLines, Icon, NavBar, SpeakButton } from "../ui.js";
 
 export const REVIEW_MODES = [
   { id: "flashcards", title: "Flashcards", icon: "cards" },
@@ -157,6 +157,7 @@ function Prompt({ mode, word, card }) {
 function Details({ mode, word }) {
   return html`<hr class="fade-in" />
     ${mode === "flashcards" || mode === "listening" || mode === "choice" ? html`<div class="title3 fade-in">${word.translation}</div>` : null}
+    <${HintLines} word=${word.word} partOfSpeech=${word.partOfSpeech} />
     ${word.forms ? html`<div class="subheadline secondary fade-in">${formList(word).join(" · ")}</div>` : null}
     ${word.example ? html`<div class="fade-in" style="display:flex;flex-direction:column;align-items:center;gap:4px">
       <div class="italic">${word.example}</div>

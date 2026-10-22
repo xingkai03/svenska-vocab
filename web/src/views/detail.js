@@ -1,6 +1,6 @@
 import { html, useEffect } from "../../vendor/preact-htm.js";
 import { LineChart } from "../charts.js";
-import { dictionary, formList, headword } from "../dictionary.js";
+import { dictionary, formList, headword, HINT_LANGUAGES } from "../dictionary.js";
 import { isDue, mastery, retention, retentionAfter, DAY } from "../scheduler.js";
 import { speak } from "../speech.js";
 import { useKeys } from "../keys.js";
@@ -53,6 +53,8 @@ export function WordDetailView({ id }) {
         </div></div>
       <//>
 
+      <${MemoryHint} word=${entry.word} partOfSpeech=${entry.partOfSpeech} />
+
       ${forms.length ? html`<${Section} header="Forms">
         ${forms.map((f) => html`<div class="cell"><span class="cell-main">${f}</span><${SpeakButton} text=${f} /></div>`)}
       <//>` : null}
@@ -76,6 +78,22 @@ export function WordDetailView({ id }) {
           : html`<button class="cell action" onClick=${() => store.addToCollection(entry)}><${Icon} name="bookmark" /> Add to my words</button>`}
       <//>
     </div>`;
+}
+
+/** German and French look-alikes, for learners who know those languages. */
+function MemoryHint({ word, partOfSpeech }) {
+  const hints = dictionary.hints(word, partOfSpeech);
+  if (!hints.length) return null;
+  const explanation = (h) => {
+    const name = HINT_LANGUAGES[h.language].name;
+    if (h.kind === "same") return `Spelled the same in ${name}, same meaning.`;
+    if (h.kind === "similar") return `${name} word with the same meaning that looks alike.`;
+    return `Swedish borrowed “${word}” from this ${name} word.`;
+  };
+  return html`<${Section} header="Memory hint" footer="Look-alike words from Wiktionary (WikDict, kaikki.org), CC BY-SA 4.0.">
+    ${hints.map((h) => html`<div class="cell"><span class="title3">${HINT_LANGUAGES[h.language].flag}</span>
+      <div class="cell-main"><span class="headline">${h.word}</span><span class="subheadline secondary">${explanation(h)}</span></div></div>`)}
+  <//>`;
 }
 
 /** Spaced-repetition status plus the word's personal forgetting curve. */

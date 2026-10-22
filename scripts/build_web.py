@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RESOURCES = ROOT / "SvenskaVocab" / "Resources"
 WEB = ROOT / "web"
-FILES = ["core_vocabulary.tsv", "folkets_sv_en.tsv", "kelly_levels.tsv"]
+FILES = ["core_vocabulary.tsv", "folkets_sv_en.tsv", "kelly_levels.tsv", "language_hints.tsv"]
 
 
 def copy_data(data: Path) -> None:

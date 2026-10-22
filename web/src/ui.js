@@ -1,7 +1,7 @@
 // Shared pieces: icons, routing, and the small views used on several screens (Shared.swift in the app).
 
 import { html } from "../vendor/preact-htm.js";
-import { headword, shortPos } from "./dictionary.js";
+import { dictionary, headword, HINT_LANGUAGES, hintSentence, shortPos } from "./dictionary.js";
 import { speak } from "./speech.js";
 
 // MARK: - Icons (24 × 24, drawn with the current text color)
@@ -133,12 +133,29 @@ export function MemoryBar({ retention }) {
     <div style=${{ width: `${width}%`, background: color }}></div></div>`;
 }
 
+/** One-line German/French memory hint for list rows: "🇩🇪 Fenster · 🇫🇷 fenêtre". Draws nothing without hints. */
+export function HintCaption({ word, partOfSpeech }) {
+  const hints = dictionary.hints(word, partOfSpeech);
+  if (!hints.length) return null;
+  return html`<div class="caption secondary" aria-label=${hints.map(hintSentence).join(". ")}>
+    ${hints.map((h) => `${HINT_LANGUAGES[h.language].flag} ${h.word}`).join(" · ")}</div>`;
+}
+
+/** "🇩🇪 Like German Fenster" lines, for learn and review cards. */
+export function HintLines({ word, partOfSpeech }) {
+  const hints = dictionary.hints(word, partOfSpeech);
+  if (!hints.length) return null;
+  return html`<div class="subheadline secondary" style="display:flex;flex-direction:column;gap:4px">
+    ${hints.map((h) => html`<div>${HINT_LANGUAGES[h.language].flag} ${hintSentence(h)}</div>`)}</div>`;
+}
+
 /** A list row for a dictionary entry. */
 export function EntryRow({ entry, saved, onOpen }) {
   return html`<a class="cell" href=${href("word", entry.id)} onClick=${onOpen}>
     <div class="cell-main">
       <div class="row" style="gap:6px"><span class="headline">${entry.word}</span><${PosTag} entry=${entry} /><${LevelBadge} level=${entry.level} /></div>
       <div class="subheadline secondary clamp2">${entry.translation}</div>
+      <${HintCaption} word=${entry.word} partOfSpeech=${entry.partOfSpeech} />
     </div>
     ${saved ? html`<span class="accent"><${Icon} name="bookmarkFill" /></span>` : null}
     <span class="chevron"><${Icon} name="chevronRight" /></span>

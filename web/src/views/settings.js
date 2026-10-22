@@ -103,6 +103,11 @@ export function SettingsView() {
         <button class="cell action" onClick=${() => speak("Hej, hur mår du?")}>Test: “Hej, hur mår du?”</button>
       <//>
 
+      <${Section} header="Languages I know" footer="Many Swedish words look like their German or French translation (fönster – Fenster, biljett – billet). Turn on the languages you know to see these memory hints in Lookup, on word pages and on learn and review cards. Hints come from Wiktionary (via WikDict and kaikki.org), CC BY-SA 4.0.">
+        <${Toggle} label="🇩🇪 German" checked=${store.get("knowsGerman")} onChange=${(v) => store.set("knowsGerman", v)} />
+        <${Toggle} label="🇫🇷 French" checked=${store.get("knowsFrench")} onChange=${(v) => store.set("knowsFrench", v)} />
+      <//>
+
       <${Section} header="Data">
         <button class="cell action" disabled=${!store.words.size} onClick=${csvExport}><${Icon} name="upload" /> Export collection as CSV</button>
         <button class="cell action" disabled=${!store.get("skippedWords")} onClick=${() => store.set("skippedWords", "")}>Show skipped words again in Learn</button>
@@ -120,6 +125,6 @@ export function SettingsView() {
       <//>
       ${importMessage ? html`<div class="notice" style="margin-top:12px">${importMessage}</div>` : null}
 
-      <div class="section-footer" style="margin-top:24px">Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Academic words and Expressions from Akademisk ordlista and Swe-MWELex, Språkbanken, CC BY 4.0. Daily reminders are set in the iPhone app.</div>
+      <div class="section-footer" style="margin-top:24px">Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Academic words and Expressions from Akademisk ordlista and Swe-MWELex, Språkbanken, CC BY 4.0. German and French memory hints from Wiktionary (WikDict, kaikki.org), CC BY-SA 4.0. Daily reminders are set in the iPhone app.</div>
     </div>`;
 }

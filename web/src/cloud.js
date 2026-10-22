@@ -392,6 +392,7 @@ const CHECK_INS = {
 const SETTING_COLUMNS = {
   dailyGoal: "daily_goal", sessionSize: "session_size", speechRate: "speech_rate", autoSpeak: "auto_speak",
   onlineLookup: "online_lookup", skippedWords: "skipped_words", discoverDeck: "discover_deck",
+  knowsGerman: "knows_german", knowsFrench: "knows_french",
 };
 
 function settingsData(settings) {

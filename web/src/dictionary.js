@@ -6,6 +6,17 @@ import { DAY, startOfDay } from "./scheduler.js";
 import { entryId, store } from "./store.js";
 
 export const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+export const HINT_LANGUAGES = {
+  de: { name: "German", flag: "🇩🇪", setting: "knowsGerman" },
+  fr: { name: "French", flag: "🇫🇷", setting: "knowsFrench" },
+};
+
+/** "Same as German Hund", "Like French école", "From French billet". */
+export function hintSentence(h) {
+  const name = HINT_LANGUAGES[h.language].name;
+  return `${h.kind === "same" ? "Same as" : h.kind === "similar" ? "Like" : "From"} ${name} ${h.word}`;
+}
 export const MY_LISTS = "My lists";
 /** Picker sections in display order; groups not listed here come after them. */
 export const GROUP_ORDER = ["Coursebook", "Spoken frequency", "Topics", "Special lists", MY_LISTS];
@@ -227,16 +238,19 @@ class Dictionary {
   #filler = null;
   #byId = new Map();
   #imported = { revision: -1, decks: [] };
+  #hints = new Map();
+  #hintsByWord = new Map();
 
   async load(base = "data/") {
     const get = (path) => fetch(base + path).then((r) => {
       if (!r.ok) throw new Error(`Could not load ${path} (${r.status})`);
       return r.text();
     });
-    const [core, folkets, kelly, deckNames] = await Promise.all([
+    const [core, folkets, kelly, deckNames, hints] = await Promise.all([
       get("core_vocabulary.tsv"), get("folkets_sv_en.tsv"), get("kelly_levels.tsv"),
-      get("decks.json").then(JSON.parse),
+      get("decks.json").then(JSON.parse), get("language_hints.tsv").catch(() => ""),
     ]);
+    this.#loadHints(hints);
     const deckTexts = await Promise.all(deckNames.map((n) => get(`decks/${n}`)));
 
     const seen = new Set();
@@ -272,6 +286,31 @@ class Dictionary {
       ranked.get(match.level).push([match.rank, e]);
     }
     for (const [level, list] of ranked) this.#levels.set(level, list.sort((a, b) => a[0] - b[0]).map((x) => x[1]));
+  }
+
+  /** language_hints.tsv: word, pos, language (de/fr), foreign word, kind (same/similar/from). */
+  #loadHints(text) {
+    for (const line of text.split("\n")) {
+      if (!line || line.startsWith("#")) continue;
+      const c = line.split("\t");
+      if (c.length < 5 || !HINT_LANGUAGES[c[2]] || !["same", "similar", "from"].includes(c[4])) continue;
+      const hint = { language: c[2], word: c[3], kind: c[4] };
+      const key = `${c[0]}#${c[1]}`;
+      if (!this.#hints.has(key)) this.#hints.set(key, []);
+      this.#hints.get(key).push(hint);
+      if (!this.#hintsByWord.has(c[0])) this.#hintsByWord.set(c[0], []);
+      const forWord = this.#hintsByWord.get(c[0]);
+      if (!forWord.some((h) => h.language === hint.language)) forWord.push(hint);
+    }
+  }
+
+  /** German and French look-alikes of a word in the languages the learner knows (Settings), German first. */
+  hints(word, partOfSpeech) {
+    const known = Object.keys(HINT_LANGUAGES).filter((l) => store.get(HINT_LANGUAGES[l].setting));
+    if (!known.length) return [];
+    const key = word.toLowerCase();
+    const found = (partOfSpeech ? this.#hints.get(`${key}#${partOfSpeech}`) : this.#hintsByWord.get(key)) ?? [];
+    return found.filter((h) => known.includes(h.language)).sort((a, b) => (a.language === "de" ? -1 : 0) - (b.language === "de" ? -1 : 0));
   }
 
   /** Kelly words of one CEFR level ("A1" … "C2"), most useful first. */

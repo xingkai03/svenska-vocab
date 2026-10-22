@@ -3,7 +3,7 @@ import { deckEntries, dictionary, formList, GROUP_ORDER, headword, LEVELS } from
 import { speak } from "../speech.js";
 import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { EmptyState, LevelBadge, NavBar, PosTag, Segmented, SpeakButton } from "../ui.js";
+import { EmptyState, HintLines, LevelBadge, NavBar, PosTag, Segmented, SpeakButton } from "../ui.js";
 
 const TYPES = [["all", "All"], ["noun", "Nouns"], ["verb", "Verbs"], ["adjective", "Adjectives"], ["other", "Other"]];
 
@@ -93,6 +93,7 @@ export function LearnView() {
           <div class="big-word">${headword(entry)}</div>
           <div class="row" style="gap:24px"><${SpeakButton} text=${entry.word} size="big" /><${SpeakButton} text=${entry.word} slow size="big" /></div>
           <div class="title3">${entry.translation}</div>
+          <${HintLines} word=${entry.word} partOfSpeech=${entry.partOfSpeech} />
           ${formList(entry).length ? html`<div class="subheadline secondary">${formList(entry).join(" · ")}</div>` : null}
           ${entry.example ? html`<hr />
             <div class="italic">${entry.example}</div>
