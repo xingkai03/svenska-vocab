@@ -1607,18 +1607,18 @@
         }
       }
     },
-    "I don't know" : {
+    "I forget" : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jag vet inte"
+            "value" : "Jag minns inte"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我不知道"
+            "value" : "我忘了"
           }
         }
       }
@@ -1927,6 +1927,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查词"
+          }
+        }
+      }
+    },
+    "Marked as forgotten. It will come back soon." : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markerat som glömt. Det kommer tillbaka snart."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已标记为忘记，很快会再次出现。"
           }
         }
       }

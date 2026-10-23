@@ -46,6 +46,8 @@ struct ReviewSessionView: View {
     @State private var picked: String?
     @State private var typed = ""
     @State private var spelling: SpellingResult?
+    /// Set by "I forget": the answer is shown and the word is graded Again on Continue.
+    @State private var forgot = false
     @State private var reviewed = 0
     @State private var correct = 0
     @FocusState private var typingFocused: Bool
@@ -87,6 +89,7 @@ struct ReviewSessionView: View {
         picked = nil
         typed = ""
         spelling = nil
+        forgot = false
         if mode == .choice || mode == .listening {
             var wrong = Set(queue.map(\.translation).filter { $0 != word.translation }.shuffled().prefix(3))
             if wrong.count < 3 {
@@ -133,6 +136,14 @@ struct ReviewSessionView: View {
         }
     }
 
+    private func forget(_ word: SavedWord) {
+        withAnimation(.easeOut(duration: 0.2)) {
+            forgot = true
+            revealed = true
+        }
+        speech.speak(word.word)
+    }
+
     // MARK: - Views
 
     private func session(_ word: SavedWord) -> some View {
@@ -150,7 +161,7 @@ struct ReviewSessionView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     prompt(word)
-                    if revealed || picked != nil || spelling != nil {
+                    if revealed || picked != nil || spelling != nil || forgot {
                         details(word)
                             .transition(.opacity)
                     }
@@ -191,7 +202,7 @@ struct ReviewSessionView: View {
                 }
             }
             .padding()
-            if picked != nil {
+            if picked != nil || forgot {
                 swedishHeader(word)
             }
         }
@@ -233,22 +244,53 @@ struct ReviewSessionView: View {
 
     @ViewBuilder
     private func controls(_ word: SavedWord) -> some View {
+        if forgot {
+            VStack(spacing: 10) {
+                Label("Marked as forgotten. It will come back soon.", systemImage: "arrow.counterclockwise.circle.fill")
+                    .foregroundStyle(ReviewGrade.again.color)
+                Button {
+                    answer(.again)
+                } label: {
+                    Text("Continue").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+            }
+        } else {
+            answerControls(word)
+        }
+    }
+
+    private func forgetButton(_ word: SavedWord) -> some View {
+        Button(role: .destructive) { forget(word) } label: {
+            Label("I forget", systemImage: "questionmark.circle")
+        }
+        .buttonStyle(.bordered)
+        .tint(ReviewGrade.again.color)
+    }
+
+    @ViewBuilder
+    private func answerControls(_ word: SavedWord) -> some View {
         switch mode {
         case .flashcards, .reverse:
             if revealed {
                 gradeButtons(word)
             } else {
-                Button { reveal(word) } label: {
-                    Text("Show answer").frame(maxWidth: .infinity)
+                HStack(spacing: 8) {
+                    forgetButton(word)
+                        .controlSize(.large)
+                    Button { reveal(word) } label: {
+                        Text("Show answer").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
             }
         case .choice, .listening:
             VStack(spacing: 10) {
                 ForEach(options, id: \.self) { option in
                     Button {
-                        guard picked == nil else { return }
+                        guard picked == nil, !forgot else { return }
                         withAnimation { picked = option }
                         if mode == .listening || !autoSpeak { speech.speak(word.word) }
                     } label: {
@@ -268,6 +310,8 @@ struct ReviewSessionView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+                } else {
+                    forgetButton(word)
                 }
             }
         case .spelling:
@@ -295,10 +339,7 @@ struct ReviewSessionView: View {
                                 .buttonStyle(.bordered)
                         }
                         Spacer()
-                        Button("I don't know") {
-                            spelling = SpellingResult(grade: .again, message: L("Answer: %@", word.word))
-                            speech.speak(word.word)
-                        }
+                        forgetButton(word)
                         Button("Check") { checkSpelling(word) }
                             .buttonStyle(.borderedProminent)
                             .disabled(typed.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -330,6 +371,7 @@ struct ReviewSessionView: View {
     }
 
     private func tint(for option: String, correct: String) -> Color? {
+        if forgot { return option == correct ? .green : .gray }
         guard let picked else { return nil }
         if option == correct { return .green }
         if option == picked { return .red }
