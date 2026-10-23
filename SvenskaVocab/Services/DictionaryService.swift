@@ -152,7 +152,7 @@ final class DictionaryService: ObservableObject {
 
     enum LookupError: LocalizedError {
         case badResponse
-        var errorDescription: String? { "The online dictionary could not be reached." }
+        var errorDescription: String? { L("The online dictionary could not be reached.") }
     }
 
     func lookupOnline(_ query: String) async throws -> [DictionaryEntry] {

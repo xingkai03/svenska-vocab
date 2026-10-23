@@ -69,7 +69,7 @@ struct DiscoverView: View {
     private func label(_ name: String, _ entries: [DictionaryEntry], _ known: [String: Bool]) -> String {
         guard !entries.isEmpty else { return name }
         let p = progress(entries, known)
-        return "\(name) · \(p.mastered) mastered · \(p.learning) learning / \(entries.count)"
+        return L("%@ · %lld mastered · %lld learning / %lld", name, p.mastered, p.learning, entries.count)
     }
 
     private func matchesFilter(_ e: DictionaryEntry) -> Bool {
@@ -88,14 +88,14 @@ struct DiscoverView: View {
         VStack(spacing: 20) {
             HStack {
                 Picker("Word list", selection: $deck) {
-                    Text(label("Core", dictionary.coreEntries, saved)).tag("core")
+                    Text(label(L("Core"), dictionary.coreEntries, saved)).tag("core")
                     Section("CEFR levels (Kelly)") {
                         ForEach(DictionaryService.levels, id: \.self) { level in
                             Text(label(level, dictionary.deck(level), saved)).tag(level)
                         }
                     }
                     ForEach(deckGroups, id: \.0) { group, decks in
-                        Section(group) {
+                        Section(L(group)) {
                             ForEach(decks) { Text(label($0.name, $0.entries, saved)).tag($0.id) }
                         }
                     }

@@ -9,6 +9,7 @@ struct SvenskaVocabApp: App {
     @StateObject private var account: AccountService
     @StateObject private var sync: SyncService
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(AppSettings.appLanguage) private var appLanguage = ""
 
     init() {
         let container: ModelContainer
@@ -29,7 +30,10 @@ struct SvenskaVocabApp: App {
 
     var body: some Scene {
         WindowGroup {
+            // Changing the language rebuilds the screens so text made in code (`L(...)`) is redone too.
             ContentView()
+                .id(appLanguage)
+                .environment(\.locale, (AppLanguage(rawValue: appLanguage) ?? .system).locale)
                 .environmentObject(dictionary)
                 .environmentObject(speech)
                 .environmentObject(account)
@@ -44,6 +48,10 @@ struct SvenskaVocabApp: App {
                 }
         }
         .modelContainer(container)
+        .onChange(of: appLanguage) {
+            AppLanguage.current.apply()
+            ReminderService.reschedule() // the reminder's text is in the app's language
+        }
         .onChange(of: scenePhase) { _, phase in
             guard account.isSignedIn, phase != .inactive else { return }
             // Leaving the app: ask iOS for a little time to upload the last changes.

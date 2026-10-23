@@ -102,7 +102,7 @@ struct PartOfSpeechTag: View {
     let entry: DictionaryEntry
 
     var body: some View {
-        Text(entry.gender.isEmpty ? PartOfSpeech.short(entry.partOfSpeech) : "\(entry.gender)-word")
+        Text(entry.gender.isEmpty ? PartOfSpeech.short(entry.partOfSpeech) : L("%@-word", entry.gender))
             .font(.caption2.weight(.semibold))
             .padding(.horizontal, 6)
             .padding(.vertical, 2)

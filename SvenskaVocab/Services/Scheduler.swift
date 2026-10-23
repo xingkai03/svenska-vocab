@@ -8,10 +8,10 @@ enum ReviewGrade: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .again: "Again"
-        case .hard: "Hard"
-        case .good: "Good"
-        case .easy: "Easy"
+        case .again: L("Again")
+        case .hard: L("Hard")
+        case .good: L("Good")
+        case .easy: L("Easy")
         }
     }
 
@@ -99,13 +99,26 @@ enum Scheduler {
         return formatInterval(n.interval)
     }
 
+    /// "10m", "3d", "2mo", "1y 6mo" in the app's language.
     static func formatInterval(_ days: Int) -> String {
-        switch days {
-        case 0: "10m"
-        case 1..<30: "\(days)d"
-        case 30..<365: "\(days / 30)mo"
-        default: String(format: "%.1fy", Double(days) / 365)
+        let parts = switch days {
+        case 0: DateComponents(minute: Int(relearnDelay / 60))
+        case 1..<30: DateComponents(day: days)
+        case 30..<365: DateComponents(month: days / 30)
+        default: DateComponents(year: days / 365, month: days % 365 / 30)
         }
+        return intervalFormatter.string(from: parts) ?? ""
+    }
+
+    private static var intervalFormatter: DateComponentsFormatter {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.minute, .day, .month, .year]
+        formatter.maximumUnitCount = 2
+        var calendar = Calendar.current
+        calendar.locale = AppLanguage.current.locale
+        formatter.calendar = calendar
+        return formatter
     }
 
     /// Probability of recall at `date` according to the forgetting curve.
