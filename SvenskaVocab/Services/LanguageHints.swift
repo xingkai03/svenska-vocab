@@ -7,7 +7,7 @@ struct LanguageHint: Hashable {
         case german = "de", french = "fr"
 
         var id: String { rawValue }
-        var name: String { self == .german ? "German" : "French" }
+        var name: String { self == .german ? L("German") : L("French") }
         var flag: String { self == .german ? "🇩🇪" : "🇫🇷" }
         /// UserDefaults key of the Settings toggle "I know German/French".
         var settingKey: String { self == .german ? AppSettings.knowsGerman : AppSettings.knowsFrench }
@@ -24,9 +24,9 @@ struct LanguageHint: Hashable {
     /// Spoken by VoiceOver: "Same as German Hund", "Like French école", "From French billet".
     var sentence: String {
         switch kind {
-        case .same: "Same as \(language.name) \(word)"
-        case .similar: "Like \(language.name) \(word)"
-        case .from: "From \(language.name) \(word)"
+        case .same: L("Same as %@ %@", language.name, word)
+        case .similar: L("Like %@ %@", language.name, word)
+        case .from: L("From %@ %@", language.name, word)
         }
     }
 }

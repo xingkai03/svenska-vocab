@@ -121,7 +121,7 @@ struct TodayView: View {
             ForEach((0..<7).reversed(), id: \.self) { offset in
                 let day = cal.date(byAdding: .day, value: -offset, to: today)!
                 VStack(spacing: 4) {
-                    Text(day.formatted(.dateTime.weekday(.narrow)))
+                    Text(day.formatted(.dateTime.weekday(.narrow).locale(AppLanguage.current.locale)))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     Image(systemName: checked.contains(day) ? "flame.fill" : "circle")

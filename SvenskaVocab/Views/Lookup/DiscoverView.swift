@@ -63,14 +63,14 @@ struct DiscoverView: View {
         VStack(spacing: 20) {
             HStack {
                 Picker("Word list", selection: $deck) {
-                    Text(label("Core", dictionary.coreEntries, saved)).tag("core")
+                    Text(label(L("Core"), dictionary.coreEntries, saved)).tag("core")
                     Section("CEFR levels (Kelly)") {
                         ForEach(DictionaryService.levels, id: \.self) { level in
                             Text(label(level, dictionary.deck(level), saved)).tag(level)
                         }
                     }
                     ForEach(deckGroups, id: \.0) { group, decks in
-                        Section(group) {
+                        Section(L(group)) {
                             ForEach(decks) { Text(label($0.name, $0.entries, saved)).tag($0.id) }
                         }
                     }

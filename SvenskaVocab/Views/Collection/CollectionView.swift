@@ -44,7 +44,7 @@ struct CollectionView: View {
         NavigationStack {
             List {
                 Picker("Filter", selection: $filter) {
-                    ForEach(Filter.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(Filter.allCases) { Text(L($0.rawValue)).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
@@ -89,7 +89,7 @@ struct CollectionView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
                         Picker("Sort", selection: $sort) {
-                            ForEach(Sort.allCases) { Text($0.rawValue).tag($0) }
+                            ForEach(Sort.allCases) { Text(L($0.rawValue)).tag($0) }
                         }
                         Picker("Level", selection: $level) {
                             Text("All levels").tag("")
@@ -126,7 +126,7 @@ struct CollectionView: View {
                     Image(systemName: "star.fill").font(.caption).foregroundStyle(.yellow)
                 }
                 Spacer()
-                Text(word.isDue ? "due" : Calendar.current.isDateInToday(word.dueDate) ? "today" : Scheduler.formatInterval(daysUntil(word.dueDate)))
+                Text(word.isDue ? L("due") : Calendar.current.isDateInToday(word.dueDate) ? L("today") : Scheduler.formatInterval(daysUntil(word.dueDate)))
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(word.isDue ? Color.red : Color.secondary)
             }

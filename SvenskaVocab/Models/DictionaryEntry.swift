@@ -39,16 +39,16 @@ enum PartOfSpeech {
 
     static func short(_ pos: String) -> String {
         switch pos {
-        case "noun": "n."
-        case "verb": "v."
-        case "adjective": "adj."
-        case "adverb": "adv."
-        case "pronoun": "pron."
-        case "preposition": "prep."
-        case "conjunction": "conj."
-        case "numeral": "num."
-        case "interjection": "interj."
-        case "phrase": "phr."
+        case "noun": L("n.")
+        case "verb": L("v.")
+        case "adjective": L("adj.")
+        case "adverb": L("adv.")
+        case "pronoun": L("pron.")
+        case "preposition": L("prep.")
+        case "conjunction": L("conj.")
+        case "numeral": L("num.")
+        case "interjection": L("interj.")
+        case "phrase": L("phr.")
         default: pos
         }
     }

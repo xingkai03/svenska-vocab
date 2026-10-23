@@ -24,6 +24,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 - **Review modes** – flashcards, English → Swedish, multiple choice, listening, and spelling (with å/ä/ö keys and "almost right" detection). When nothing is due you can practise without changing the schedule.
 - **Daily check-in** – set a daily goal (reviews + new words). Once you reach it you can check in. Streak counter, a week strip, and a daily reminder notification.
 - **Account & cloud sync** – optional sign-in (email and password, via [Supabase](https://supabase.com)). Your saved words with their review state, review history, check-ins, settings and imported word lists are backed up and kept in sync across devices; the dictionary and built-in lists stay on the device. The app works fully offline and syncs when it opens, closes and every few minutes. Words already on the device are merged into the account on first sign-in.
+- **App language** – the interface is in English, Swedish or Simplified Chinese (Settings › App language, or follow the iPhone's language). Dictionary translations stay in English.
 - **Summary** – words, mastered, current and best streak, total reviews, 30-day accuracy, a 14-day activity chart, mastery breakdown, a forgetting curve for your whole collection, a 7-day review forecast, a check-in calendar, and your trickiest words.
 
 ## Requirements
@@ -87,6 +88,10 @@ python3 scripts/build_folkets.py folkets_sv_en_public.xml
 ```
 
 Don't commit the XML. Rerun the script after editing `core_vocabulary.tsv` so the two files don't overlap.
+
+### Translating the interface
+
+Interface text lives in the String Catalog `SvenskaVocab/Resources/Localizable.xcstrings` (English source, `sv` and `zh-Hans` translations). SwiftUI text with a literal (`Text("Review")`, `Button("Save")`) is added to the catalog automatically when you build in Xcode; translate new entries in the catalog editor. Text built in code goes through `L("…")` (see `AppSettings.swift`), so it follows the in-app language choice; add those keys to the catalog by hand. To add a language, add a case to `AppLanguage` and the language in the catalog.
 
 ### Personal word lists
 

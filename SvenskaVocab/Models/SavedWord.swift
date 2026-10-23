@@ -77,6 +77,7 @@ enum Mastery: String, CaseIterable, Identifiable {
     case mastered = "Mastered"
 
     var id: String { rawValue }
+    var title: String { L(rawValue) }
 }
 
 /// One answer given during a review session.

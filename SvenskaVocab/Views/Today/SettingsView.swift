@@ -18,6 +18,7 @@ struct SettingsView: View {
     @AppStorage(AppSettings.skippedWords) private var skippedWords = ""
     @AppStorage(AppSettings.knowsGerman) private var knowsGerman = false
     @AppStorage(AppSettings.knowsFrench) private var knowsFrench = false
+    @AppStorage(AppSettings.appLanguage) private var appLanguage = ""
     @State private var notificationsDenied = false
     @State private var showImporter = false
     @State private var importMessage: String?
@@ -33,6 +34,14 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 AccountSection()
+
+                Section {
+                    Picker("App language", selection: $appLanguage) {
+                        ForEach(AppLanguage.allCases) { Text($0.name).tag($0.rawValue) }
+                    }
+                } footer: {
+                    Text("The language of buttons and menus. Translations of Swedish words stay in English.")
+                }
 
                 Section("Daily goal") {
                     Stepper("\(dailyGoal) reviews or new words", value: $dailyGoal, in: 5...200, step: 5)
@@ -155,7 +164,8 @@ struct SettingsView: View {
             let scoped = url.startAccessingSecurityScopedResource()
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
             let count = try dictionary.importDeck(from: url)
-            importMessage = "Imported \(count) words from “\(url.deletingPathExtension().lastPathComponent)”. Find the list in Learn new words."
+            importMessage = L("Imported %lld words from “%@”. Find the list in Learn new words.",
+                              count, url.deletingPathExtension().lastPathComponent)
         } catch {
             importMessage = error.localizedDescription
         }

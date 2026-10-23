@@ -35,8 +35,8 @@ enum SupabaseError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .notConfigured: "Cloud sync is not set up in this build."
-        case .notSignedIn: "You are signed out."
+        case .notConfigured: L("Cloud sync is not set up in this build.")
+        case .notSignedIn: L("You are signed out.")
         case let .server(_, message): message
         }
     }
@@ -76,7 +76,9 @@ struct SupabaseClient {
         _ = try? await send("auth/v1/logout", body: [:], token: session.accessToken)
     }
 
-    private static let unexpected = SupabaseError.server(status: 0, message: "Unexpected response from the server.")
+    private static var unexpected: SupabaseError {
+        .server(status: 0, message: L("Unexpected response from the server."))
+    }
 
     private static func session(from json: Any) -> AuthSession? {
         guard let dict = json as? [String: Any],
@@ -145,7 +147,7 @@ struct SupabaseClient {
         for key in ["error_description", "msg", "message", "error"] {
             if let text = dict[key] as? String, !text.isEmpty { return text }
         }
-        return "Server error (\(status))."
+        return L("Server error (%lld).", status)
     }
 }
 
