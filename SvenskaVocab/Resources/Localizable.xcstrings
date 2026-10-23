@@ -1,6 +1,23 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ · %lld mastered · %lld learning / %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld kan jag · %lld lär mig / %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 已掌握 %lld · 学习中 %lld / %lld"
+          }
+        }
+      }
+    },
     "%@ · practice" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -149,18 +166,18 @@
         }
       }
     },
-    "%lld of %lld learned" : {
+    "%lld mastered · %lld learning · %lld words" : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld av %lld inlärda"
+            "value" : "%lld kan jag · %lld lär mig · %lld ord"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已学 %lld / %lld"
+            "value" : "已掌握 %lld · 学习中 %lld · 共 %lld 个"
           }
         }
       }
@@ -1899,18 +1916,18 @@
         }
       }
     },
-    "Look up more words or reset skipped words in Settings." : {
+    "Look up more words, or pick another word list." : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Slå upp fler ord eller återställ överhoppade ord i Inställningar."
+            "value" : "Slå upp fler ord eller välj en annan ordlista."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "去查更多单词，或在设置中重置跳过的单词。"
+            "value" : "去查更多单词，或换一个词表。"
           }
         }
       }
@@ -3033,22 +3050,6 @@
         }
       }
     },
-    "Show skipped words again in Learn" : {
-      "localizations" : {
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa överhoppade ord igen i Lär dig"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在“学习”中重新显示跳过的单词"
-          }
-        }
-      }
-    },
     "Sign in" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3548,6 +3549,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可以不输入 å、ä、ö：“bat”也能找到“båt”。%@ 个单词可离线查询，其他单词会在 Folkets lexikon 中在线查找。"
+          }
+        }
+      }
+    },
+    "Undo “I know it”" : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ångra ”Det kan jag”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销“我认识”"
           }
         }
       }
