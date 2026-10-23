@@ -132,11 +132,12 @@ private struct MemorySection: View {
 
     var body: some View {
         Section {
-            LabeledContent("Level", value: word.mastery.rawValue)
+            LabeledContent("Level", value: word.mastery.title)
             LabeledContent("Next review") {
-                Text(word.isDue ? "Now" : word.dueDate.formatted(.relative(presentation: .named)))
+                Text(word.isDue ? L("Now")
+                     : word.dueDate.formatted(.relative(presentation: .named).locale(AppLanguage.current.locale)))
             }
-            LabeledContent("Reviews", value: "\(word.reviewCount) (\(word.lapses) forgotten)")
+            LabeledContent("Reviews", value: L("%lld (%lld forgotten)", word.reviewCount, word.lapses))
             if word.lastReviewedAt != nil {
                 LabeledContent("Memory now", value: word.retention.formatted(.percent.precision(.fractionLength(0))))
                 curve

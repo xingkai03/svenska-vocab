@@ -69,7 +69,7 @@ struct DeckFiller: Sendable {
 enum WordDecks {
     enum ImportError: LocalizedError {
         case empty
-        var errorDescription: String? { "No words found. Use one word per line: Swedish, English (tab or comma separated)." }
+        var errorDescription: String? { L("No words found. Use one word per line: Swedish, English (tab or comma separated).") }
     }
 
     static var importedFolder: URL {

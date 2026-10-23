@@ -52,7 +52,7 @@ final class SyncService: ObservableObject {
             } catch is CancellationError {
                 return
             } catch let error as URLError where error.code == .notConnectedToInternet {
-                lastError = "Offline. Changes will sync when you are back online."
+                lastError = L("Offline. Changes will sync when you are back online.")
             } catch {
                 lastError = error.localizedDescription
             }
