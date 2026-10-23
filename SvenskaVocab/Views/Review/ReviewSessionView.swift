@@ -8,11 +8,11 @@ enum ReviewMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .flashcards: "Flashcards"
-        case .reverse: "English → Swedish"
-        case .choice: "Multiple choice"
-        case .listening: "Listening"
-        case .spelling: "Spelling"
+        case .flashcards: L("Flashcards")
+        case .reverse: L("English → Swedish")
+        case .choice: L("Multiple choice")
+        case .listening: L("Listening")
+        case .spelling: L("Spelling")
         }
     }
 
@@ -67,7 +67,7 @@ struct ReviewSessionView: View {
                 finished
             }
         }
-        .navigationTitle(practice ? "\(mode.title) · practice" : mode.title)
+        .navigationTitle(practice ? L("%@ · practice", mode.title) : mode.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -390,11 +390,11 @@ struct ReviewSessionView: View {
         guard !given.isEmpty else { return }
         let target = word.word.lowercased()
         if given == target {
-            spelling = SpellingResult(grade: .good, message: "Rätt! Correct.")
+            spelling = SpellingResult(grade: .good, message: L("Rätt! Correct."))
         } else if given.searchFolded == target.searchFolded {
-            spelling = SpellingResult(grade: .hard, message: "Almost — mind the å, ä, ö: \(word.word)")
+            spelling = SpellingResult(grade: .hard, message: L("Almost — mind the å, ä, ö: %@", word.word))
         } else {
-            spelling = SpellingResult(grade: .again, message: "Answer: \(word.word)")
+            spelling = SpellingResult(grade: .again, message: L("Answer: %@", word.word))
         }
         speech.speak(word.word)
     }
