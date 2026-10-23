@@ -1,0 +1,254 @@
+import { html, useEffect, useRef, useState } from "../../vendor/preact-htm.js";
+import { dictionary, formList, headword, shortPos } from "../dictionary.js";
+import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../scheduler.js";
+import { checkSpelling as check } from "../spelling.js";
+import { speak } from "../speech.js";
+import { store } from "../store.js";
+import { Kbd, useKeys } from "../keys.js";
+import { back, HintLines, Icon, NavBar, SpeakButton } from "../ui.js";
+
+export const REVIEW_MODES = [
+  { id: "flashcards", title: "Flashcards", icon: "cards" },
+  { id: "reverse", title: "English → Swedish", icon: "swap" },
+  { id: "choice", title: "Multiple choice", icon: "list" },
+  { id: "listening", title: "Listening", icon: "ear" },
+  { id: "spelling", title: "Spelling", icon: "keyboard" },
+];
+
+const shuffle = (a) => {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+};
+
+/** Practice reviews are logged (they count toward the daily goal) but don't change the schedule. */
+export function ReviewView({ modeId, practice }) {
+  const mode = REVIEW_MODES.find((m) => m.id === modeId) ?? REVIEW_MODES[0];
+  const [queue, setQueue] = useState(() => {
+    const all = [...store.words.values()];
+    const size = store.get("sessionSize");
+    const picked = practice
+      ? all.sort((a, b) => retention(a) - retention(b)).slice(0, size)
+      : all.filter((w) => isDue(w)).sort((a, b) => a.dueDate - b.dueDate).slice(0, size);
+    return shuffle(picked.map((w) => w.key));
+  });
+  const [card, setCard] = useState({ revealed: false, picked: null, typed: "", spelling: null, forgot: false, options: [] });
+  const [score, setScore] = useState({ reviewed: 0, correct: 0 });
+  const typing = useRef(null);
+
+  // Words deleted during the session (e.g. on another device) drop out of the queue.
+  const live = queue.filter((k) => store.words.has(k));
+  const word = live.length ? store.words.get(live[0]) : null;
+  const autoSpeak = store.get("autoSpeak");
+
+  // Prepare each new card.
+  useEffect(() => {
+    if (!word) return;
+    let options = [];
+    if (mode.id === "choice" || mode.id === "listening") {
+      const wrong = new Set(shuffle(live.map((k) => store.words.get(k).translation).filter((t) => t !== word.translation)).slice(0, 3));
+      for (const t of dictionary.distractors(word.translation, 6)) if (wrong.size < 3) wrong.add(t);
+      options = shuffle([...wrong, word.translation]);
+    }
+    setCard({ revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
+    if ((mode.id === "flashcards" || mode.id === "choice") && autoSpeak) speak(word.word);
+    if (mode.id === "listening") speak(word.word);
+    if (mode.id === "spelling") setTimeout(() => typing.current?.focus(), 0);
+  }, [word?.key, score.reviewed]);
+
+  const answer = (grade) => {
+    if (!word) return;
+    const updated = practice ? word : apply(grade, word);
+    if (!practice) store.updateWord(word.key, updated);
+    store.addLog({ date: Date.now(), wordKey: word.key, grade, intervalAfter: updated.interval });
+    const rest = live.slice(1);
+    // Forgotten words come back later in the same session.
+    if (grade === AGAIN && rest.length) rest.splice(Math.min(rest.length, 4), 0, word.key);
+    setQueue(rest);
+    setScore((s) => ({ reviewed: s.reviewed + 1, correct: s.correct + (grade === AGAIN ? 0 : 1) }));
+  };
+
+  const reveal = () => {
+    setCard((c) => ({ ...c, revealed: true }));
+    if (mode.id === "reverse" && autoSpeak) speak(word.word);
+  };
+
+  const pick = (option) => {
+    if (card.picked != null || card.forgot) return;
+    setCard((c) => ({ ...c, picked: option }));
+    if (mode.id === "listening" || !autoSpeak) speak(word.word);
+  };
+
+  /** "I forget": shows the answer, and Continue grades the word Again. */
+  const forget = () => {
+    setCard((c) => ({
+      ...c, forgot: true, revealed: true,
+      spelling: mode.id === "spelling" ? { grade: AGAIN, message: "Marked as forgotten" } : null,
+    }));
+    speak(word.word);
+  };
+
+  const checkSpelling = () => {
+    if (!card.typed.trim()) return;
+    const { kind, form } = check(card.typed, word.word, formList(word));
+    const spelling = kind === "correct" ? { grade: GOOD, message: form ? `Rätt! ${form} is a form of ${word.word}.` : "Rätt! Correct." }
+      : kind === "diacritics" ? { grade: HARD, message: `Almost — mind the å, ä, ö: ${word.word}` }
+      : kind === "typo" ? { grade: HARD, message: form ? `Almost — small typo. It's spelled ${form}, a form of ${word.word}.` : `Almost — small typo. It's spelled ${word.word}.` }
+      : { grade: AGAIN, message: `Answer: ${word.word}` };
+    setCard((c) => ({ ...c, spelling }));
+    speak(word.word);
+  };
+
+  // Keyboard: space or enter shows the answer and continues, 1–4 grade or pick an option, F (Esc in spelling) is
+  // "I forget", P plays the word again.
+  const flip = mode.id === "flashcards" || mode.id === "reverse";
+  const choice = mode.id === "choice" || mode.id === "listening";
+  const proceed = card.forgot ? () => answer(AGAIN)
+    : card.spelling ? () => answer(card.spelling.grade)
+    : choice && card.picked != null ? () => answer(card.picked === word.translation ? GOOD : AGAIN) : null;
+  useKeys(word ? [
+    [["Space", "Enter"], "Show answer", flip && !card.revealed && reveal],
+    [["f"], "I forget", !card.forgot && !card.revealed && card.picked == null && !card.spelling && forget],
+    ...GRADES.map((g) => [[String(g.value + 1)], g.title, flip && card.revealed && !card.forgot && (() => answer(g.value))]),
+    ...card.options.map((o, i) => [[String(i + 1)], `Answer ${i + 1}`, choice && card.picked == null && !card.forgot && (() => pick(o))]),
+    [["Space", "Enter"], "Continue", proceed],
+    // In English → Swedish and spelling, the word is the answer: it plays only once it's shown.
+    ...(mode.id === "reverse" || mode.id === "spelling") && !(card.revealed || card.spelling) ? [] : [
+      [["p"], "Play the word", () => speak(word.word)],
+      [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
+    ],
+    [["x"], "Play the example", word.example && (card.revealed || card.picked != null || card.spelling) && (() => speak(word.example))],
+  ] : [[["Space", "Enter"], "Done", () => back("today")]]);
+
+  const title = practice ? `${mode.title} · practice` : mode.title;
+  if (!word) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" /><${Finished} score=${score} />`;
+
+  const answered = card.revealed || card.picked != null || card.spelling != null;
+  return html`
+    <${NavBar} title=${title} backTo="today" backLabel="Today" />
+    <div class="page"><div class="stack">
+      <div class="row caption secondary mono">
+        <span>${live.length} left</span><span class="spacer"></span>
+        ${score.reviewed ? html`<span>${Math.round((score.correct / score.reviewed) * 100)}% correct</span>` : null}
+      </div>
+      <div class="flashcard" key=${`${word.key}-${score.reviewed}`}>
+        <${Prompt} mode=${mode.id} word=${word} card=${card} />
+        ${answered ? html`<${Details} mode=${mode.id} word=${word} />` : null}
+      </div>
+      <${Controls} mode=${mode.id} word=${word} card=${card} practice=${practice} typing=${typing}
+        onReveal=${reveal} onForget=${forget} onAnswer=${answer} onPick=${pick} onCheck=${checkSpelling}
+        onType=${(typed) => setCard((c) => ({ ...c, typed }))}
+      />
+    </div></div>`;
+}
+
+function SwedishHeader({ word }) {
+  return html`<div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div class="review-word">${headword(word)}</div>
+    <${SpeakButton} text=${word.word} size="big" hotkey="p" />
+  </div>`;
+}
+
+function Prompt({ mode, word, card }) {
+  if (mode === "flashcards" || mode === "choice") return html`<${SwedishHeader} word=${word} />`;
+  if (mode === "listening") {
+    return html`<div class="row" style="gap:32px;padding:16px">
+        <span class="speak"><button class="icon-button huge" onClick=${() => speak(word.word)} aria-label="Play again" title="Play again (P)"><${Icon} name="speaker" /></button><${Kbd} k="p" /></span>
+        <span class="speak"><button class="icon-button big" onClick=${() => speak(word.word, { slow: true })} aria-label="Play slowly" title="Play slowly (Shift+P)"><${Icon} name="slow" /></button><${Kbd} k="P" /></span>
+      </div>
+      ${card.picked != null || card.forgot ? html`<${SwedishHeader} word=${word} />` : null}`;
+  }
+  return html`<div class="title" style="font-size:28px">${word.translation}</div>
+    <div class="secondary">${word.gender ? `${word.gender} …` : shortPos(word.partOfSpeech)}</div>
+    ${card.revealed || card.spelling ? html`<hr /><${SwedishHeader} word=${word} />` : null}`;
+}
+
+function Details({ mode, word }) {
+  return html`<hr class="fade-in" />
+    ${mode === "flashcards" || mode === "listening" || mode === "choice" ? html`<div class="title3 fade-in">${word.translation}</div>` : null}
+    <${HintLines} word=${word.word} partOfSpeech=${word.partOfSpeech} />
+    ${word.forms ? html`<div class="subheadline secondary fade-in">${formList(word).join(" · ")}</div>` : null}
+    ${word.example ? html`<div class="fade-in" style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div class="italic">${word.example}</div>
+      <div class="subheadline secondary">${word.exampleTranslation}</div>
+      <${SpeakButton} text=${word.example} hotkey="x" /></div>` : null}
+    ${word.note ? html`<div class="footnote secondary fade-in"><${Icon} name="note" /> ${word.note}</div>` : null}`;
+}
+
+const forgotten = html`<div class="headline red fade-in"><${Icon} name="xCircle" /> Marked as forgotten</div>`;
+
+function Controls({ mode, word, card, practice, typing, onReveal, onForget, onAnswer, onPick, onCheck, onType }) {
+  const forgetButton = (k) => html`<button class="btn large" onClick=${onForget}>I forget<${Kbd} k=${k} /></button>`;
+  const continueButton = (grade) => html`<button class="btn prominent large full" onClick=${() => onAnswer(grade)}>Continue<${Kbd} k="Enter" /></button>`;
+  if (mode === "flashcards" || mode === "reverse") {
+    if (card.forgot) return html`<div style="display:flex;flex-direction:column;gap:10px">${forgotten}${continueButton(AGAIN)}</div>`;
+    if (!card.revealed) return html`<div class="row" style="gap:12px">${forgetButton("f")}
+      <button class="btn prominent large full" onClick=${onReveal}>Show answer<${Kbd} k="Space" /></button></div>`;
+    return html`<div class="grade-row">
+      ${GRADES.map((g) => html`<button class="btn tinted" style=${{ "--tint": `var(--${g.color})` }} onClick=${() => onAnswer(g.value)}
+        title=${`${g.title} (${g.value + 1})`}>
+        <span class="subheadline bold">${g.title}</span>${practice ? null : html`<span class="caption2">${preview(g.value, word)}</span>`}<${Kbd} k=${String(g.value + 1)} />
+      </button>`)}
+    </div>`;
+  }
+  if (mode === "choice" || mode === "listening") {
+    const answered = card.picked != null || card.forgot;
+    const tint = (option) => !answered ? null : option === word.translation ? "green" : option === card.picked ? "red" : "gray";
+    return html`<div style="display:flex;flex-direction:column;gap:10px">
+      ${card.options.map((option, i) => html`<button class=${`btn large full ${tint(option) ? "tinted" : ""}`}
+        style=${tint(option) ? { "--tint": `var(--${tint(option)})`, fontWeight: 500 } : { fontWeight: 500 }} onClick=${() => onPick(option)}>
+        <span class="clamp2">${option}</span>${!answered ? html`<${Kbd} k=${String(i + 1)} />` : null}</button>`)}
+      ${card.forgot ? html`${forgotten}${continueButton(AGAIN)}`
+        : card.picked != null ? continueButton(card.picked === word.translation ? GOOD : AGAIN)
+        : forgetButton("f")}
+    </div>`;
+  }
+  // Spelling
+  if (card.spelling) {
+    const s = card.spelling;
+    return html`<div style="display:flex;flex-direction:column;gap:10px">
+      <div class="headline" style=${{ color: `var(--${GRADES[s.grade].color})` }}><${Icon} name=${s.grade === AGAIN ? "xCircle" : "checkCircle"} /> ${s.message}</div>
+      ${continueButton(s.grade)}
+    </div>`;
+  }
+  const insert = (letter) => {
+    onType(card.typed + letter);
+    typing.current?.focus();
+  };
+  return html`<div style="display:flex;flex-direction:column;gap:10px">
+    <input ref=${typing} class="typing" placeholder="Type the Swedish word" value=${card.typed} autocomplete="off" autocapitalize="off"
+      spellcheck=${false} onInput=${(e) => onType(e.currentTarget.value)} onKeyDown=${(e) => {
+        if (e.key === "Enter") return onCheck();
+        if (e.key === "Escape") {
+          e.preventDefault();
+          return onForget();
+        }
+        // å, ä, ö sit where [, ' and ; are on an English keyboard; Swedish words never use those characters.
+        const letter = SWEDISH_KEYS[e.key];
+        if (letter && !e.metaKey && !e.ctrlKey) {
+          e.preventDefault();
+          insert(letter);
+        }
+      }} />
+    <div class="row wrap" style="gap:8px">
+      ${[["å", "["], ["ä", "'"], ["ö", ";"]].map(([l, k]) => html`<button class="btn" onClick=${() => insert(l)} title=${`Type ${l} (or press ${k})`}>${l}<${Kbd} k=${k} /></button>`)}
+      <span class="spacer"></span>
+      <button class="btn plain" onClick=${onForget}>I forget<${Kbd} k="Escape" /></button>
+      <button class="btn prominent" disabled=${!card.typed.trim()} onClick=${onCheck}>Check</button>
+    </div>
+  </div>`;
+}
+
+const SWEDISH_KEYS = { "[": "å", "{": "Å", "'": "ä", '"': "Ä", ";": "ö", ":": "Ö" };
+
+function Finished({ score }) {
+  return html`<div class="page"><div class="empty" style="gap:16px;padding-top:64px">
+    <span class="accent"><${Icon} name=${score.reviewed ? "party" : "checkCircle"} /></span>
+    <h2 style="font-size:28px">${score.reviewed ? "Session complete!" : "Nothing to review"}</h2>
+    <div>${score.reviewed ? `${score.reviewed} answers · ${Math.round((score.correct / score.reviewed) * 100)}% correct` : "Add words to your collection first."}</div>
+    <button class="btn prominent large" onClick=${() => back("today")}>Done<${Kbd} k="Enter" /></button>
+  </div></div>`;
+}

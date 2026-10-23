@@ -50,6 +50,21 @@ For the best pronunciation, download an enhanced Swedish voice on the device: Se
 
 The project uses Xcode 16's folder-synchronised groups, so new files you add under `SvenskaVocab/` are picked up automatically. On older Xcode, regenerate the project with [XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`.
 
+### Web version
+
+`web/` is a browser version with the same tabs and features (lookup, Learn new words, reviews in all five modes, check-ins, summary, settings, imported lists) and sv-SE pronunciation through the browser's speech voices. It signs in to the same Supabase accounts and syncs the same tables with the same merge rules as the app, so you can learn on the web and on the iPhone with one account. Without an account it keeps everything in the browser (IndexedDB).
+
+On a computer everything works from the keyboard: T / L / W / S switch tabs, `/` searches, J / K or the arrow keys move through lists, Space and 1–4 answer reviews, ← / → mark new words known or learn them (Z undoes), P pronounces the word (Shift+P slowly, X the example; in Lookup and My words the selected row), Esc goes back, and `?` lists every shortcut for the current screen. In spelling, `[`, `'` and `;` type å, ä and ö (where they sit on a Swedish keyboard).
+
+It is plain JavaScript modules with no build step (Preact + htm are vendored in `web/vendor/`). To run it locally:
+
+```
+python3 scripts/build_web.py           # copies the dictionary and open word lists into web/data
+python3 scripts/serve_web.py           # then open http://localhost:8000 (served without caching)
+```
+
+`web/config.js` holds the Supabase URL and publishable key (public by design; the tables are protected by row-level security). `.github/workflows/web.yml` publishes the site to GitHub Pages on every push to `main` that touches it: in the repository settings › Pages, set Source to "GitHub Actions". The build only copies `Resources/Decks`, never `Resources/Private`. For confirmation emails to open the web version, add its URL under Supabase › Authentication › URL Configuration.
+
 ## Project layout
 
 ```
@@ -62,7 +77,8 @@ SvenskaVocab/
   Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv and kelly_levels.tsv (generated)
     Decks/        open word lists (deck_*.tsv)
     Private/      your personal lists (git-ignored)
-scripts/          build_folkets.py, build_kelly.py, build_open_decks.py
+scripts/          build_folkets.py, build_kelly.py, build_open_decks.py, build_web.py
+web/              browser version (see Web version above)
 ```
 
 ### Extending the built-in vocabulary
