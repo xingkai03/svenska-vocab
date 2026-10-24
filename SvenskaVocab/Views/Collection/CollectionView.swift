@@ -134,6 +134,7 @@ struct CollectionView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+            LanguageHintCaption(word: word.word, partOfSpeech: word.partOfSpeech)
             MemoryBar(retention: word.retention)
         }
         .padding(.vertical, 2)

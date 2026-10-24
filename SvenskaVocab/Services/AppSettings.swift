@@ -13,6 +13,8 @@ enum AppSettings {
     static let recentSearches = "recentSearches"
     static let onlineLookup = "onlineLookup"
     static let discoverDeck = "discoverDeck"
+    static let knowsGerman = "knowsGerman"
+    static let knowsFrench = "knowsFrench"
     static let appLanguage = "appLanguage"
 }
 

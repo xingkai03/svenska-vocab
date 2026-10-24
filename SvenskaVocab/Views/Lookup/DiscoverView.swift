@@ -168,6 +168,7 @@ struct DiscoverView: View {
                 SpeakButton(text: entry.word, slow: true, font: .title2)
             }
             Text(entry.translation).font(.title3).multilineTextAlignment(.center)
+            LanguageHintLines(word: entry.word, partOfSpeech: entry.partOfSpeech)
             if !entry.formList.isEmpty {
                 Text(entry.formList.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
             }

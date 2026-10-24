@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ %@" : {
+      "shouldTranslate" : false
+    },
     "%@ · practice" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1541,6 +1544,40 @@
         }
       }
     },
+    "French" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "franska"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "法语"
+          }
+        }
+      }
+    },
+    "From %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Från %1$@ %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来自%1$@ %2$@"
+          }
+        }
+      }
+    },
     "From Folkets lexikon, CC BY-SA 2.5." : {
       "localizations" : {
         "sv" : {
@@ -1569,6 +1606,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "性"
+          }
+        }
+      }
+    },
+    "German" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tyska"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "德语"
           }
         }
       }
@@ -1753,6 +1807,23 @@
         }
       }
     },
+    "Languages I know" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Språk jag kan"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我会的语言"
+          }
+        }
+      }
+    },
     "Last 14 days" : {
       "localizations" : {
         "sv" : {
@@ -1866,6 +1937,23 @@
         }
       }
     },
+    "Like %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Som %1$@ %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "类似%1$@ %2$@"
+          }
+        }
+      }
+    },
     "Listening" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1915,6 +2003,23 @@
         }
       }
     },
+    "Look-alike words from Wiktionary (WikDict, kaikki.org), CC BY-SA 4.0." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liknande ord från Wiktionary (WikDict, kaikki.org), CC BY-SA 4.0."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相似词来自 Wiktionary（WikDict、kaikki.org），CC BY-SA 4.0。"
+          }
+        }
+      }
+    },
     "Lookup" : {
       "localizations" : {
         "sv" : {
@@ -1927,6 +2032,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查词"
+          }
+        }
+      }
+    },
+    "Many Swedish words look like their German or French translation (fönster – Fenster, biljett – billet). Turn on the languages you know to see these memory hints in Lookup, on word pages and on review cards. Hints come from Wiktionary (via WikDict and kaikki.org), CC BY-SA 4.0." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Många svenska ord liknar sin tyska eller franska översättning (fönster – Fenster, biljett – billet). Slå på de språk du kan för att se minnesledtrådarna i Slå upp, på ordsidor och på repetitionskort. Ledtrådarna kommer från Wiktionary (via WikDict och kaikki.org), CC BY-SA 4.0."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "许多瑞典语单词与其德语或法语译词很相似（fönster – Fenster，biljett – billet）。打开你会的语言，即可在“查词”、单词页面和复习卡片上看到这些记忆提示。提示来自 Wiktionary（经由 WikDict 和 kaikki.org），CC BY-SA 4.0。"
           }
         }
       }
@@ -1975,6 +2097,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "记忆"
+          }
+        }
+      }
+    },
+    "Memory hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minnesledtråd"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "记忆提示"
           }
         }
       }
@@ -2836,6 +2975,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rätt！正确。"
+          }
+        }
+      }
+    },
+    "Same as %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Samma som %1$@ %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与%1$@ %2$@相同"
           }
         }
       }
@@ -4152,6 +4308,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "动"
+          }
+        }
+      }
+    },
+    "🇩🇪 German" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🇩🇪 Tyska"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🇩🇪 德语"
+          }
+        }
+      }
+    },
+    "🇫🇷 French" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🇫🇷 Franska"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🇫🇷 法语"
           }
         }
       }

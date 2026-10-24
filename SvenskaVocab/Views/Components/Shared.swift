@@ -122,6 +122,7 @@ struct EntryRow: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
+                LanguageHintCaption(word: entry.word, partOfSpeech: entry.partOfSpeech)
             }
             Spacer()
             if isSaved {

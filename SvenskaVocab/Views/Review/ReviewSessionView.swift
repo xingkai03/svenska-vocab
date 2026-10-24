@@ -212,6 +212,7 @@ struct ReviewSessionView: View {
         if mode == .flashcards || mode == .listening || mode == .choice {
             Text(word.translation).font(.title3).multilineTextAlignment(.center)
         }
+        LanguageHintLines(word: word.word, partOfSpeech: word.partOfSpeech)
         if !word.forms.isEmpty {
             Text(word.entry.formList.joined(separator: " · "))
                 .font(.subheadline)
