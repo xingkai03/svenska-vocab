@@ -1,11 +1,13 @@
-import { html, useEffect } from "../../vendor/preact-htm.js";
+import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { LineChart } from "../charts.js";
 import { dictionary, formList, headword, HINT_LANGUAGES } from "../dictionary.js";
 import { isDue, mastery, retention, retentionAfter, DAY } from "../scheduler.js";
 import { speak } from "../speech.js";
+import { svt, svtTerms } from "../svt.js";
+import { EpisodeCell } from "./svt.js";
 import { useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { EmptyState, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, relative } from "../ui.js";
+import { EmptyState, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, href, relative } from "../ui.js";
 
 export function WordDetailView({ id }) {
   const saved = store.words.get(id);
@@ -22,6 +24,7 @@ export function WordDetailView({ id }) {
     [["a"], "Add to my words", !saved && (() => store.addToCollection(entry))],
     [["f"], "Favorite", saved && (() => store.updateWord(id, { isFavorite: !saved.isFavorite }))],
     [["e"], "Edit", saved && (() => go("edit", id))],
+    [["v"], "Search the word on SVT Play", () => go("svt", { q: entry.word })],
     [["m"], "Write a note", saved && (() => document.querySelector("main textarea")?.focus())],
     [["Delete", "Backspace"], "Remove from my words", saved && (() => remove())],
   ] : []);
@@ -66,6 +69,8 @@ export function WordDetailView({ id }) {
         </div><${SpeakButton} text=${entry.example} hotkey="x" /></div>
       <//>` : null}
 
+      <${SvtClips} word=${entry.word} forms=${forms} />
+
       ${saved ? html`<${Memory} word=${saved} />
         <${Section} header="My note">
           <textarea class="text" rows="2" placeholder="Mnemonic, context, related words…" value=${saved.note}
@@ -93,6 +98,22 @@ function MemoryHint({ word, partOfSpeech }) {
   return html`<${Section} header="Memory hint" footer="Look-alike words from Wiktionary (WikDict, kaikki.org), CC BY-SA 4.0.">
     ${hints.map((h) => html`<div class="cell"><span class="title3">${HINT_LANGUAGES[h.language].flag}</span>
       <div class="cell-main"><span class="headline">${h.word}</span><span class="subheadline secondary">${explanation(h)}</span></div></div>`)}
+  <//>`;
+}
+
+/** The newest SVT Play episodes where the word or one of its forms is said. Draws nothing until clips are found. */
+function SvtClips({ word, forms }) {
+  const [found, setFound] = useState(null);
+  const terms = [...new Set([word, ...forms].flatMap((w) => { const t = svtTerms(w); return t.length === 1 ? t : []; }))];
+  useEffect(() => {
+    let current = true;
+    if (terms.length) svt.search(terms, { anyOf: true }).then((r) => current && setFound(r.results), () => {});
+    return () => { current = false; };
+  }, [terms.join(" ")]);
+  if (!found?.length) return null;
+  return html`<${Section} header="Heard on SVT Play" footer="Opens SVT Play just before the word is said; some programmes can only be watched in Sweden.">
+    ${found.slice(0, 3).map((r) => html`<${EpisodeCell} ...${r} max=${4} />`)}
+    <a class="cell action" href=${href("svt", { q: word })}><${Icon} name="tv" /> Search “${word}” on SVT Play</a>
   <//>`;
 }
 

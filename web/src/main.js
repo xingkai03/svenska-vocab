@@ -13,6 +13,7 @@ import { LookupView } from "./views/lookup.js";
 import { ReviewView } from "./views/review.js";
 import { SettingsView } from "./views/settings.js";
 import { SummaryView } from "./views/summary.js";
+import { SvtView } from "./views/svt.js";
 import { TodayView } from "./views/today.js";
 import { WordsView } from "./views/words.js";
 
@@ -33,6 +34,7 @@ function Page({ route }) {
     case "summary": return html`<${SummaryView} />`;
     case "learn": return html`<${LearnView} />`;
     case "review": return html`<${ReviewView} key=${location.hash} modeId=${args[0]} practice=${query.practice === "1"} />`;
+    case "svt": return html`<${SvtView} key=${route.hash} query=${query} />`;
     case "word": return html`<${WordDetailView} key=${args[0]} id=${args[0]} />`;
     case "new": return html`<${EditWordView} key=${location.hash} prefill=${query.prefill ?? ""} />`;
     case "edit": return html`<${EditWordView} key=${args[0]} id=${args[0]} />`;
@@ -65,6 +67,7 @@ function App() {
   }, []);
 
   if (TABS.some((t) => t.name === route.name)) lastTab = route.name;
+  else if (route.name === "svt") lastTab = "lookup";
   const now = Date.now();
   let due = 0;
   for (const w of store.words.values()) if (isDue(w, now)) due += 1;

@@ -51,6 +51,7 @@ const PATHS = {
   repeat: '<path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.7M20 4v4.7h-4.7M20 12a8 8 0 0 1-13.7 5.6L4 15.3M4 20v-4.7h4.7"/>',
   sort: '<path d="M7 4v16m-3.5-3.5L7 20l3.5-3.5M17 20V4m-3.5 3.5L17 4l3.5 3.5"/>',
   filter: '<circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none"/><path d="M7.5 9h9M9.5 12.5h5M11 16h2" stroke="var(--card)"/>',
+  tv: '<rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8M10.5 8.5v5l4-2.5z"/>',
   dictionary: '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19"/><path d="M9.5 13 12 7l2.5 6M10.3 11h3.4"/>',
 };
 
@@ -65,7 +66,7 @@ export function parseRoute() {
   const raw = location.hash.replace(/^#\/?/, "");
   const [path, search = ""] = raw.split("?");
   const parts = path.split("/").filter(Boolean).map(decodeURIComponent);
-  return { name: parts[0] || "today", args: parts.slice(1), query: Object.fromEntries(new URLSearchParams(search)) };
+  return { name: parts[0] || "today", args: parts.slice(1), query: Object.fromEntries(new URLSearchParams(search)), hash: location.hash };
 }
 
 export function href(...parts) {

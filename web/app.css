@@ -332,3 +332,10 @@ kbd.hint { margin-left: 6px; background: rgba(127, 127, 127, 0.18); color: inher
 .speak { display: inline-flex; align-items: center; }
 .speak kbd.hint { margin-left: 0; }
 [data-id] > a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* SVT Play clips */
+.svt-times { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; align-items: center; }
+.svt-times .tag { font-size: 14px; font-weight: 500; padding: 3px 10px; font-variant-numeric: tabular-nums; }
+.svt-words { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 0; }
+.svt-note { margin: 24px 0 32px; }
+.svt-programme { margin-left: auto; min-width: 0; max-width: 65%; }
