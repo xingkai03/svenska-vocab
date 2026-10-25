@@ -45,7 +45,7 @@ struct SyncStatusText: View {
         } else if let error = sync.lastError {
             Text(error).foregroundStyle(.red)
         } else if let date = sync.lastSyncedAt {
-            Text("Synced \(date.formatted(.relative(presentation: .named)))")
+            Text("Synced \(date.formatted(.relative(presentation: .named).locale(AppLanguage.current.locale)))")
         } else {
             Text("Not synced yet")
         }
@@ -147,7 +147,7 @@ struct SignInView: View {
         Form {
             Section {
                 Picker("Mode", selection: $mode) {
-                    ForEach(Mode.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(Mode.allCases) { Text(L($0.rawValue)).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
@@ -175,7 +175,7 @@ struct SignInView: View {
                     Task { await submit() }
                 } label: {
                     HStack {
-                        Text(mode.rawValue)
+                        Text(L(mode.rawValue))
                         Spacer()
                         if isWorking { ProgressView() }
                     }
@@ -190,7 +190,7 @@ struct SignInView: View {
                 Section { Text(infoMessage) }
             }
         }
-        .navigationTitle(mode.rawValue)
+        .navigationTitle(L(mode.rawValue))
         .onChange(of: mode) { errorMessage = nil }
     }
 
@@ -206,7 +206,7 @@ struct SignInView: View {
                 try await account.signIn(email: email, password: password)
             case .signUp:
                 guard try await account.signUp(email: email, password: password) else {
-                    infoMessage = "Check your inbox for a confirmation email from Supabase, open the link, then come back and sign in."
+                    infoMessage = L("Check your inbox for a confirmation email from Supabase, open the link, then come back and sign in.")
                     mode = .signIn
                     return
                 }

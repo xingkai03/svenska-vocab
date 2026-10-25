@@ -67,8 +67,8 @@ struct SummaryView: View {
             let day = cal.date(byAdding: .day, value: -offset, to: today)!
             let reviews = logs.filter { cal.isDate($0.date, inSameDayAs: day) }.count
             let added = words.filter { cal.isDate($0.addedAt, inSameDayAs: day) }.count
-            return [DayActivity(day: day, kind: "Reviews", count: reviews),
-                    DayActivity(day: day, kind: "New words", count: added)]
+            return [DayActivity(day: day, kind: L("Reviews"), count: reviews),
+                    DayActivity(day: day, kind: L("New words"), count: added)]
         }
     }
 
@@ -79,7 +79,7 @@ struct SummaryView: View {
                 BarMark(x: .value("Day", item.day, unit: .day), y: .value("Count", item.count))
                     .foregroundStyle(by: .value("Kind", item.kind))
             }
-            .chartForegroundStyleScale(["Reviews": Color.accentColor, "New words": Color.purple])
+            .chartForegroundStyleScale([L("Reviews"): Color.accentColor, L("New words"): Color.purple])
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day, count: 2)) { _ in
                     AxisValueLabel(format: .dateTime.day().month(.narrow))
@@ -96,7 +96,7 @@ struct SummaryView: View {
             Text("Mastery").font(.headline)
             Chart(Mastery.allCases) { level in
                 BarMark(x: .value("Words", words.filter { $0.mastery == level }.count),
-                        y: .value("Level", level.rawValue))
+                        y: .value("Level", level.title))
                     .foregroundStyle(color(for: level))
                     .annotation(position: .trailing) {
                         Text("\(words.filter { $0.mastery == level }.count)").font(.caption)
@@ -133,11 +133,11 @@ struct SummaryView: View {
         let reviewed = words.filter { $0.lastReviewedAt != nil }
         return (0...30).flatMap { day -> [CurvePoint] in
             let date = cal.date(byAdding: .day, value: day, to: .now)!
-            var points = [CurvePoint(day: day, series: "Without review",
+            var points = [CurvePoint(day: day, series: L("Without review"),
                                      value: Scheduler.retention(elapsedDays: Double(day), stability: 1))]
             if !reviewed.isEmpty {
                 let avg = reviewed.map { Scheduler.retention(of: $0, at: date) }.reduce(0, +) / Double(reviewed.count)
-                points.append(CurvePoint(day: day, series: "Your words", value: avg))
+                points.append(CurvePoint(day: day, series: L("Your words"), value: avg))
             }
             return points
         }
@@ -151,7 +151,7 @@ struct SummaryView: View {
                     .foregroundStyle(by: .value("Series", p.series))
                     .interpolationMethod(.monotone)
             }
-            .chartForegroundStyleScale(["Your words": Color.accentColor, "Without review": Color.gray])
+            .chartForegroundStyleScale([L("Your words"): Color.accentColor, L("Without review"): Color.gray])
             .chartYScale(domain: 0...1)
             .chartYAxis {
                 AxisMarks(values: [0, 0.25, 0.5, 0.75, 1]) { value in
@@ -227,7 +227,7 @@ struct SummaryView: View {
 
 private struct StatTile: View {
     let value: String
-    let label: String
+    let label: LocalizedStringKey
     let icon: String
     let color: Color
 
@@ -248,7 +248,11 @@ private struct CheckInCalendar: View {
     let checkIns: [CheckIn]
     @State private var month = Calendar.current.dateInterval(of: .month, for: .now)!.start
 
-    private var cal: Calendar { .current }
+    private var cal: Calendar {
+        var cal = Calendar.current
+        cal.locale = AppLanguage.current.locale // weekday names in the app's language
+        return cal
+    }
 
     private var days: [Date?] {
         let range = cal.range(of: .day, in: .month, for: month)!
@@ -267,7 +271,7 @@ private struct CheckInCalendar: View {
                 Text("Check-ins").font(.headline)
                 Spacer()
                 Button { shift(-1) } label: { Image(systemName: "chevron.left") }
-                Text(month.formatted(.dateTime.month(.wide).year())).font(.subheadline).monospacedDigit()
+                Text(month.formatted(.dateTime.month(.wide).year().locale(AppLanguage.current.locale))).font(.subheadline).monospacedDigit()
                 Button { shift(1) } label: { Image(systemName: "chevron.right") }
                     .disabled(cal.isDate(month, equalTo: .now, toGranularity: .month))
             }
