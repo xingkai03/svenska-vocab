@@ -15,7 +15,6 @@ struct SettingsView: View {
     @AppStorage(AppSettings.onlineLookup) private var onlineLookup = true
     @AppStorage(AppSettings.reminderEnabled) private var reminderEnabled = false
     @AppStorage(AppSettings.reminderTime) private var reminderTime = 19 * 3600.0 // seconds after midnight
-    @AppStorage(AppSettings.skippedWords) private var skippedWords = ""
     @AppStorage(AppSettings.knowsGerman) private var knowsGerman = false
     @AppStorage(AppSettings.knowsFrench) private var knowsFrench = false
     @AppStorage(AppSettings.appLanguage) private var appLanguage = ""
@@ -108,8 +107,6 @@ struct SettingsView: View {
                         Label("Export collection as CSV", systemImage: "square.and.arrow.up")
                     }
                     .disabled(words.isEmpty)
-                    Button("Show skipped words again in Learn") { skippedWords = "" }
-                        .disabled(skippedWords.isEmpty)
                 }
 
                 Section {

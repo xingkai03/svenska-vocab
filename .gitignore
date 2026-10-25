@@ -8,3 +8,7 @@ __pycache__/
 SvenskaVocab/Resources/Private/
 # Supabase project URL and anon key for cloud sync (see supabase/Supabase.example.plist).
 SvenskaVocab/Config/
+
+# Web version: word data copied in by scripts/build_web.py, and its deploy output.
+web/data/
+_site/

@@ -26,8 +26,8 @@ struct CollectionView: View {
             let matchesFilter: Bool = switch filter {
             case .all: true
             case .due: w.isDue
-            case .learning: w.mastery == .new || w.mastery == .learning
-            case .mastered: w.mastery == .mastered || w.mastery == .familiar
+            case .learning: !w.isWellKnown
+            case .mastered: w.isWellKnown
             case .favorites: w.isFavorite
             }
             return matchesFilter && (level.isEmpty || w.level == level) && (q.isEmpty || w.word.searchFolded.contains(q) || w.translation.searchFolded.contains(q))

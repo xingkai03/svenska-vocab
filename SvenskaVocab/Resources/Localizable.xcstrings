@@ -4,6 +4,23 @@
     "%@ %@" : {
       "shouldTranslate" : false
     },
+    "%@ · %lld mastered · %lld learning / %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %lld kan jag · %lld lär mig / %lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 已掌握 %lld · 学习中 %lld / %lld"
+          }
+        }
+      }
+    },
     "%@ · practice" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -152,18 +169,18 @@
         }
       }
     },
-    "%lld of %lld learned" : {
+    "%lld mastered · %lld learning · %lld words" : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld av %lld inlärda"
+            "value" : "%lld kan jag · %lld lär mig · %lld ord"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已学 %lld / %lld"
+            "value" : "已掌握 %lld · 学习中 %lld · 共 %lld 个"
           }
         }
       }
@@ -642,6 +659,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "差一点——注意 å、ä、ö：%@"
+          }
+        }
+      }
+    },
+    "Almost — small typo. It's spelled %@, a form of %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nästan – litet stavfel. Det stavas %1$@, en form av %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差一点——有个小拼写错误。正确拼写是 %1$@，是 %2$@ 的一种形式。"
+          }
+        }
+      }
+    },
+    "Almost — small typo. It's spelled %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nästan – litet stavfel. Det stavas %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差一点——有个小拼写错误。正确拼写是 %@。"
           }
         }
       }
@@ -1661,18 +1712,18 @@
         }
       }
     },
-    "I don't know" : {
+    "I forget" : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jag vet inte"
+            "value" : "Jag minns inte"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我不知道"
+            "value" : "我忘了"
           }
         }
       }
@@ -1987,18 +2038,18 @@
         }
       }
     },
-    "Look up more words or reset skipped words in Settings." : {
+    "Look up more words, or pick another word list." : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Slå upp fler ord eller återställ överhoppade ord i Inställningar."
+            "value" : "Slå upp fler ord eller välj en annan ordlista."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "去查更多单词，或在设置中重置跳过的单词。"
+            "value" : "去查更多单词，或换一个词表。"
           }
         }
       }
@@ -2049,6 +2100,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "许多瑞典语单词与其德语或法语译词很相似（fönster – Fenster，biljett – billet）。打开你会的语言，即可在“查词”、单词页面和复习卡片上看到这些记忆提示。提示来自 Wiktionary（经由 WikDict 和 kaikki.org），CC BY-SA 4.0。"
+          }
+        }
+      }
+    },
+    "Marked as forgotten. It will come back soon." : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markerat som glömt. Det kommer tillbaka snart."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已标记为忘记，很快会再次出现。"
           }
         }
       }
@@ -2962,6 +3029,23 @@
         }
       }
     },
+    "Rätt! %@ is a form of %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rätt! %1$@ är en form av %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rätt！%1$@ 是 %2$@ 的一种形式。"
+          }
+        }
+      }
+    },
     "Rätt! Correct." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3185,22 +3269,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "显示答案"
-          }
-        }
-      }
-    },
-    "Show skipped words again in Learn" : {
-      "localizations" : {
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa överhoppade ord igen i Lär dig"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在“学习”中重新显示跳过的单词"
           }
         }
       }
@@ -3704,6 +3772,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可以不输入 å、ä、ö：“bat”也能找到“båt”。%@ 个单词可离线查询，其他单词会在 Folkets lexikon 中在线查找。"
+          }
+        }
+      }
+    },
+    "Undo “I know it”" : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ångra ”Det kan jag”"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销“我认识”"
           }
         }
       }

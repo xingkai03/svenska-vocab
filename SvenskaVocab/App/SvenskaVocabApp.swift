@@ -65,7 +65,10 @@ struct SvenskaVocabApp: App {
 }
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var context
+    @EnvironmentObject private var dictionary: DictionaryService
     @Query private var words: [SavedWord]
+    @AppStorage(AppSettings.skippedWords) private var skippedRaw = ""
 
     private var dueCount: Int { words.filter(\.isDue).count }
 
@@ -81,5 +84,15 @@ struct ContentView: View {
             SummaryView()
                 .tabItem { Label("Summary", systemImage: "chart.bar.fill") }
         }
+        // Words marked "I know it" now go to the collection as mastered; earlier ones (also synced from
+        // another device or the web) are moved there once the dictionary has loaded.
+        .task(id: dictionary.isLoaded) { adoptSkippedWords() }
+        .onChange(of: skippedRaw) { adoptSkippedWords() }
+    }
+
+    private func adoptSkippedWords() {
+        guard dictionary.isLoaded, !skippedRaw.isEmpty else { return }
+        context.adoptSkippedWords(skippedRaw, dictionary: dictionary)
+        skippedRaw = ""
     }
 }

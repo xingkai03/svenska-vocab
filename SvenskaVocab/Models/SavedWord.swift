@@ -59,6 +59,18 @@ final class SavedWord {
 
     var isDue: Bool { dueDate <= .now }
 
+    /// Counted as mastered in word list progress and the Mastered filter (familiar or mastered).
+    var isWellKnown: Bool { mastery == .familiar || mastery == .mastered }
+
+    /// Marks a word the learner already knows ("I know it") as mastered: next review in a month.
+    func markKnown(now: Date = .now) {
+        repetitions = 3
+        interval = 30
+        reviewCount = max(reviewCount, 1)
+        lastReviewedAt = now
+        dueDate = Calendar.current.date(byAdding: .day, value: interval, to: Calendar.current.startOfDay(for: now)) ?? now
+    }
+
     var mastery: Mastery {
         if reviewCount == 0 { return .new }
         if interval < 7 { return .learning }
