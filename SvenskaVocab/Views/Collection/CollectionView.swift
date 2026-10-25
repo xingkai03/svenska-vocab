@@ -26,8 +26,8 @@ struct CollectionView: View {
             let matchesFilter: Bool = switch filter {
             case .all: true
             case .due: w.isDue
-            case .learning: w.mastery == .new || w.mastery == .learning
-            case .mastered: w.mastery == .mastered || w.mastery == .familiar
+            case .learning: !w.isWellKnown
+            case .mastered: w.isWellKnown
             case .favorites: w.isFavorite
             }
             return matchesFilter && (level.isEmpty || w.level == level) && (q.isEmpty || w.word.searchFolded.contains(q) || w.translation.searchFolded.contains(q))
@@ -44,7 +44,7 @@ struct CollectionView: View {
         NavigationStack {
             List {
                 Picker("Filter", selection: $filter) {
-                    ForEach(Filter.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(Filter.allCases) { Text(L($0.rawValue)).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
@@ -89,7 +89,7 @@ struct CollectionView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
                         Picker("Sort", selection: $sort) {
-                            ForEach(Sort.allCases) { Text($0.rawValue).tag($0) }
+                            ForEach(Sort.allCases) { Text(L($0.rawValue)).tag($0) }
                         }
                         Picker("Level", selection: $level) {
                             Text("All levels").tag("")
@@ -126,7 +126,7 @@ struct CollectionView: View {
                     Image(systemName: "star.fill").font(.caption).foregroundStyle(.yellow)
                 }
                 Spacer()
-                Text(word.isDue ? "due" : Calendar.current.isDateInToday(word.dueDate) ? "today" : Scheduler.formatInterval(daysUntil(word.dueDate)))
+                Text(word.isDue ? L("due") : Calendar.current.isDateInToday(word.dueDate) ? L("today") : Scheduler.formatInterval(daysUntil(word.dueDate)))
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(word.isDue ? Color.red : Color.secondary)
             }
@@ -134,6 +134,7 @@ struct CollectionView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+            LanguageHintCaption(word: word.word, partOfSpeech: word.partOfSpeech)
             MemoryBar(retention: word.retention)
         }
         .padding(.vertical, 2)

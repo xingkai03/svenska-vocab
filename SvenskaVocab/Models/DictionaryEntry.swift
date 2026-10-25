@@ -21,6 +21,19 @@ struct DictionaryEntry: Identifiable, Hashable {
 
     var id: String { "\(word.lowercased())#\(partOfSpeech)" }
 
+    /// The same word across word lists, whatever part of speech a list gives it: lowercased,
+    /// without a leading article or infinitive marker ("en bil", "att springa").
+    var wordKey: String { Self.wordKey(word) }
+
+    static func wordKey(_ word: String) -> String {
+        var w = word.lowercased().trimmingCharacters(in: .whitespaces)
+        for prefix in ["en ", "ett ", "att "] where w.hasPrefix(prefix) && w.count > prefix.count {
+            w = String(w.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+            break
+        }
+        return w
+    }
+
     var formList: [String] {
         forms.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
     }
@@ -39,16 +52,16 @@ enum PartOfSpeech {
 
     static func short(_ pos: String) -> String {
         switch pos {
-        case "noun": "n."
-        case "verb": "v."
-        case "adjective": "adj."
-        case "adverb": "adv."
-        case "pronoun": "pron."
-        case "preposition": "prep."
-        case "conjunction": "conj."
-        case "numeral": "num."
-        case "interjection": "interj."
-        case "phrase": "phr."
+        case "noun": L("n.")
+        case "verb": L("v.")
+        case "adjective": L("adj.")
+        case "adverb": L("adv.")
+        case "pronoun": L("pron.")
+        case "preposition": L("prep.")
+        case "conjunction": L("conj.")
+        case "numeral": L("num.")
+        case "interjection": L("interj.")
+        case "phrase": L("phr.")
         default: pos
         }
     }

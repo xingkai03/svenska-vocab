@@ -18,6 +18,7 @@ final class DictionaryService: ObservableObject {
     static let levels = ["A1", "A2", "B1", "B2", "C1", "C2"]
 
     private var index = SearchIndex(entries: [], coreCount: 0)
+    private var byID: [String: DictionaryEntry] = [:]
     private var decks: [String: [DictionaryEntry]] = [:]
     private var filler: DeckFiller?
 
@@ -34,12 +35,14 @@ final class DictionaryService: ObservableObject {
             let decks = Self.applyLevels(to: &loaded)
             let all = loaded
             let fullIndex = SearchIndex(entries: all, coreCount: core.count)
+            let byID = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
             let filler = DeckFiller(entries: all)
             let custom = WordDecks.loadAll(filler: filler)
             await MainActor.run {
                 self.coreEntries = Array(all.prefix(core.count))
                 self.entries = all
                 self.index = fullIndex
+                self.byID = byID
                 self.decks = decks
                 self.filler = filler
                 self.customDecks = custom
@@ -90,6 +93,12 @@ final class DictionaryService: ObservableObject {
     /// Kelly words of one CEFR level ("A1" … "C2"), most useful first.
     func deck(_ level: String) -> [DictionaryEntry] {
         decks[level] ?? []
+    }
+
+    /// The entry with this id ("word#pos") from the dictionary or a word list, if any.
+    func entry(id: String) -> DictionaryEntry? {
+        byID[id] ?? coreEntries.first { $0.id == id }
+            ?? customDecks.lazy.flatMap(\.entries).first { $0.id == id }
     }
 
     /// Imports a TSV/CSV word list as a new deck and returns its word count.
@@ -143,7 +152,7 @@ final class DictionaryService: ObservableObject {
 
     enum LookupError: LocalizedError {
         case badResponse
-        var errorDescription: String? { "The online dictionary could not be reached." }
+        var errorDescription: String? { L("The online dictionary could not be reached.") }
     }
 
     func lookupOnline(_ query: String) async throws -> [DictionaryEntry] {

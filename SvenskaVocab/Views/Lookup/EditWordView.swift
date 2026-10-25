@@ -48,7 +48,7 @@ struct EditWordView: View {
                     TextField("Word", text: $word)
                         .textInputAutocapitalization(.never)
                     Picker("Part of speech", selection: $partOfSpeech) {
-                        ForEach(PartOfSpeech.all, id: \.self) { Text($0.capitalized).tag($0) }
+                        ForEach(PartOfSpeech.all, id: \.self) { Text(L($0.capitalized)).tag($0) }
                     }
                     if partOfSpeech == "noun" {
                         Picker("Gender", selection: $gender) {

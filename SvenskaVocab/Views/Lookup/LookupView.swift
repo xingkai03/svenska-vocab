@@ -70,8 +70,8 @@ struct LookupView: View {
     /// is cut to a few rows so the other stays visible (e.g. "dog" shows Swedish "dog" = died, and "hund").
     @ViewBuilder
     private func localSections(_ results: SearchResults) -> some View {
-        let swedish = ("Swedish", results.swedish)
-        let english = ("English → Swedish", results.english)
+        let swedish = (L("Swedish"), results.swedish)
+        let english = (L("English → Swedish"), results.english)
         let (first, second) = results.englishFirst ? (english, swedish) : (swedish, english)
         let collapsed = !showAllFirst && !second.1.isEmpty && first.1.count > 6
         if !first.1.isEmpty {

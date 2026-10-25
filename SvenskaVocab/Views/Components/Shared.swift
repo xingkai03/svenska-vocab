@@ -49,6 +49,29 @@ extension ModelContext {
         try? save()
         return word
     }
+
+    /// "I know it": adds the entry to the collection as mastered. A word already in the collection keeps its progress.
+    /// Returns the new word, or nil if it was already there.
+    @discardableResult
+    func addAsKnown(_ entry: DictionaryEntry) -> SavedWord? {
+        let key = entry.id
+        if (try? fetchCount(FetchDescriptor<SavedWord>(predicate: #Predicate<SavedWord> { $0.key == key }))) ?? 0 > 0 {
+            return nil
+        }
+        let word = SavedWord(entry: entry)
+        word.markKnown()
+        insert(word)
+        try? save()
+        return word
+    }
+
+    /// Moves words skipped with "I know it" in older versions (or on another device) into the collection as mastered.
+    @MainActor
+    func adoptSkippedWords(_ raw: String, dictionary: DictionaryService) {
+        for id in raw.split(separator: "\n").map(String.init) {
+            if let entry = dictionary.entry(id: id) { addAsKnown(entry) }
+        }
+    }
 }
 
 /// Small horizontal bar showing the forgetting-curve retention of a word.
@@ -79,7 +102,7 @@ struct PartOfSpeechTag: View {
     let entry: DictionaryEntry
 
     var body: some View {
-        Text(entry.gender.isEmpty ? PartOfSpeech.short(entry.partOfSpeech) : "\(entry.gender)-word")
+        Text(entry.gender.isEmpty ? PartOfSpeech.short(entry.partOfSpeech) : L("%@-word", entry.gender))
             .font(.caption2.weight(.semibold))
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
@@ -122,6 +145,7 @@ struct EntryRow: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
+                LanguageHintCaption(word: entry.word, partOfSpeech: entry.partOfSpeech)
             }
             Spacer()
             if isSaved {
