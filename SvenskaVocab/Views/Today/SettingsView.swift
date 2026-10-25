@@ -15,6 +15,8 @@ struct SettingsView: View {
     @AppStorage(AppSettings.onlineLookup) private var onlineLookup = true
     @AppStorage(AppSettings.reminderEnabled) private var reminderEnabled = false
     @AppStorage(AppSettings.reminderTime) private var reminderTime = 19 * 3600.0 // seconds after midnight
+    @AppStorage(AppSettings.knowsGerman) private var knowsGerman = false
+    @AppStorage(AppSettings.knowsFrench) private var knowsFrench = false
     @AppStorage(AppSettings.appLanguage) private var appLanguage = ""
     @State private var notificationsDenied = false
     @State private var showImporter = false
@@ -80,6 +82,15 @@ struct SettingsView: View {
                     } else {
                         Text("No Swedish voice is installed. Add one in iOS Settings › Accessibility › Spoken Content › Voices › Swedish.")
                     }
+                }
+
+                Section {
+                    Toggle("🇩🇪 German", isOn: $knowsGerman)
+                    Toggle("🇫🇷 French", isOn: $knowsFrench)
+                } header: {
+                    Text("Languages I know")
+                } footer: {
+                    Text("Many Swedish words look like their German or French translation (fönster – Fenster, biljett – billet). Turn on the languages you know to see these memory hints in Lookup, on word pages and on review cards. Hints come from Wiktionary (via WikDict and kaikki.org), CC BY-SA 4.0.")
                 }
 
                 Section {
