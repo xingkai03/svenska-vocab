@@ -58,6 +58,8 @@ The project uses Xcode 16's folder-synchronised groups, so new files you add und
 
 On a computer everything works from the keyboard: T / L / W / S switch tabs, `/` searches, J / K or the arrow keys move through lists, Space and 1–4 answer reviews, ← / → mark new words known or learn them (Z undoes), P pronounces the word (Shift+P slowly, X the example; in Lookup and My words the selected row), Esc goes back, and `?` lists every shortcut for the current screen. In spelling, `[`, `'` and `;` type å, ä and ö (where they sit on a Swedish keyboard).
 
+The web version also has SVT Play clips (formerly SVT Learn on xingkai03.github.io/svt-learn): search a Swedish word under Lookup › Hear words on SVT Play (or V) and jump to the moment it's said in an SVT programme, and each word page lists the newest episodes where the word or one of its forms is said. `web/svt/` is a links-only index (word → episode and second, plus episode names and links), never SVT's subtitles. Episodes that have left SVT Play are hidden. This is web only; the iPhone app doesn't include it.
+
 It is plain JavaScript modules with no build step (Preact + htm are vendored in `web/vendor/`). To run it locally:
 
 ```
@@ -81,6 +83,7 @@ SvenskaVocab/
     Private/      your personal lists (git-ignored)
 scripts/          build_folkets.py, build_kelly.py, build_open_decks.py, build_language_hints.py, build_web.py
 web/              browser version (see Web version above)
+  svt/            SVT Play word index (episodes.json + one file per two-letter prefix)
 ```
 
 ### Extending the built-in vocabulary

@@ -35,7 +35,8 @@ export function LookupView({ query: initial = "" }) {
   useKeys([
     [["p"], "Pronounce the selected word", results && (() => speak(selectedWord()))],
     [["P"], "Pronounce it slowly", results && (() => speak(selectedWord(), { slow: true }))],
-    [["n"], "Add your own word", () => go("new", query.trim() ? { prefill: query.trim() } : {})]]);
+    [["n"], "Add your own word", () => go("new", query.trim() ? { prefill: query.trim() } : {})],
+    [["v"], "Hear it on SVT Play", () => go("svt", query.trim() ? { q: query.trim() } : {})]]);
 
   return html`
     <${NavBar} title="Lookup" large right=${html`
@@ -63,6 +64,10 @@ export function LookupView({ query: initial = "" }) {
             <div class="headline"><${Icon} name="dictionary" /> Search in Swedish or English</div>
             <div class="subheadline secondary">Type without å, ä, ö if you like: “bat” finds “båt”. ${dictionary.entries.length.toLocaleString()} words, from the same dictionary as the app.</div>
           </div></div>
+          <a class="cell" href=${href("svt")}><span class="accent"><${Icon} name="tv" /></span>
+            <div class="cell-main"><span>Hear words on SVT Play</span>
+              <span class="subheadline secondary">Jump to the moment a word is said in an SVT programme.</span></div>
+            <span class="chevron"><${Icon} name="chevronRight" /></span></a>
         <//>`
       : html`
         <${Results} results=${results} query=${query} showAllFirst=${showAllFirst} onShowAll=${() => setShowAllFirst(true)} />
@@ -70,6 +75,7 @@ export function LookupView({ query: initial = "" }) {
         <${Section}>
           <button class="cell action" onClick=${() => go("new", { prefill: query.trim() })}>
             <${Icon} name="plusCircle" /> Add “${query.trim()}” as your own word</button>
+          <a class="cell action" href=${href("svt", { q: query.trim() })}><${Icon} name="tv" /> Hear “${query.trim()}” on SVT Play</a>
         <//>`}
     </div>`;
 }
