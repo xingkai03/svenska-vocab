@@ -8,15 +8,14 @@ struct DiscoverView: View {
     @EnvironmentObject private var dictionary: DictionaryService
     @EnvironmentObject private var speech: SpeechService
     @Query private var words: [SavedWord]
-    @AppStorage(AppSettings.skippedWords) private var skippedRaw = ""
     @AppStorage(AppSettings.autoSpeak) private var autoSpeak = true
     /// "core", a CEFR level ("A1" … "C2") or a WordDeck id.
     @AppStorage(AppSettings.discoverDeck) private var deck = "core"
     @State private var chapter = ""
     @State private var partOfSpeech = "all"
     @State private var learnedThisVisit = 0
-
-    private var skipped: Set<String> { Set(skippedRaw.split(separator: "\n").map(String.init)) }
+    /// The last word marked "I know it", until the next answer, so it can be undone.
+    @State private var lastKnown: SavedWord?
 
     private var customDeck: WordDeck? { dictionary.customDecks.first { $0.id == deck } }
 
@@ -27,11 +26,8 @@ struct DiscoverView: View {
     }
 
     private var candidates: [DictionaryEntry] {
-        let saved = Set(words.map(\.key))
-        let skip = skipped
-        return deckEntries.filter {
-            !saved.contains($0.id) && !skip.contains($0.id) && matchesFilter($0)
-        }
+        let saved = savedWords
+        return deckEntries.filter { saved[$0.wordKey] == nil && matchesFilter($0) }
     }
 
     /// Bundled and imported word lists by picker section, in `WordDeck.groupOrder`.
@@ -41,10 +37,39 @@ struct DiscoverView: View {
         return groups.keys.sorted { (order($0), $0) < (order($1), $1) }.map { ($0, groups[$0]!) }
     }
 
-    /// "A1 · 120/1339": learned of total words in a list.
-    private func label(_ name: String, _ entries: [DictionaryEntry], _ saved: Set<String>) -> String {
+    /// Collection words by `DictionaryEntry.wordKey` → whether they count as mastered, so a word
+    /// learned from one list counts in every list that has it.
+    private var savedWords: [String: Bool] {
+        var result: [String: Bool] = [:]
+        for w in words {
+            let key = DictionaryEntry.wordKey(w.word)
+            result[key] = (result[key] ?? false) || w.isWellKnown
+        }
+        return result
+    }
+
+    /// Words of a list in the collection: mastered (familiar or better) and still being learned.
+    private struct Progress {
+        var mastered = 0, learning = 0
+    }
+
+    private func progress(_ entries: [DictionaryEntry], _ known: [String: Bool]) -> Progress {
+        var p = Progress()
+        for e in entries {
+            switch known[e.wordKey] {
+            case true?: p.mastered += 1
+            case false?: p.learning += 1
+            case nil: break
+            }
+        }
+        return p
+    }
+
+    /// "A1 · 120 mastered · 35 learning / 1339".
+    private func label(_ name: String, _ entries: [DictionaryEntry], _ known: [String: Bool]) -> String {
         guard !entries.isEmpty else { return name }
-        return "\(name) · \(entries.filter { saved.contains($0.id) }.count)/\(entries.count)"
+        let p = progress(entries, known)
+        return L("%@ · %lld mastered · %lld learning / %lld", name, p.mastered, p.learning, entries.count)
     }
 
     private func matchesFilter(_ e: DictionaryEntry) -> Bool {
@@ -58,8 +83,8 @@ struct DiscoverView: View {
     var body: some View {
         let remaining = candidates
         let all = deckEntries
-        let saved = Set(words.map(\.key))
-        let learned = all.filter { saved.contains($0.id) }.count
+        let saved = savedWords
+        let current = progress(all, saved)
         VStack(spacing: 20) {
             HStack {
                 Picker("Word list", selection: $deck) {
@@ -96,17 +121,28 @@ struct DiscoverView: View {
 
             if !all.isEmpty {
                 VStack(spacing: 4) {
-                    ProgressView(value: Double(learned), total: Double(all.count))
-                    Text("\(learned) of \(all.count) learned")
+                    ProgressView(value: Double(current.mastered + current.learning), total: Double(all.count))
+                    Text("\(current.mastered) mastered · \(current.learning) learning · \(all.count) words")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
 
             if let entry = remaining.first {
-                Text("\(remaining.count) words left · \(learnedThisVisit) added this session")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text("\(remaining.count) words left · \(learnedThisVisit) added this session")
+                        .foregroundStyle(.secondary)
+                    if let lastKnown {
+                        Button("Undo “I know it”") {
+                            withAnimation {
+                                context.delete(lastKnown)
+                                try? context.save()
+                                self.lastKnown = nil
+                            }
+                        }
+                    }
+                }
+                .font(.caption)
 
                 card(entry)
                     .id(entry.id)
@@ -115,7 +151,7 @@ struct DiscoverView: View {
 
                 HStack(spacing: 16) {
                     Button {
-                        withAnimation { skippedRaw += (skippedRaw.isEmpty ? "" : "\n") + entry.id }
+                        withAnimation { lastKnown = context.addAsKnown(entry) }
                     } label: {
                         Label("I know it", systemImage: "checkmark")
                             .frame(maxWidth: .infinity)
@@ -126,6 +162,7 @@ struct DiscoverView: View {
                         withAnimation {
                             context.addToCollection(entry)
                             learnedThisVisit += 1
+                            lastKnown = nil
                         }
                     } label: {
                         Label("Learn", systemImage: "plus")
@@ -140,7 +177,7 @@ struct DiscoverView: View {
             } else {
                 ContentUnavailableView("You've seen them all",
                                        systemImage: "checkmark.seal",
-                                       description: Text("Look up more words or reset skipped words in Settings."))
+                                       description: Text("Look up more words, or pick another word list."))
             }
             Spacer()
         }
@@ -168,6 +205,7 @@ struct DiscoverView: View {
                 SpeakButton(text: entry.word, slow: true, font: .title2)
             }
             Text(entry.translation).font(.title3).multilineTextAlignment(.center)
+            LanguageHintLines(word: entry.word, partOfSpeech: entry.partOfSpeech)
             if !entry.formList.isEmpty {
                 Text(entry.formList.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary)
             }

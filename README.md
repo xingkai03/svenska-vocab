@@ -17,11 +17,13 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
   - **Topics** – 16 everyday themes (greetings, family, body & health, food, home, clothes, weather, time, numbers, travel, city, work & school, shopping, nature, feelings, hobbies), 30–50 words each.
   The picker shows learned / total for every list.
 - **Word lists** – import your own lists (Settings › Word lists › Import word list…, from Files on the iPhone) as .tsv, .csv or .txt with Swedish, English and optionally part of speech, example and chapter. They appear in Learn new words with a chapter filter; missing grammar and examples are filled in from the dictionary.
+- **German and French memory hints** – in Settings › Languages I know, turn on German and/or French. About 8 000 Swedish words then show a look-alike German word and 3 000 a French one ("fönster" – 🇩🇪 Fenster, "biljett" – 🇫🇷 billet), in Lookup, Learn new words, your collection, the word page and on review cards after you answer. Built from Wiktionary translations and etymologies; only words with the same meaning that look alike are kept, so false friends such as "snäll" / "schnell" are left out.
 - **CEFR levels** – about 7 500 words carry a level badge (A1–C2) in search results, word details and your collection, which you can filter by level.
 - **Spaced repetition** – an SM-2 scheduler with Again / Hard / Good / Easy grading and interval previews. Forgotten words come back in the same session.
 - **Forgetting curve** – each word has a modelled recall probability R(t) = 0.9^(t / interval), shown as a memory-strength bar and a curve on its detail page.
 - **Review modes** – flashcards, English → Swedish, multiple choice, listening, and spelling (with å/ä/ö keys and "almost right" detection). When nothing is due you can practise without changing the schedule.
 - **Daily check-in** – set a daily goal (reviews + new words). Once you reach it you can check in. Streak counter, a week strip, and a daily reminder notification.
+- **Daily reading** – every day the Today screen has a short Swedish story or topic introduction built around six words you learned or reviewed in the last two weeks. Your words are highlighted; tap one to open it. Listen to the whole text, show an English translation, or ask for a new story or topic. On iOS 26 devices with Apple Intelligence the text is written on the device (free, nothing leaves the phone); elsewhere a simple offline version is made from sentence templates and the words' example sentences.
 - **Account & cloud sync** – optional sign-in (email and password, via [Supabase](https://supabase.com)). Your saved words with their review state, review history, check-ins, settings and imported word lists are backed up and kept in sync across devices; the dictionary and built-in lists stay on the device. The app works fully offline and syncs when it opens, closes and every few minutes. Words already on the device are merged into the account on first sign-in.
 - **App language** – the interface is in English, Swedish or Simplified Chinese (Settings › App language, or follow the iPhone's language). Dictionary translations stay in English.
 - **Summary** – words, mastered, current and best streak, total reviews, 30-day accuracy, a 14-day activity chart, mastery breakdown, a forgetting curve for your whole collection, a 7-day review forecast, a check-in calendar, and your trickiest words.
@@ -59,10 +61,10 @@ SvenskaVocab/
   Services/       Dictionary (offline + Folkets lexikon), speech, scheduler, settings, reminders
     Cloud/        Supabase auth client and sync
   Views/          Today, Lookup, Collection, Review, Summary
-  Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv and kelly_levels.tsv (generated)
+  Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv, kelly_levels.tsv, language_hints.tsv (generated)
     Decks/        open word lists (deck_*.tsv)
     Private/      your personal lists (git-ignored)
-scripts/          build_folkets.py, build_kelly.py, build_open_decks.py
+scripts/          build_folkets.py, build_kelly.py, build_open_decks.py, build_language_hints.py
 ```
 
 ### Extending the built-in vocabulary
@@ -131,3 +133,4 @@ Spoken frequency lists: [FrequencyWords](https://github.com/hermitdave/Frequency
 Academic words: Akademisk ordlista, Ribeck, Jansson & Sköldberg (2016), [Språkbanken](https://spraakbanken.gu.se/en/resources/ao), licensed CC BY 4.0.
 Expressions: [Swe-MWELex](https://spraakbanken.gu.se/en/resources/swe-mwelex), Språkbanken, University of Gothenburg, licensed CC BY 4.0 (the .xlsx release).
 CEFR levels come from the Swedish Kelly list, [Språkbanken](https://spraakbanken.gu.se/en/resources/kelly), University of Gothenburg, licensed CC BY 4.0.
+German and French memory hints: Wiktionary contributors, via [WikDict](https://www.wikdict.com/) (Swedish–German and Swedish–French translations) and [kaikki.org](https://kaikki.org/dictionary/Swedish/) (etymologies), licensed CC BY-SA 4.0. The generated `language_hints.tsv` is a derivative work under the same licence.

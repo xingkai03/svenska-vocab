@@ -9,10 +9,14 @@ enum AppSettings {
     static let autoSpeak = "autoSpeak"
     static let reminderEnabled = "reminderEnabled"
     static let reminderTime = "reminderTime"
+    /// Legacy: words skipped with "I know it" before they went to the collection as mastered. Still synced,
+    /// so lists marked on the web or an older build are moved into the collection (see ContentView).
     static let skippedWords = "skippedWords"
     static let recentSearches = "recentSearches"
     static let onlineLookup = "onlineLookup"
     static let discoverDeck = "discoverDeck"
+    static let knowsGerman = "knowsGerman"
+    static let knowsFrench = "knowsFrench"
     static let appLanguage = "appLanguage"
 }
 
