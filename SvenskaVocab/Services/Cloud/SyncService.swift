@@ -531,6 +531,7 @@ struct LogRecord: Codable {
     var wordKey: String
     var grade: Int
     var intervalAfter: Int
+    var mode: String?
     var reviewedAt: Date
     var updatedAt: Date?
 
@@ -546,12 +547,13 @@ struct LogRecord: Codable {
         wordKey = log.wordKey
         grade = log.grade
         intervalAfter = log.intervalAfter
+        mode = log.mode
         reviewedAt = log.date
     }
 
     func makeLog() -> ReviewLog {
         ReviewLog(date: reviewedAt, wordKey: wordKey, grade: ReviewGrade(rawValue: grade) ?? .good,
-                  intervalAfter: intervalAfter)
+                  intervalAfter: intervalAfter, mode: mode ?? "")
     }
 }
 
@@ -566,6 +568,7 @@ struct SettingsData: Codable, Equatable {
     var discoverDeck: String?
     var knowsGerman: Bool?
     var knowsFrench: Bool?
+    var disabledReviewModes: String?
 
     static func fromDefaults(_ d: UserDefaults = .standard) -> SettingsData {
         SettingsData(dailyGoal: d.object(forKey: AppSettings.dailyGoal) as? Int,
@@ -576,7 +579,8 @@ struct SettingsData: Codable, Equatable {
                      skippedWords: d.string(forKey: AppSettings.skippedWords),
                      discoverDeck: d.string(forKey: AppSettings.discoverDeck),
                      knowsGerman: d.object(forKey: AppSettings.knowsGerman) as? Bool,
-                     knowsFrench: d.object(forKey: AppSettings.knowsFrench) as? Bool)
+                     knowsFrench: d.object(forKey: AppSettings.knowsFrench) as? Bool,
+                     disabledReviewModes: d.string(forKey: AppSettings.disabledReviewModes))
     }
 
     func applyToDefaults(_ d: UserDefaults = .standard) {
@@ -584,7 +588,8 @@ struct SettingsData: Codable, Equatable {
                                       AppSettings.speechRate: speechRate, AppSettings.autoSpeak: autoSpeak,
                                       AppSettings.onlineLookup: onlineLookup, AppSettings.skippedWords: skippedWords,
                                       AppSettings.discoverDeck: discoverDeck, AppSettings.knowsGerman: knowsGerman,
-                                      AppSettings.knowsFrench: knowsFrench]
+                                      AppSettings.knowsFrench: knowsFrench,
+                                      AppSettings.disabledReviewModes: disabledReviewModes]
         for case let (key, value?) in values { d.set(value, forKey: key) }
     }
 }

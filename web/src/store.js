@@ -49,6 +49,8 @@ export const SETTING_DEFAULTS = {
   discoverDeck: "core",
   knowsGerman: false,
   knowsFrench: false,
+  /** Review methods turned off, comma-separated ids from REVIEW_MODES. */
+  disabledReviewModes: "",
 };
 
 /** Key of a word in the collection: the same as DictionaryEntry.id in the app. */
@@ -56,7 +58,7 @@ export const entryId = (e) => `${e.word.toLowerCase()}#${e.partOfSpeech}`;
 
 class Store {
   words = new Map(); // key → saved word
-  logs = []; // { date, wordKey, grade, intervalAfter }, oldest first
+  logs = []; // { date, wordKey, grade, intervalAfter, mode }, oldest first; mode is the review method ("" if unknown)
   checkIns = new Map(); // "2026-10-21" → { day, checkedInAt, itemsDone }
   settings = {}; // only the settings the learner has set (see SETTING_DEFAULTS)
   lists = new Map(); // "deck_my_list.tsv" → file content

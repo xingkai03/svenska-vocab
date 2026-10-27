@@ -99,12 +99,15 @@ final class ReviewLog {
     var wordKey: String
     var grade: Int
     var intervalAfter: Int
+    /// The review method (ReviewMode raw value); empty for answers given before methods were recorded.
+    var mode: String = ""
 
-    init(date: Date = .now, wordKey: String, grade: ReviewGrade, intervalAfter: Int) {
+    init(date: Date = .now, wordKey: String, grade: ReviewGrade, intervalAfter: Int, mode: String = "") {
         self.date = date
         self.wordKey = wordKey
         self.grade = grade.rawValue
         self.intervalAfter = intervalAfter
+        self.mode = mode
     }
 
     var wasCorrect: Bool { grade != ReviewGrade.again.rawValue }

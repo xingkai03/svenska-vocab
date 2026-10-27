@@ -42,7 +42,7 @@ export function WordsView() {
   useKeys([
     ...FILTERS.map(([v, t], i) => [[String(i + 1)], `Show ${t === "★" ? "favorites" : t.toLowerCase()}`, () => set({ filter: v })]),
     [["o"], "Change the sort order", () => set({ sort: SORTS[(SORTS.findIndex((x) => x[0] === view.sort) + 1) % SORTS.length][0] })],
-    [["r"], "Review", words.length && (() => go("review", "flashcards", anyDue ? {} : { practice: 1 }))],
+    [["r"], "Review", words.length && (() => go("review", "mixed", anyDue ? {} : { practice: 1 }))],
     [["n"], "Add a word", () => go("new")],
     [["p"], "Pronounce the selected word", visible.length && (() => speak(selectedWord()))],
     [["P"], "Pronounce it slowly", visible.length && (() => speak(selectedWord(), { slow: true }))],
@@ -52,7 +52,7 @@ export function WordsView() {
     <${NavBar} title="My words" large
       right=${html`
         ${words.length ? html`<button class="bar-button" title="Review" aria-label="Review"
-          onClick=${() => go("review", "flashcards", anyDue ? {} : { practice: 1 })}><${Icon} name="cards" /></button>` : null}
+          onClick=${() => go("review", "mixed", anyDue ? {} : { practice: 1 })}><${Icon} name="cards" /></button>` : null}
         <button class="bar-button" title="Add word" aria-label="Add word" onClick=${() => go("new")}><${Icon} name="plus" /></button>`}>
       <div class="page"><label class="search"><${Icon} name="search" />
         <input type="search" placeholder="Filter my words" value=${view.search} onInput=${(e) => set({ search: e.currentTarget.value })} aria-label="Filter my words" />

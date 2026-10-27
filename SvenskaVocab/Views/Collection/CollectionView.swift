@@ -103,7 +103,7 @@ struct CollectionView: View {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if !words.isEmpty {
                         NavigationLink {
-                            ReviewSessionView(mode: .flashcards, practice: !words.contains(where: \.isDue))
+                            ReviewSessionView(practice: !words.contains(where: \.isDue))
                         } label: {
                             Image(systemName: "rectangle.on.rectangle.angled")
                         }

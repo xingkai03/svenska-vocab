@@ -1,6 +1,7 @@
 import { html, useEffect, useRef, useState } from "../../vendor/preact-htm.js";
 import { dictionary, formList, headword, shortPos } from "../dictionary.js";
 import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../scheduler.js";
+import { enabledMethods, pickMethod } from "../methods.js";
 import { checkSpelling as check } from "../spelling.js";
 import { speak } from "../speech.js";
 import { store } from "../store.js";
@@ -24,9 +25,16 @@ const shuffle = (a) => {
   return b;
 };
 
-/** Practice reviews are logged (they count toward the daily goal) but don't change the schedule. */
+/** Mixed review picks a method for each card (see methods.js). */
+export const MIXED = { id: "mixed", title: "Mixed", icon: "shuffle" };
+
+/**
+ * Practice reviews are logged (they count toward the daily goal) but don't change the schedule. modeId "mixed" picks
+ * a method for each card.
+ */
 export function ReviewView({ modeId, practice }) {
-  const mode = REVIEW_MODES.find((m) => m.id === modeId) ?? REVIEW_MODES[0];
+  // null for a mixed session.
+  const mode = modeId === MIXED.id ? null : REVIEW_MODES.find((m) => m.id === modeId) ?? REVIEW_MODES[0];
   const [queue, setQueue] = useState(() => {
     const all = [...store.words.values()];
     const size = store.get("sessionSize");
@@ -35,7 +43,20 @@ export function ReviewView({ modeId, practice }) {
       : all.filter((w) => isDue(w)).sort((a, b) => a.dueDate - b.dueDate).slice(0, size);
     return shuffle(picked.map((w) => w.key));
   });
-  const [card, setCard] = useState({ revealed: false, picked: null, typed: "", spelling: null, forgot: false, options: [] });
+  // Each word's past answers ({ mode, grade }), oldest first, for picking methods in a mixed session.
+  const attempts = useRef(null);
+  if (!attempts.current) {
+    attempts.current = new Map();
+    if (!mode) {
+      const keys = new Set(queue);
+      for (const l of store.logs) {
+        if (!l.mode || !keys.has(l.wordKey)) continue;
+        if (!attempts.current.has(l.wordKey)) attempts.current.set(l.wordKey, []);
+        attempts.current.get(l.wordKey).push({ mode: l.mode, grade: l.grade });
+      }
+    }
+  }
+  const [card, setCard] = useState({ method: mode?.id ?? null, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options: [] });
   const [score, setScore] = useState({ reviewed: 0, correct: 0 });
   const typing = useRef(null);
 
@@ -43,27 +64,32 @@ export function ReviewView({ modeId, practice }) {
   const live = queue.filter((k) => store.words.has(k));
   const word = live.length ? store.words.get(live[0]) : null;
   const autoSpeak = store.get("autoSpeak");
+  // The method of the current card.
+  const method = mode?.id ?? card.method;
 
   // Prepare each new card.
   useEffect(() => {
     if (!word) return;
+    const method = mode?.id ?? pickMethod(enabledMethods(store.get("disabledReviewModes")), attempts.current.get(word.key) ?? []);
     let options = [];
-    if (mode.id === "choice" || mode.id === "listening") {
+    if (method === "choice" || method === "listening") {
       const wrong = new Set(shuffle(live.map((k) => store.words.get(k).translation).filter((t) => t !== word.translation)).slice(0, 3));
       for (const t of dictionary.distractors(word.translation, 6)) if (wrong.size < 3) wrong.add(t);
       options = shuffle([...wrong, word.translation]);
     }
-    setCard({ revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
-    if ((mode.id === "flashcards" || mode.id === "choice") && autoSpeak) speak(word.word);
-    if (mode.id === "listening") speak(word.word);
-    if (mode.id === "spelling") setTimeout(() => typing.current?.focus(), 0);
+    setCard({ method, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
+    if ((method === "flashcards" || method === "choice") && autoSpeak) speak(word.word);
+    if (method === "listening") speak(word.word);
+    if (method === "spelling") setTimeout(() => typing.current?.focus(), 0);
   }, [word?.key, score.reviewed]);
 
   const answer = (grade) => {
     if (!word) return;
     const updated = practice ? word : apply(grade, word);
     if (!practice) store.updateWord(word.key, updated);
-    store.addLog({ date: Date.now(), wordKey: word.key, grade, intervalAfter: updated.interval });
+    store.addLog({ date: Date.now(), wordKey: word.key, grade, intervalAfter: updated.interval, mode: method });
+    if (!attempts.current.has(word.key)) attempts.current.set(word.key, []);
+    attempts.current.get(word.key).push({ mode: method, grade });
     const rest = live.slice(1);
     // Forgotten words come back later in the same session.
     if (grade === AGAIN && rest.length) rest.splice(Math.min(rest.length, 4), 0, word.key);
@@ -73,20 +99,20 @@ export function ReviewView({ modeId, practice }) {
 
   const reveal = () => {
     setCard((c) => ({ ...c, revealed: true }));
-    if (mode.id === "reverse" && autoSpeak) speak(word.word);
+    if (method === "reverse" && autoSpeak) speak(word.word);
   };
 
   const pick = (option) => {
     if (card.picked != null || card.forgot) return;
     setCard((c) => ({ ...c, picked: option }));
-    if (mode.id === "listening" || !autoSpeak) speak(word.word);
+    if (method === "listening" || !autoSpeak) speak(word.word);
   };
 
   /** "I forget": shows the answer, and Continue grades the word Again. */
   const forget = () => {
     setCard((c) => ({
       ...c, forgot: true, revealed: true,
-      spelling: mode.id === "spelling" ? { grade: AGAIN, message: "Marked as forgotten" } : null,
+      spelling: method === "spelling" ? { grade: AGAIN, message: "Marked as forgotten" } : null,
     }));
     speak(word.word);
   };
@@ -104,8 +130,8 @@ export function ReviewView({ modeId, practice }) {
 
   // Keyboard: space or enter shows the answer and continues, 1–4 grade or pick an option, F (Esc in spelling) is
   // "I forget", P plays the word again.
-  const flip = mode.id === "flashcards" || mode.id === "reverse";
-  const choice = mode.id === "choice" || mode.id === "listening";
+  const flip = method === "flashcards" || method === "reverse";
+  const choice = method === "choice" || method === "listening";
   const proceed = card.forgot ? () => answer(AGAIN)
     : card.spelling ? () => answer(card.spelling.grade)
     : choice && card.picked != null ? () => answer(card.picked === word.translation ? GOOD : AGAIN) : null;
@@ -116,14 +142,16 @@ export function ReviewView({ modeId, practice }) {
     ...card.options.map((o, i) => [[String(i + 1)], `Answer ${i + 1}`, choice && card.picked == null && !card.forgot && (() => pick(o))]),
     [["Space", "Enter"], "Continue", proceed],
     // In English → Swedish and spelling, the word is the answer: it plays only once it's shown.
-    ...(mode.id === "reverse" || mode.id === "spelling") && !(card.revealed || card.spelling) ? [] : [
+    ...(method === "reverse" || method === "spelling") && !(card.revealed || card.spelling) ? [] : [
       [["p"], "Play the word", () => speak(word.word)],
       [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
     ],
     [["x"], "Play the example", word.example && (card.revealed || card.picked != null || card.spelling) && (() => speak(word.example))],
   ] : [[["Space", "Enter"], "Done", () => back("today")]]);
 
-  const title = practice ? `${mode.title} · practice` : mode.title;
+  const title = practice ? `${(mode ?? MIXED).title} · practice` : mode?.title ?? "Mixed review";
+  // Until the first card's method is picked.
+  if (word && !method) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" />`;
   if (!word) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" /><${Finished} score=${score} />`;
 
   const answered = card.revealed || card.picked != null || card.spelling != null;
@@ -132,13 +160,14 @@ export function ReviewView({ modeId, practice }) {
     <div class="page"><div class="stack">
       <div class="row caption secondary mono">
         <span>${live.length} left</span><span class="spacer"></span>
+        ${mode ? null : html`<span><${Icon} name=${REVIEW_MODES.find((m) => m.id === method).icon} /> ${REVIEW_MODES.find((m) => m.id === method).title}</span><span class="spacer"></span>`}
         ${score.reviewed ? html`<span>${Math.round((score.correct / score.reviewed) * 100)}% correct</span>` : null}
       </div>
       <div class="flashcard" key=${`${word.key}-${score.reviewed}`}>
-        <${Prompt} mode=${mode.id} word=${word} card=${card} />
-        ${answered ? html`<${Details} mode=${mode.id} word=${word} />` : null}
+        <${Prompt} mode=${method} word=${word} card=${card} />
+        ${answered ? html`<${Details} mode=${method} word=${word} />` : null}
       </div>
-      <${Controls} mode=${mode.id} word=${word} card=${card} practice=${practice} typing=${typing}
+      <${Controls} mode=${method} word=${word} card=${card} practice=${practice} typing=${typing}
         onReveal=${reveal} onForget=${forget} onAnswer=${answer} onPick=${pick} onCheck=${checkSpelling}
         onType=${(typed) => setCard((c) => ({ ...c, typed }))}
       />

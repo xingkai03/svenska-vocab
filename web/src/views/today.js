@@ -6,7 +6,8 @@ import { Kbd, useKeys } from "../keys.js";
 import { speak } from "../speech.js";
 import { entryId, store } from "../store.js";
 import { Icon, NavBar, SpeakButton, go, href } from "../ui.js";
-import { REVIEW_MODES } from "./review.js";
+import { enabledMethods } from "../methods.js";
+import { MIXED, REVIEW_MODES } from "./review.js";
 
 export function todayStats() {
   const words = [...store.words.values()];
@@ -28,6 +29,9 @@ export function TodayView() {
   const days = new Set(store.checkIns.keys());
   const streak = currentStreak(days);
   const checkedInToday = days.has(dayString(Date.now()));
+  // Mixed review, then the methods turned on in Settings.
+  const enabled = enabledMethods(store.get("disabledReviewModes"));
+  const modes = [MIXED, ...REVIEW_MODES.filter((m) => enabled.includes(m.id))];
   const [celebrate, setCelebrate] = useState(0);
 
   const checkIn = () => {
@@ -38,8 +42,8 @@ export function TodayView() {
 
   const wotd = dictionary.wordOfTheDay();
   useKeys([
-    [["r"], dueCount ? "Start review" : "Practice", words.length && (() => go("review", "flashcards", dueCount ? {} : { practice: 1 }))],
-    ...REVIEW_MODES.map((m, i) => [[String(i + 1)], m.title, words.length && (() => go("review", m.id, dueCount ? {} : { practice: 1 }))]),
+    [["r"], dueCount ? "Start review" : "Practice", words.length && (() => go("review", MIXED.id, dueCount ? {} : { practice: 1 }))],
+    ...modes.map((m, i) => [[String(i + 1)], m.title, words.length && (() => go("review", m.id, dueCount ? {} : { practice: 1 }))]),
     [["n"], "Learn new words", () => go("learn")],
     [["c"], "Check in", !checkedInToday && doneToday >= dailyGoal && checkIn],
     [["p"], "Pronounce the word of the day", wotd && (() => speak(wotd.word))],
@@ -82,11 +86,11 @@ export function TodayView() {
             <div class="subheadline secondary">${words.length === 0 ? "Your collection is empty"
               : dueCount === 0 ? "All caught up — nothing due" : `${dueCount} words due now`}</div>
           </div>
-          ${dueCount > 0 ? html`<a class="btn prominent" href=${href("review", "flashcards")}>Start<${Kbd} k="r" /></a>` : null}
+          ${dueCount > 0 ? html`<a class="btn prominent" href=${href("review", MIXED.id)}>Start<${Kbd} k="r" /></a>` : null}
         </div>
         ${words.length ? html`
           <div class="mode-grid">
-            ${REVIEW_MODES.map((m, i) => html`<button onClick=${() => go("review", m.id, dueCount === 0 ? { practice: 1 } : {})}>
+            ${modes.map((m, i) => html`<button onClick=${() => go("review", m.id, dueCount === 0 ? { practice: 1 } : {})}>
               <${Icon} name=${m.icon} />${m.title}<${Kbd} k=${String(i + 1)} /></button>`)}
           </div>
           ${dueCount === 0 ? html`<div class="caption2 secondary">Practice mode: reviewing ahead of schedule won't change due dates.</div>` : null}` : null}

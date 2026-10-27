@@ -30,6 +30,7 @@ const PATHS = {
   chevronLeft: '<path d="m15 5-7 7 7 7"/>',
   sparkles: '<path d="M10 3c.6 4.2 2.8 6.4 7 7-4.2.6-6.4 2.8-7 7-.6-4.2-2.8-6.4-7-7 4.2-.6 6.4-2.8 7-7zM18.5 14c.3 2 1.3 3 3.3 3.3-2 .3-3 1.3-3.3 3.3-.3-2-1.3-3-3.3-3.3 2-.3 3-1.3 3.3-3.3z" fill="currentColor" stroke="none"/>',
   cards: '<rect x="3" y="6" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/>',
+  shuffle: '<path d="M3 7h3.5c5 0 6 10 11 10H21m-3-3 3 3-3 3M3 17h3.5c1.7 0 2.9-1.2 3.9-2.8M13.6 9.8C14.6 8.2 15.8 7 17.5 7H21m-3-3 3 3-3 3"/>',
   swap: '<path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4 4-4-4 4-4"/>',
   list: '<path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor"/>',
   ear: '<path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 .5"/><path d="M10 9.5a2 2 0 0 1 4 0c0 1.2-1.2 1.6-1.6 2.6"/>',
@@ -181,9 +182,9 @@ export function Segmented({ options, value, onChange, label }) {
   </div>`;
 }
 
-export function Toggle({ label, checked, onChange }) {
+export function Toggle({ label, checked, disabled = false, onChange }) {
   return html`<label class="cell"><span class="cell-main">${label}</span>
-    <input type="checkbox" class="switch" checked=${checked} onChange=${(e) => onChange(e.currentTarget.checked)} /></label>`;
+    <input type="checkbox" class="switch" checked=${checked} disabled=${disabled} onChange=${(e) => onChange(e.currentTarget.checked)} /></label>`;
 }
 
 export function Stepper({ label, value, min, max, step, onChange }) {

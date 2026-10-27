@@ -1,10 +1,12 @@
 import { html, useRef, useState } from "../../vendor/preact-htm.js";
 import { cloud } from "../cloud.js";
 import { convertList, dictionary, MY_LISTS } from "../dictionary.js";
+import { enabledMethods } from "../methods.js";
 import { hasSpeech, hasSwedishVoice, speak } from "../speech.js";
 import { useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { Icon, NavBar, Section, Stepper, Toggle, go, href, relative } from "../ui.js";
+import { REVIEW_MODES } from "./review.js";
 
 export function SyncStatus() {
   if (cloud.isSyncing) return html`<span>Syncing…</span>`;
@@ -48,6 +50,14 @@ export function SettingsView() {
   const fileInput = useRef(null);
   const [importMessage, setImportMessage] = useState(null);
   const rate = store.get("speechRate");
+  const enabled = enabledMethods(store.get("disabledReviewModes"));
+  // The last method that is on can't be turned off.
+  const setMode = (id, on) => {
+    const off = new Set(store.get("disabledReviewModes").split(",").filter(Boolean));
+    if (on) off.delete(id);
+    else off.add(id);
+    if (off.size < REVIEW_MODES.length) store.set("disabledReviewModes", REVIEW_MODES.map((m) => m.id).filter((id) => off.has(id)).join(","));
+  };
   // Personal lists: imported ones (the open lists that ship with the app are in Learn new words).
   const myLists = dictionary.customDecks.filter((d) => d.group === MY_LISTS);
 
@@ -87,6 +97,11 @@ export function SettingsView() {
           onChange=${(v) => store.set("dailyGoal", v)} />
         <${Stepper} label=${`${store.get("sessionSize")} cards per session`} value=${store.get("sessionSize")} min=${10} max=${200} step=${10}
           onChange=${(v) => store.set("sessionSize", v)} />
+      <//>
+
+      <${Section} header="Review methods" footer="Mixed review picks one of these for each card, and more often the ones you find hardest for that word, such as spelling a word you only recognise.">
+        ${REVIEW_MODES.map((m) => html`<${Toggle} label=${html`<span class="row" style="gap:8px"><${Icon} name=${m.icon} />${m.title}</span>`} checked=${enabled.includes(m.id)}
+          disabled=${enabled.length === 1 && enabled[0] === m.id} onChange=${(on) => setMode(m.id, on)} />`)}
       <//>
 
       <${Section} header="Pronunciation" footer=${!hasSpeech ? "This browser can't speak text aloud."

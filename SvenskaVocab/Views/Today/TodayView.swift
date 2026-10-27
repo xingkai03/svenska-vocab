@@ -10,6 +10,7 @@ struct TodayView: View {
     @Query(sort: \ReviewLog.date, order: .reverse) private var logs: [ReviewLog]
     @Query(sort: \CheckIn.day) private var checkIns: [CheckIn]
     @AppStorage(AppSettings.dailyGoal) private var dailyGoal = 20
+    @AppStorage(AppSettings.disabledReviewModes) private var disabledReviewModes = ""
     @State private var showSettings = false
     @State private var celebrate = false
 
@@ -143,6 +144,8 @@ struct TodayView: View {
 
     // MARK: - Review
 
+    private var enabledModes: [ReviewMode] { ReviewMethods.enabled(disabled: disabledReviewModes) }
+
     private var reviewCard: some View {
         Card {
             HStack {
@@ -156,7 +159,7 @@ struct TodayView: View {
                 Spacer()
                 if dueCount > 0 {
                     NavigationLink {
-                        ReviewSessionView(mode: .flashcards)
+                        ReviewSessionView()
                     } label: {
                         Text("Start").bold()
                     }
@@ -165,11 +168,11 @@ struct TodayView: View {
             }
             if !words.isEmpty {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 8) {
-                    ForEach(ReviewMode.allCases) { mode in
+                    ForEach([nil] + enabledModes.map(Optional.some), id: \.self) { mode in
                         NavigationLink {
                             ReviewSessionView(mode: mode, practice: dueCount == 0)
                         } label: {
-                            Label(mode.title, systemImage: mode.icon)
+                            Label(mode?.title ?? L("Mixed"), systemImage: mode?.icon ?? "shuffle")
                                 .font(.caption.weight(.medium))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
