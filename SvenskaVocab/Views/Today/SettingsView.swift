@@ -98,7 +98,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Lookup")
                 } footer: {
-                    Text("Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Academic words and Expressions from Akademisk ordlista and Swe-MWELex, Språkbanken, CC BY 4.0.")
+                    Text("Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. Extra example sentences from Wiktionary (kaikki.org), CC BY-SA 4.0, and Tatoeba, CC BY 2.0 FR. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Academic words and Expressions from Akademisk ordlista and Swe-MWELex, Språkbanken, CC BY 4.0.")
                 }
 
                 Section("Data") {

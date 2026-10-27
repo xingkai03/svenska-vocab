@@ -5,7 +5,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 ## Features
 
 - **Lookup** – search in Swedish or English, with or without å/ä/ö ("bat" finds "båt"). About 37 000 words work offline: a curated core vocabulary of ~700 common words plus the whole of [Folkets lexikon](https://folkets-lexikon.csc.kth.se/folkets/) (KTH). Anything else is looked up in Folkets lexikon online. Recent searches are remembered.
-- **Word details** – article (en/ett), inflected forms, translation, example sentence with translation, personal notes.
+- **Word details** – article (en/ett), inflected forms, translation, example sentence with translation, personal notes. More than 13 000 dictionary words have an example sentence, from Folkets lexikon, Wiktionary and Tatoeba.
 - **Pronunciation** – every word, form and example sentence can be spoken with the system's Swedish (sv-SE) voice, at normal or slow speed. Optional auto-pronounce.
 - **Collection** – save words, add your own, edit, favourite, filter (due, learning, mastered, favourites), sort (recent, A–Z, next review, weakest memory), swipe to delete. Export as CSV.
 - **Learn new words** – step through the core vocabulary in frequency order, or a CEFR word list (A1, A2, B1, B2, C1, C2) from the Swedish Kelly list, with progress per list: "Learn" adds a word, "I know it" skips it.
@@ -109,6 +109,25 @@ python3 scripts/build_folkets.py folkets_sv_en_public.xml
 
 Don't commit the XML. Rerun the script after editing `core_vocabulary.tsv` so the two files don't overlap.
 
+### Filling in example sentences
+
+Folkets lexikon has an example for only about one word in five. `scripts/build_examples.py` fills the empty example columns of `folkets_sv_en.tsv` from open sources, so run it after `build_folkets.py`:
+
+1. a usage example written for the same word and part of speech in Wiktionary (kaikki.org extract),
+2. otherwise a short sentence (3–14 words) that uses the word or one of its inflected forms, from Tatoeba, Wiktionary or the dictionary's own examples. Spellings shared by two dictionary words ("springa" the verb and the noun) and words that are mostly names ("Nick") are skipped, since the sentence could be about the other one.
+
+```
+curl -LO https://kaikki.org/dictionary/Swedish/kaikki.org-dictionary-Swedish.jsonl
+mkdir tatoeba && cd tatoeba
+curl -LO https://downloads.tatoeba.org/exports/per_language/swe/swe_sentences.tsv.bz2
+curl -LO https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2
+curl -LO https://downloads.tatoeba.org/exports/per_language/swe/swe-eng_links.tsv.bz2
+bunzip2 *.bz2 && cd ..
+python3 scripts/build_examples.py .
+```
+
+This takes example coverage from 7 080 to 13 040 of the 36 200 Folkets words (20% → 36%); for words with a Kelly CEFR level it goes from 52% to 82%. Existing examples are never changed and a second run adds nothing. Don't commit the downloads.
+
 ### Translating the interface
 
 Interface text lives in the String Catalog `SvenskaVocab/Resources/Localizable.xcstrings` (English source, `sv` and `zh-Hans` translations). SwiftUI text with a literal (`Text("Review")`, `Button("Save")`) is added to the catalog automatically when you build in Xcode; translate new entries in the catalog editor. Text built in code goes through `L("…")` (see `AppSettings.swift`), so it follows the in-app language choice; add those keys to the catalog by hand. To add a language, add a case to `AppLanguage` and the language in the catalog.
@@ -153,3 +172,4 @@ Academic words: Akademisk ordlista, Ribeck, Jansson & Sköldberg (2016), [Språk
 Expressions: [Swe-MWELex](https://spraakbanken.gu.se/en/resources/swe-mwelex), Språkbanken, University of Gothenburg, licensed CC BY 4.0 (the .xlsx release).
 CEFR levels come from the Swedish Kelly list, [Språkbanken](https://spraakbanken.gu.se/en/resources/kelly), University of Gothenburg, licensed CC BY 4.0.
 German and French memory hints: Wiktionary contributors, via [WikDict](https://www.wikdict.com/) (Swedish–German and Swedish–French translations) and [kaikki.org](https://kaikki.org/dictionary/Swedish/) (etymologies), licensed CC BY-SA 4.0. The generated `language_hints.tsv` is a derivative work under the same licence.
+Extra example sentences: Wiktionary contributors, via [kaikki.org](https://kaikki.org/dictionary/Swedish/), licensed CC BY-SA 4.0, and [Tatoeba](https://tatoeba.org/) contributors, licensed CC BY 2.0 FR.
