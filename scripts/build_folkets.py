@@ -11,7 +11,8 @@ then run from the repository root:
 
 Writes SvenskaVocab/Resources/folkets_sv_en.tsv with the same seven columns as
 core_vocabulary.tsv (word, pos, gender, forms, translation, example, example_en),
-leaving out words the curated core vocabulary already covers.
+leaving out words the curated core vocabulary already covers. Run scripts/build_examples.py
+afterwards to fill in example sentences for words Folkets has none for.
 """
 
 import html

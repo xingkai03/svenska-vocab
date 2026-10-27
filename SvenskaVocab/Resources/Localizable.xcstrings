@@ -3144,18 +3144,18 @@
         }
       }
     },
-    "Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Academic words and Expressions from Akademisk ordlista and Swe-MWELex, Språkbanken, CC BY 4.0." : {
+    "Searches Folkets lexikon (KTH) for words that are not in the built-in dictionary. Dictionary data © Folkets lexikon, CC BY-SA 2.5. Extra example sentences from Wiktionary (kaikki.org), CC BY-SA 4.0, and Tatoeba, CC BY 2.0 FR. CEFR levels from the Swedish Kelly list, Språkbanken, University of Gothenburg, CC BY 4.0. Coursebook lists from SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Spoken frequency lists from FrequencyWords by Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Academic words and Expressions from Akademisk ordlista and Swe-MWELex, Språkbanken, CC BY 4.0." : {
       "localizations" : {
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Söker i Folkets lexikon (KTH) efter ord som inte finns i den inbyggda ordboken. Ordboksdata © Folkets lexikon, CC BY-SA 2.5. CEFR-nivåer från den svenska Kelly-listan, Språkbanken, Göteborgs universitet, CC BY 4.0. Läroboksordlistor från SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Frekvenslistor för talspråk från FrequencyWords av Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Akademiska ord och Uttryck från Akademisk ordlista och Swe-MWELex, Språkbanken, CC BY 4.0."
+            "value" : "Söker i Folkets lexikon (KTH) efter ord som inte finns i den inbyggda ordboken. Ordboksdata © Folkets lexikon, CC BY-SA 2.5. Fler exempelmeningar från Wiktionary (kaikki.org), CC BY-SA 4.0, och Tatoeba, CC BY 2.0 FR. CEFR-nivåer från den svenska Kelly-listan, Språkbanken, Göteborgs universitet, CC BY 4.0. Läroboksordlistor från SVALex (François, Volodina, Pilán & Tack 2016), CC BY-NC-SA 4.0. Frekvenslistor för talspråk från FrequencyWords av Hermit Dave (OpenSubtitles), CC BY-SA 4.0. Akademiska ord och Uttryck från Akademisk ordlista och Swe-MWELex, Språkbanken, CC BY 4.0."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Folkets lexikon（KTH）中查找内置词典里没有的单词。词典数据 © Folkets lexikon，CC BY-SA 2.5。CEFR 等级来自瑞典语 Kelly 词表，Språkbanken，哥德堡大学，CC BY 4.0。教材词表来自 SVALex（François、Volodina、Pilán 和 Tack，2016），CC BY-NC-SA 4.0。口语频率词表来自 Hermit Dave 的 FrequencyWords（OpenSubtitles），CC BY-SA 4.0。学术词汇和习语来自 Akademisk ordlista 和 Swe-MWELex，Språkbanken，CC BY 4.0。"
+            "value" : "在 Folkets lexikon（KTH）中查找内置词典里没有的单词。词典数据 © Folkets lexikon，CC BY-SA 2.5。补充例句来自 Wiktionary（kaikki.org），CC BY-SA 4.0，以及 Tatoeba，CC BY 2.0 FR。CEFR 等级来自瑞典语 Kelly 词表，Språkbanken，哥德堡大学，CC BY 4.0。教材词表来自 SVALex（François、Volodina、Pilán 和 Tack，2016），CC BY-NC-SA 4.0。口语频率词表来自 Hermit Dave 的 FrequencyWords（OpenSubtitles），CC BY-SA 4.0。学术词汇和习语来自 Akademisk ordlista 和 Swe-MWELex，Språkbanken，CC BY 4.0。"
           }
         }
       }
