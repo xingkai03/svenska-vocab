@@ -28,7 +28,8 @@ enum ReviewMode: String, CaseIterable, Identifiable {
 }
 
 struct ReviewSessionView: View {
-    let mode: ReviewMode
+    /// The one method to use, or nil for a mixed session that picks a method for each card (see ReviewMethods).
+    var mode: ReviewMode?
     /// Practice reviews are logged (they count toward the daily goal) but don't change the schedule.
     var practice = false
 
@@ -38,9 +39,14 @@ struct ReviewSessionView: View {
     @EnvironmentObject private var speech: SpeechService
     @AppStorage(AppSettings.sessionSize) private var sessionSize = 30
     @AppStorage(AppSettings.autoSpeak) private var autoSpeak = true
+    @AppStorage(AppSettings.disabledReviewModes) private var disabledReviewModes = ""
 
     @State private var started = false
     @State private var queue: [SavedWord] = []
+    /// The method of the current card.
+    @State private var method: ReviewMode = .flashcards
+    /// Each word's past answers (method and grade), oldest first, for picking methods in a mixed session.
+    @State private var attempts: [String: [ReviewMethods.Attempt]] = [:]
     @State private var revealed = false
     @State private var options: [String] = []
     @State private var picked: String?
@@ -67,9 +73,11 @@ struct ReviewSessionView: View {
                 finished
             }
         }
-        .navigationTitle(practice ? L("%@ · practice", mode.title) : mode.title)
+        .navigationTitle(practice ? L("%@ · practice", title) : title)
         .navigationBarTitleDisplayMode(.inline)
     }
+
+    private var title: String { mode?.title ?? L("Mixed review") }
 
     // MARK: - Session flow
 
@@ -79,6 +87,13 @@ struct ReviewSessionView: View {
             queue = Array(all.sorted { $0.retention < $1.retention }.prefix(sessionSize)).shuffled()
         } else {
             queue = Array(all.filter(\.isDue).sorted { $0.dueDate < $1.dueDate }.prefix(sessionSize)).shuffled()
+        }
+        if mode == nil {
+            let keys = Set(queue.map(\.key))
+            let logs = (try? context.fetch(FetchDescriptor<ReviewLog>(sortBy: [SortDescriptor(\.date)]))) ?? []
+            for log in logs where keys.contains(log.wordKey) && !log.mode.isEmpty {
+                attempts[log.wordKey, default: []].append(.init(mode: log.mode, grade: log.grade))
+            }
         }
         started = true
         if let first = queue.first { prepare(first) }
@@ -90,7 +105,8 @@ struct ReviewSessionView: View {
         typed = ""
         spelling = nil
         forgot = false
-        if mode == .choice || mode == .listening {
+        method = mode ?? ReviewMethods.pick(from: ReviewMethods.enabled(disabled: disabledReviewModes), attempts: attempts[word.key] ?? [])
+        if method == .choice || method == .listening {
             var wrong = Set(queue.map(\.translation).filter { $0 != word.translation }.shuffled().prefix(3))
             if wrong.count < 3 {
                 for t in dictionary.distractors(for: word.translation, count: 6) where wrong.count < 3 {
@@ -99,7 +115,7 @@ struct ReviewSessionView: View {
             }
             options = (Array(wrong) + [word.translation]).shuffled()
         }
-        switch mode {
+        switch method {
         case .flashcards, .choice:
             if autoSpeak { speech.speak(word.word) }
         case .listening:
@@ -117,7 +133,8 @@ struct ReviewSessionView: View {
         if !practice {
             Scheduler.apply(grade, to: word)
         }
-        context.insert(ReviewLog(wordKey: word.key, grade: grade, intervalAfter: word.interval))
+        context.insert(ReviewLog(wordKey: word.key, grade: grade, intervalAfter: word.interval, mode: method.rawValue))
+        attempts[word.key, default: []].append(.init(mode: method.rawValue, grade: grade.rawValue))
         try? context.save()
         reviewed += 1
         if grade != .again {
@@ -131,7 +148,7 @@ struct ReviewSessionView: View {
 
     private func reveal(_ word: SavedWord) {
         withAnimation(.easeOut(duration: 0.2)) { revealed = true }
-        if mode == .reverse && autoSpeak {
+        if method == .reverse && autoSpeak {
             speech.speak(word.word)
         }
     }
@@ -151,6 +168,10 @@ struct ReviewSessionView: View {
             HStack {
                 Text("\(queue.count) left").monospacedDigit()
                 Spacer()
+                if mode == nil {
+                    Label(method.title, systemImage: method.icon)
+                    Spacer()
+                }
                 if reviewed > 0 {
                     Text("\(Int(Double(correct) / Double(reviewed) * 100))% correct").monospacedDigit()
                 }
@@ -179,7 +200,7 @@ struct ReviewSessionView: View {
 
     @ViewBuilder
     private func prompt(_ word: SavedWord) -> some View {
-        switch mode {
+        switch method {
         case .flashcards, .choice:
             swedishHeader(word)
         case .reverse, .spelling:
@@ -220,7 +241,7 @@ struct ReviewSessionView: View {
     @ViewBuilder
     private func details(_ word: SavedWord) -> some View {
         Divider()
-        if mode == .flashcards || mode == .listening || mode == .choice {
+        if method == .flashcards || method == .listening || method == .choice {
             Text(word.translation).font(.title3).multilineTextAlignment(.center)
         }
         LanguageHintLines(word: word.word, partOfSpeech: word.partOfSpeech)
@@ -272,7 +293,7 @@ struct ReviewSessionView: View {
 
     @ViewBuilder
     private func answerControls(_ word: SavedWord) -> some View {
-        switch mode {
+        switch method {
         case .flashcards, .reverse:
             if revealed {
                 gradeButtons(word)
@@ -293,7 +314,7 @@ struct ReviewSessionView: View {
                     Button {
                         guard picked == nil, !forgot else { return }
                         withAnimation { picked = option }
-                        if mode == .listening || !autoSpeak { speech.speak(word.word) }
+                        if method == .listening || !autoSpeak { speech.speak(word.word) }
                     } label: {
                         Text(option)
                             .lineLimit(2)

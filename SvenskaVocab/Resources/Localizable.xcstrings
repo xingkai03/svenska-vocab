@@ -2217,6 +2217,56 @@
         }
       }
     },
+    "Mixed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blandat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合"
+          }
+        }
+      }
+    },
+    "Mixed review" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blandad repetition"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合复习"
+          }
+        }
+      }
+    },
+    "Mixed review picks one of these for each card, and more often the ones you find hardest for that word, such as spelling a word you only recognise." : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blandad repetition väljer ett av dessa för varje kort, och oftare de som är svårast för just det ordet, till exempel att stava ett ord som du bara känner igen."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合复习会为每张卡片选择其中一种方式，并更常选择你在这个词上最薄弱的方式，比如拼写一个你只认得的词。"
+          }
+        }
+      }
+    },
     "Mnemonic, context, related words…" : {
       "localizations" : {
         "sv" : {
@@ -2993,6 +3043,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "复习"
+          }
+        }
+      }
+    },
+    "Review methods" : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetitionssätt"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复习方式"
           }
         }
       }

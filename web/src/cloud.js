@@ -277,7 +277,7 @@ class Cloud {
       if (updated != null) cursor = Math.max(cursor ?? updated, updated);
       if (known.has(row.id)) continue;
       known.add(row.id);
-      store.logs.push({ date: parseDate(row.reviewed_at), wordKey: row.word_key, grade: row.grade, intervalAfter: row.interval_after });
+      store.logs.push({ date: parseDate(row.reviewed_at), wordKey: row.word_key, grade: row.grade, intervalAfter: row.interval_after, mode: row.mode ?? "" });
       added = true;
     }
     if (added) {
@@ -292,7 +292,7 @@ class Cloud {
       const chunk = fresh.slice(i, i + 1000);
       await this.#upsert("review_logs", chunk.map((l) => ({
         user_id: userId, id: logId(l), word_key: l.wordKey, grade: l.grade, interval_after: l.intervalAfter,
-        reviewed_at: iso(l.date),
+        mode: l.mode ?? "", reviewed_at: iso(l.date),
       })), "user_id,id", true);
       state.logsPushedThrough = Math.max(state.logsPushedThrough ?? -Infinity, ...chunk.map((l) => l.date));
     }
@@ -392,7 +392,7 @@ const CHECK_INS = {
 const SETTING_COLUMNS = {
   dailyGoal: "daily_goal", sessionSize: "session_size", speechRate: "speech_rate", autoSpeak: "auto_speak",
   onlineLookup: "online_lookup", skippedWords: "skipped_words", discoverDeck: "discover_deck",
-  knowsGerman: "knows_german", knowsFrench: "knows_french",
+  knowsGerman: "knows_german", knowsFrench: "knows_french", disabledReviewModes: "disabled_review_modes",
 };
 
 function settingsData(settings) {

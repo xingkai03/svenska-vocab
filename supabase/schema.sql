@@ -51,6 +51,9 @@ create table if not exists public.review_logs (
   updated_at timestamptz not null default now(),
   primary key (user_id, id)
 );
+-- The review method used (flashcards, reverse, choice, listening, spelling), so mixed review can favour each word's
+-- weak methods on every device. Empty for answers logged before this column existed.
+alter table public.review_logs add column if not exists mode text not null default '';
 
 -- Daily check-ins; day is the learner's local calendar day.
 create table if not exists public.check_ins (

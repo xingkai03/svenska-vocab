@@ -18,6 +18,8 @@ enum AppSettings {
     static let knowsGerman = "knowsGerman"
     static let knowsFrench = "knowsFrench"
     static let appLanguage = "appLanguage"
+    /// Review methods turned off in Settings, comma-separated ReviewMode raw values. Synced.
+    static let disabledReviewModes = "disabledReviewModes"
 }
 
 /// The language of the app's interface, chosen in Settings. "System" follows the iPhone's language.

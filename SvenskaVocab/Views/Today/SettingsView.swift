@@ -18,9 +18,23 @@ struct SettingsView: View {
     @AppStorage(AppSettings.knowsGerman) private var knowsGerman = false
     @AppStorage(AppSettings.knowsFrench) private var knowsFrench = false
     @AppStorage(AppSettings.appLanguage) private var appLanguage = ""
+    @AppStorage(AppSettings.disabledReviewModes) private var disabledReviewModes = ""
     @State private var notificationsDenied = false
     @State private var showImporter = false
     @State private var importMessage: String?
+
+    /// On/off switch for a review method. The last method that is on can't be turned off.
+    private func modeEnabled(_ mode: ReviewMode) -> Binding<Bool> {
+        Binding(
+            get: { !disabledReviewModes.split(separator: ",").contains(Substring(mode.rawValue)) },
+            set: { on in
+                var off = Set(disabledReviewModes.split(separator: ",").map(String.init))
+                if on { off.remove(mode.rawValue) } else { off.insert(mode.rawValue) }
+                guard off.count < ReviewMode.allCases.count else { return }
+                disabledReviewModes = ReviewMode.allCases.map(\.rawValue).filter(off.contains).joined(separator: ",")
+            }
+        )
+    }
 
     private var reminderDate: Binding<Date> {
         Binding(
@@ -45,6 +59,19 @@ struct SettingsView: View {
                 Section("Daily goal") {
                     Stepper("\(dailyGoal) reviews or new words", value: $dailyGoal, in: 5...200, step: 5)
                     Stepper("\(sessionSize) cards per session", value: $sessionSize, in: 10...200, step: 10)
+                }
+
+                Section {
+                    ForEach(ReviewMode.allCases) { mode in
+                        Toggle(isOn: modeEnabled(mode)) {
+                            Label(mode.title, systemImage: mode.icon)
+                        }
+                        .disabled(ReviewMethods.enabled(disabled: disabledReviewModes) == [mode])
+                    }
+                } header: {
+                    Text("Review methods")
+                } footer: {
+                    Text("Mixed review picks one of these for each card, and more often the ones you find hardest for that word, such as spelling a word you only recognise.")
                 }
 
                 Section {
