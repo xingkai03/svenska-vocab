@@ -10,6 +10,7 @@ import { WordDetailView } from "./views/detail.js";
 import { EditWordView } from "./views/edit.js";
 import { LearnView } from "./views/learn.js";
 import { LookupView } from "./views/lookup.js";
+import { ReadView } from "./views/read.js";
 import { ReviewView } from "./views/review.js";
 import { SettingsView } from "./views/settings.js";
 import { SummaryView } from "./views/summary.js";
@@ -35,6 +36,7 @@ function Page({ route }) {
     case "learn": return html`<${LearnView} />`;
     case "review": return html`<${ReviewView} key=${location.hash} modeId=${args[0]} practice=${query.practice === "1"} />`;
     case "svt": return html`<${SvtView} key=${route.hash} query=${query} />`;
+    case "read": return html`<${ReadView} args=${args} query=${query} />`;
     case "word": return html`<${WordDetailView} key=${args[0]} id=${args[0]} />`;
     case "new": return html`<${EditWordView} key=${location.hash} prefill=${query.prefill ?? ""} />`;
     case "edit": return html`<${EditWordView} key=${args[0]} id=${args[0]} />`;
@@ -67,7 +69,7 @@ function App() {
   }, []);
 
   if (TABS.some((t) => t.name === route.name)) lastTab = route.name;
-  else if (route.name === "svt") lastTab = "lookup";
+  else if (route.name === "svt" || route.name === "read") lastTab = "lookup";
   const now = Date.now();
   let due = 0;
   for (const w of store.words.values()) if (isDue(w, now)) due += 1;

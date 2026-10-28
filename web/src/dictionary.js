@@ -173,6 +173,55 @@ class SearchIndex {
     };
   }
 
+  /** Entries a word from running text is, or is an inflection of: the same spelling, a listed form, then a
+   *  headword its ending can be undone to ("bilarna" → "bil"). Unlike search, never a prefix or substring match. */
+  matches(word) {
+    const w = word.toLowerCase();
+    const found = [];
+    const add = (ids, keep = () => true) => {
+      for (const i of ids ?? []) if (!found.includes(i) && keep(this.entries[i])) found.push(i);
+    };
+    add(this.byExactWord.get(w));
+    add(this.byForm.get(fold(w)), (e) => formList(e).some((f) => f.toLowerCase() === w));
+    if (!found.length) for (const stem of inflectionStems(w)) add(this.byExactWord.get(stem));
+    if (!found.length) add(this.byWord.get(fold(w)));
+    return found.sort((a, b) => (a < this.coreCount) !== (b < this.coreCount) ? (a < this.coreCount ? -1 : 1) : 0)
+      .map((i) => this.entries[i]);
+  }
+
+  /** Multi-word entries ("ta hand om", "tycker om") by their words, lower-cased and joined by spaces. */
+  get phrases() {
+    if (!this.#phrases) {
+      this.#phrases = new Map();
+      this.entries.forEach((e, i) => {
+        for (const p of [e.word, ...formList(e)]) {
+          const key = p.toLowerCase().replace(/\s+/g, " ").trim();
+          if (!key.includes(" ") || /[^\p{L} -]/u.test(key)) continue;
+          if (!this.#phrases.has(key)) this.#phrases.set(key, []);
+          if (!this.#phrases.get(key).includes(i)) this.#phrases.get(key).push(i);
+        }
+      });
+      this.phraseLength = Math.min(5, Math.max(2, ...[...this.#phrases.keys()].map((k) => k.split(" ").length)));
+    }
+    return this.#phrases;
+  }
+
+  #phrases = null;
+
+  /** The longest multi-word entry starting at words[start]; the first word may be inflected ("tar hand om"). */
+  phraseAt(words, start) {
+    const phrases = this.phrases;
+    for (let n = Math.min(this.phraseLength, words.length - start); n >= 2; n--) {
+      const rest = words.slice(start + 1, start + n).map((w) => w.toLowerCase()).join(" ");
+      const first = words[start].toLowerCase();
+      for (const head of [first, ...inflectionStems(first)]) {
+        const ids = phrases.get(`${head} ${rest}`);
+        if (ids) return { length: n, entries: ids.map((i) => this.entries[i]) };
+      }
+    }
+    return null;
+  }
+
   #prefixMatches(prefix) {
     let low = 0, high = this.sorted.length;
     while (low < high) {
@@ -365,6 +414,16 @@ class Dictionary {
 
   search(query, limit) {
     return this.#index.search(query, limit);
+  }
+
+  /** Dictionary entries for a word as it appears in a text, best first (see SearchIndex.matches). */
+  matches(word) {
+    return this.#index.matches(word);
+  }
+
+  /** { length, entries } for a multi-word entry starting at words[start], or null. */
+  phraseAt(words, start) {
+    return this.#index.phraseAt(words, start);
   }
 
   /** A dictionary or word list entry by key ("hund#noun"). */
