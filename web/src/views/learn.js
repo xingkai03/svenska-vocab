@@ -25,6 +25,40 @@ export function wordKey(word) {
   return t;
 }
 
+let cache = { revision: -1, saved: null, progress: new WeakMap() };
+
+/**
+ * Saved words by wordKey → whether mastered (a word saved from one list counts in every list that has it), and each
+ * list's progress. Kept until the collection changes: the list picker shows progress for every list on each render.
+ */
+function savedProgress() {
+  const revision = store.revision.words ?? 0;
+  if (cache.revision !== revision || !cache.saved) {
+    const saved = new Map();
+    for (const w of store.words.values()) {
+      const k = wordKey(w.word);
+      saved.set(k, saved.get(k) || isMastered(w));
+    }
+    cache = { revision, saved, progress: new WeakMap() };
+  }
+  const { saved, progress: counts } = cache;
+  const progress = (entries) => {
+    let result = counts.get(entries);
+    if (result) return result;
+    let mastered = 0, learning = 0;
+    for (const e of entries) {
+      const m = saved.get(wordKey(e.word));
+      if (m === undefined) continue;
+      if (m) mastered += 1;
+      else learning += 1;
+    }
+    result = { mastered, learning };
+    counts.set(entries, result);
+    return result;
+  };
+  return { saved, progress };
+}
+
 /** Learn new words from the core vocabulary, a Kelly CEFR list or another word list, optionally one chapter at a time. */
 export function LearnView() {
   const [chapter, setChapter] = useState("");
@@ -41,23 +75,8 @@ export function LearnView() {
   const deck = chosen === "core" || LEVELS.includes(chosen) || customDeck ? chosen : "core";
   const all = deck === "core" ? dictionary.coreEntries : customDeck ? deckEntries(customDeck, chapter) : dictionary.deck(deck);
 
-  // A word saved from one list counts in every list that has it: word key → mastered.
-  const saved = new Map();
-  for (const w of store.words.values()) {
-    const k = wordKey(w.word);
-    saved.set(k, saved.get(k) || isMastered(w));
-  }
+  const { saved, progress } = savedProgress();
   const remaining = all.filter((e) => !saved.has(wordKey(e.word)) && matchesType(e, type));
-  const progress = (entries) => {
-    let mastered = 0, learning = 0;
-    for (const e of entries) {
-      const m = saved.get(wordKey(e.word));
-      if (m === undefined) continue;
-      if (m) mastered += 1;
-      else learning += 1;
-    }
-    return { mastered, learning };
-  };
   const { mastered, learning } = progress(all);
   const entry = remaining[0];
 

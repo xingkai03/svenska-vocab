@@ -81,7 +81,7 @@ class Store {
     this.checkIns = new Map((checkIns ?? []).map((c) => [c.day, c]));
     this.settings = settings ?? {};
     this.lists = new Map(Object.entries(lists ?? {}));
-    this.revision.lists = (this.revision.lists ?? 0) + 1;
+    for (const p of ["words", "lists"]) this.revision[p] = (this.revision[p] ?? 0) + 1;
     this.#emit();
   }
 

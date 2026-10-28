@@ -9,14 +9,17 @@ import { EmptyState, HintCaption, Icon, LevelBadge, MemoryBar, NavBar, Segmented
 const FILTERS = [["all", "All"], ["due", "Due"], ["learning", "Learning"], ["mastered", "Mastered"], ["favorites", "★"]];
 const SORTS = [["recent", "Recently added"], ["alphabetical", "A–Z"], ["due", "Next review"], ["weakest", "Weakest memory"]];
 const collator = new Intl.Collator("sv");
+/** Rows drawn at first; a large collection shows more on request instead of drawing thousands of rows at once. */
+const PAGE = 200;
 
 // Filter, sort and search stay put while moving between tabs, like the app's tab state.
-const view = { filter: "all", sort: "recent", level: "", search: "" };
+const view = { filter: "all", sort: "recent", level: "", search: "", shown: PAGE };
 
 export function WordsView() {
   const [, rerender] = useState(0);
   const set = (patch) => {
-    Object.assign(view, patch);
+    // A new filter, sort or search starts again from the top of the list.
+    Object.assign(view, { shown: PAGE }, patch);
     rerender((n) => n + 1);
   };
   const words = [...store.words.values()].sort((a, b) => b.addedAt - a.addedAt);
@@ -73,7 +76,9 @@ export function WordsView() {
         ? html`<${EmptyState} icon="books" title="No words yet">Save words from Lookup, or use Learn new words on the Today tab.<//>`
         : html`<section class="section">
             <div class="section-header"><span>${visible.length} words</span></div>
-            <div class="list">${visible.map((w) => html`<${WordRow} key=${w.key} word=${w} now=${now} />`)}</div>
+            <div class="list">${visible.slice(0, view.shown).map((w) => html`<${WordRow} key=${w.key} word=${w} now=${now} />`)}</div>
+            ${visible.length > view.shown ? html`<div class="center" style="margin-top:12px">
+              <button class="btn" onClick=${() => set({ shown: view.shown + PAGE * 5 })}>Show more (${visible.length - view.shown} more)</button></div>` : null}
           </section>`}
     </div>`;
 }
