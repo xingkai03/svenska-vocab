@@ -4,7 +4,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 
 ## Features
 
-- **Lookup** – search in Swedish or English, with or without å/ä/ö ("bat" finds "båt"). About 37 000 words work offline: a curated core vocabulary of ~700 common words plus the whole of [Folkets lexikon](https://folkets-lexikon.csc.kth.se/folkets/) (KTH). Anything else is looked up in Folkets lexikon online. Recent searches are remembered.
+- **Lookup** – search in Swedish or English, with or without å/ä/ö ("bat" finds "båt"). About 37 000 words work offline: a curated core vocabulary of ~700 common words plus the whole of [Folkets lexikon](https://folkets-lexikon.csc.kth.se/folkets/) (KTH). Anything else is looked up in Folkets lexikon online. Recent searches are remembered. Inflected forms find their entry too ("bilarna" finds "bil", "pratade" finds "prata"), and tapping a word in an example sentence (double-clicking on the web) opens Lookup for it.
 - **Word details** – article (en/ett), inflected forms, translation, example sentence with translation, personal notes. More than 13 000 dictionary words have an example sentence, from Folkets lexikon, Wiktionary and Tatoeba.
 - **Pronunciation** – every word, form and example sentence can be spoken with the system's Swedish (sv-SE) voice, at normal or slow speed. Optional auto-pronounce.
 - **Collection** – save words, add your own, edit, favourite, filter (due, learning, mastered, favourites), sort (recent, A–Z, next review, weakest memory), swipe to delete. Export as CSV.

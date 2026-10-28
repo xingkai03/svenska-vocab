@@ -59,7 +59,7 @@ struct WordDetailView: View {
                 Section("Example") {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(shown.example).italic()
+                            ExampleText(text: shown.example)
                             if !shown.exampleTranslation.isEmpty {
                                 Text(shown.exampleTranslation).font(.subheadline).foregroundStyle(.secondary)
                             }

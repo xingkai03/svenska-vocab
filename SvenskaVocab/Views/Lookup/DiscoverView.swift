@@ -211,7 +211,7 @@ struct DiscoverView: View {
             }
             if !entry.example.isEmpty {
                 Divider()
-                Text(entry.example).italic().multilineTextAlignment(.center)
+                ExampleText(text: entry.example).multilineTextAlignment(.center)
                 Text(entry.exampleTranslation).font(.subheadline).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                 SpeakButton(text: entry.example, font: .body)

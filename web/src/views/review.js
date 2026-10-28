@@ -6,7 +6,7 @@ import { checkSpelling as check } from "../spelling.js";
 import { speak } from "../speech.js";
 import { store } from "../store.js";
 import { Kbd, useKeys } from "../keys.js";
-import { back, HintLines, Icon, NavBar, SpeakButton } from "../ui.js";
+import { back, ExampleText, HintLines, Icon, NavBar, SpeakButton } from "../ui.js";
 
 export const REVIEW_MODES = [
   { id: "flashcards", title: "Flashcards", icon: "cards" },
@@ -201,7 +201,7 @@ function Details({ mode, word }) {
     <${HintLines} word=${word.word} partOfSpeech=${word.partOfSpeech} />
     ${word.forms ? html`<div class="subheadline secondary fade-in">${formList(word).join(" · ")}</div>` : null}
     ${word.example ? html`<div class="fade-in" style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div class="italic">${word.example}</div>
+      <${ExampleText} text=${word.example} />
       <div class="subheadline secondary">${word.exampleTranslation}</div>
       <${SpeakButton} text=${word.example} hotkey="x" /></div>` : null}
     ${word.note ? html`<div class="footnote secondary fade-in"><${Icon} name="note" /> ${word.note}</div>` : null}`;

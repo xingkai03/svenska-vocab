@@ -156,6 +156,7 @@ svg.icon { width: 1.1em; height: 1.1em; vertical-align: -0.17em; flex: none; }
 .title2 { font-size: 22px; font-weight: 700; }
 .title3 { font-size: 20px; }
 .italic { font-style: italic; }
+.example-text { user-select: text; -webkit-user-select: text; }
 .bold { font-weight: 600; }
 .mono { font-variant-numeric: tabular-nums; }
 .red { color: var(--red); } .orange { color: var(--orange); } .green { color: var(--green); }

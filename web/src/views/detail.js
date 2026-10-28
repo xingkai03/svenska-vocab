@@ -7,7 +7,7 @@ import { svt, svtTerms } from "../svt.js";
 import { EpisodeCell } from "./svt.js";
 import { useKeys } from "../keys.js";
 import { store } from "../store.js";
-import { EmptyState, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, href, relative } from "../ui.js";
+import { EmptyState, ExampleText, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, href, relative } from "../ui.js";
 
 export function WordDetailView({ id }) {
   const saved = store.words.get(id);
@@ -64,7 +64,7 @@ export function WordDetailView({ id }) {
 
       ${entry.example ? html`<${Section} header="Example">
         <div class="cell"><div class="cell-main">
-          <span class="italic">${entry.example}</span>
+          <${ExampleText} text=${entry.example} />
           ${entry.exampleTranslation ? html`<span class="subheadline secondary">${entry.exampleTranslation}</span>` : null}
         </div><${SpeakButton} text=${entry.example} hotkey="x" /></div>
       <//>` : null}

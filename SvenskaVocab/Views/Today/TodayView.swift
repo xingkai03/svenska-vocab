@@ -239,7 +239,7 @@ struct TodayView: View {
                 }
                 Text(entry.translation).font(.body)
                 if !entry.example.isEmpty {
-                    Text(entry.example).italic()
+                    ExampleText(text: entry.example)
                     Text(entry.exampleTranslation).font(.caption).foregroundStyle(.secondary)
                 }
                 NavigationLink("Details") { WordDetailView(entry: entry) }
