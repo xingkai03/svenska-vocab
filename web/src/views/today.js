@@ -5,7 +5,7 @@ import { addDays, currentStreak, dayString, isDue, isToday, startOfDay } from ".
 import { Kbd, useKeys } from "../keys.js";
 import { speak } from "../speech.js";
 import { entryId, store } from "../store.js";
-import { Icon, NavBar, SpeakButton, go, href } from "../ui.js";
+import { ExampleText, Icon, NavBar, SpeakButton, go, href } from "../ui.js";
 import { enabledMethods } from "../methods.js";
 import { MIXED, REVIEW_MODES } from "./review.js";
 
@@ -141,7 +141,7 @@ function WordOfTheDay() {
         <${Icon} name=${saved ? "bookmarkFill" : "bookmark"} /></button>
     </div>
     <div>${entry.translation}</div>
-    ${entry.example ? html`<div class="italic">${entry.example}</div><div class="caption secondary">${entry.exampleTranslation}</div>` : null}
+    ${entry.example ? html`<${ExampleText} text=${entry.example} /><div class="caption secondary">${entry.exampleTranslation}</div>` : null}
     <a class="subheadline" href=${href("word", entry.id)}>Details</a>
   </div>`;
 }

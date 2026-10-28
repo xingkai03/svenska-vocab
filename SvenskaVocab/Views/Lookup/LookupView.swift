@@ -11,6 +11,14 @@ struct LookupView: View {
     @State private var onlineState: OnlineState = .idle
     @State private var showAddWord = false
     @State private var showAllFirst = false
+    @Environment(\.dismiss) private var dismiss
+    /// True when opened on top of another screen (from a word in an example sentence), which then needs a Done button.
+    private let showsDone: Bool
+
+    init(query: String = "", showsDone: Bool = false) {
+        _query = State(initialValue: query)
+        self.showsDone = showsDone
+    }
 
     enum OnlineState: Equatable {
         case idle, loading, done, failed(String)
@@ -57,8 +65,15 @@ struct LookupView: View {
                 showAllFirst = false
             }
             .toolbar {
-                Button { showAddWord = true } label: { Image(systemName: "plus") }
-                    .accessibilityLabel("Add your own word")
+                if showsDone {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button { showAddWord = true } label: { Image(systemName: "plus") }
+                        .accessibilityLabel("Add your own word")
+                }
             }
             .sheet(isPresented: $showAddWord) {
                 EditWordView(prefill: query)

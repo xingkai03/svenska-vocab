@@ -154,6 +154,19 @@ export function HintLines({ word, partOfSpeech }) {
     ${hints.map((h) => `${HINT_LANGUAGES[h.language].flag} ${h.word}`).join(" · ")}</div>`;
 }
 
+/** An example sentence; double-clicking one of its words opens Lookup for it, where inflected forms
+ *  ("hunden", "sprang") also find their dictionary entry. */
+export function ExampleText({ text, class: cls = "italic" }) {
+  const lookUp = () => {
+    const selection = getSelection();
+    const word = selection?.toString().match(/\p{L}+(?:-\p{L}+)*/u)?.[0];
+    if (!word) return;
+    selection.removeAllRanges();
+    go("lookup", { q: word.toLowerCase() });
+  };
+  return html`<div class=${`${cls} example-text`} onDblClick=${lookUp} title="Double-click a word to look it up">${text}</div>`;
+}
+
 /** A list row for a dictionary entry. */
 export function EntryRow({ entry, saved, onOpen }) {
   return html`<a class="cell" href=${href("word", entry.id)} onClick=${onOpen}>

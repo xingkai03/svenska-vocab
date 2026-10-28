@@ -188,6 +188,45 @@ struct SearchResults {
     var isEmpty: Bool { swedish.isEmpty && english.isEmpty }
 }
 
+/// Undoes common Swedish inflections for words that are neither a headword nor a listed form: noun plurals,
+/// definite and genitive forms, verb tenses and participles, adjective agreement and comparison. So "bilarna"
+/// finds "bil", "pratade" finds "prata", "fåglar" finds "fågel" and the imperative "stäng" finds "stänga".
+enum Inflection {
+    /// Ending → replacement, tried in this order.
+    private static let rules: [(String, String)] = [
+        ("arnas", ""), ("ernas", ""), ("ornas", "a"), ("arna", ""), ("erna", ""), ("orna", "a"), ("rna", ""),
+        ("aste", ""), ("ades", "a"), ("ande", "a"), ("ende", ""), ("ade", "a"), ("are", ""), ("ast", ""),
+        ("dde", ""), ("ens", ""), ("ets", ""), ("nas", ""), ("ats", "a"), ("es", "a"),
+        ("ar", ""), ("er", ""), ("er", "a"), ("or", "a"), ("en", ""), ("en", "a"), ("et", ""), ("na", ""),
+        ("ns", ""), ("at", "a"), ("ad", "a"), ("de", "a"), ("te", "a"), ("tt", ""), ("t", "a"),
+        ("n", ""), ("r", ""), ("t", ""), ("s", ""), ("s", "a"), ("a", ""), ("e", ""), ("", "a"),
+    ]
+    private static let doubled = Set("bdfgklmnprstv")
+    private static let vowels = Set("aeiouyåäö")
+
+    /// Headword spellings a word could be an inflection of, most likely first. Stems also lose a doubled final
+    /// consonant ("mannen" → "man") or get back the e that falls out before an ending ("cyklar" → "cykel").
+    static func stems(of word: String) -> [String] {
+        let w = word.lowercased()
+        var result: [String] = []
+        guard w.count >= 3 else { return result }
+        func add(_ s: String) {
+            if s.count >= 2, s != w, !result.contains(s) { result.append(s) }
+        }
+        for (ending, replacement) in rules where w.hasSuffix(ending) {
+            let stem = String(w.dropLast(ending.count))
+            add(stem + replacement)
+            if ending.isEmpty, let last = stem.last { add(stem + String(last) + "a") } // "glöm" → "glömma"
+            guard replacement.isEmpty else { continue }
+            let c = Array(stem)
+            guard c.count >= 2, let last = c.last else { continue }
+            if last == c[c.count - 2], doubled.contains(last) { add(String(stem.dropLast())) }
+            if "lnr".contains(last), !vowels.contains(c[c.count - 2]) { add(String(stem.dropLast()) + "e" + String(last)) }
+        }
+        return result
+    }
+}
+
 /// Lookup tables over the offline entries. search() runs on every keystroke over ~37 000 entries, so whole-word,
 /// inflection and prefix matches come from hash maps and a sorted list; only the substring pass scans everything.
 private struct SearchIndex: Sendable {
@@ -247,6 +286,7 @@ private struct SearchIndex: Sendable {
         add(byExactWord[exactLower], 0)
         add(byWord[q], 1)
         add(byForm[q], 2)
+        for stem in Inflection.stems(of: exactLower) { add(byExactWord[stem], 2) }
         add(byTranslationToken[q], 3)
         add(prefixMatches(Array(q.utf8)), 4)
         // Substring matches rank last; skip the full scan when better matches already fill the list,

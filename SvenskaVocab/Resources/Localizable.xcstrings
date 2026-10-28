@@ -3664,6 +3664,22 @@
         }
       }
     },
+    "Tap a word to look it up" : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tryck på ett ord för att slå upp det"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点按单词即可查词"
+          }
+        }
+      }
+    },
     "Test: “Hej, hur mår du?”" : {
       "localizations" : {
         "sv" : {

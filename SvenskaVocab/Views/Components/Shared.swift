@@ -166,3 +166,50 @@ struct Card<Content: View>: View {
             .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
     }
 }
+
+/// An example sentence whose words can be tapped to open Lookup for them; inflected forms ("hunden", "sprang")
+/// also find their dictionary entry there.
+struct ExampleText: View {
+    let text: String
+    @State private var lookup: LookupTerm?
+
+    private struct LookupTerm: Identifiable {
+        let id: String
+    }
+
+    private static let scheme = "svenska-lookup"
+
+    /// The sentence with each word as a link, styled like the rest of the text.
+    private var linked: AttributedString {
+        var result = AttributedString()
+        var rest = text.startIndex
+        for match in text.matches(of: #/\p{L}+(?:-\p{L}+)*/#) {
+            result += AttributedString(text[rest..<match.range.lowerBound])
+            var word = AttributedString(text[match.range])
+            if let encoded = String(text[match.range]).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
+                word.link = URL(string: "\(Self.scheme):\(encoded)")
+            }
+            result += word
+            rest = match.range.upperBound
+        }
+        result += AttributedString(text[rest...])
+        return result
+    }
+
+    var body: some View {
+        Text(linked)
+            .italic()
+            .tint(.primary)
+            .environment(\.openURL, OpenURLAction { url in
+                guard url.scheme == Self.scheme,
+                      let word = url.absoluteString.dropFirst(Self.scheme.count + 1).removingPercentEncoding
+                else { return .systemAction }
+                lookup = LookupTerm(id: word.lowercased())
+                return .handled
+            })
+            .accessibilityHint("Tap a word to look it up")
+            .sheet(item: $lookup) { term in
+                LookupView(query: term.id, showsDone: true)
+            }
+    }
+}

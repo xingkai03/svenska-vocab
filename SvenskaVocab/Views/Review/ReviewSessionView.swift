@@ -253,7 +253,7 @@ struct ReviewSessionView: View {
         }
         if !word.example.isEmpty {
             VStack(spacing: 4) {
-                Text(word.example).italic().multilineTextAlignment(.center)
+                ExampleText(text: word.example).multilineTextAlignment(.center)
                 Text(word.exampleTranslation).font(.subheadline).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                 SpeakButton(text: word.example, font: .body)

@@ -66,6 +66,37 @@ function parseDictionary(text, seen) {
   return result;
 }
 
+/** Ending → replacement pairs that undo common Swedish inflections: noun plurals, definite and genitive
+ *  forms, verb tenses and participles, adjective agreement and comparison. Tried on words that are neither a
+ *  headword nor a listed form, so "bilarna" finds "bil", "pratade" finds "prata", "fåglar" finds "fågel" and the imperative "stäng" finds "stänga". */
+const INFLECTIONS = [
+  ["arnas", ""], ["ernas", ""], ["ornas", "a"], ["arna", ""], ["erna", ""], ["orna", "a"], ["rna", ""],
+  ["aste", ""], ["ades", "a"], ["ande", "a"], ["ende", ""], ["ade", "a"], ["are", ""], ["ast", ""],
+  ["dde", ""], ["ens", ""], ["ets", ""], ["nas", ""], ["ats", "a"], ["es", "a"],
+  ["ar", ""], ["er", ""], ["er", "a"], ["or", "a"], ["en", ""], ["en", "a"], ["et", ""], ["na", ""],
+  ["ns", ""], ["at", "a"], ["ad", "a"], ["de", "a"], ["te", "a"], ["tt", ""], ["t", "a"],
+  ["n", ""], ["r", ""], ["t", ""], ["s", ""], ["s", "a"], ["a", ""], ["e", ""], ["", "a"],
+];
+
+/** Headword spellings a word could be an inflection of, most likely first. Stems also lose a doubled final
+ *  consonant ("mannen" → "man") or get back the e that falls out before an ending ("cyklar" → "cykel"). */
+export function inflectionStems(word) {
+  const w = word.toLowerCase();
+  const result = [];
+  if (w.length < 3) return result;
+  const add = (s) => s.length >= 2 && s !== w && !result.includes(s) && result.push(s);
+  for (const [ending, replacement] of INFLECTIONS) {
+    if (!w.endsWith(ending)) continue;
+    const stem = w.slice(0, w.length - ending.length);
+    add(stem + replacement);
+    if (!ending) add(`${stem}${stem.at(-1)}a`); // "glöm" → "glömma"
+    if (replacement) continue;
+    if (/([bdfgklmnprstv])\1$/.test(stem)) add(stem.slice(0, -1));
+    if (/[^aeiouyåäö][lnr]$/.test(stem)) add(`${stem.slice(0, -1)}e${stem.slice(-1)}`);
+  }
+  return result;
+}
+
 /** Ranked search in both directions. Exact Swedish spelling ranks above diacritic-folded matches. */
 class SearchIndex {
   constructor(entries, coreCount) {
@@ -114,6 +145,7 @@ class SearchIndex {
     add(this.byExactWord.get(query.toLowerCase().trim()), 0);
     add(this.byWord.get(q), 1);
     add(this.byForm.get(q), 2);
+    for (const stem of inflectionStems(query.trim())) add(this.byExactWord.get(stem), 2);
     add(this.byToken.get(q), 3);
     add(this.#prefixMatches(q), 4);
     // Substring matches rank last; skip the full scan when better matches already fill the list,
