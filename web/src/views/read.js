@@ -2,7 +2,7 @@ import { html, useEffect, useMemo, useRef, useState } from "../../vendor/preact-
 import { dictionary, headword } from "../dictionary.js";
 import { useKeys } from "../keys.js";
 import {
-  articleDate, eightSidorList, eightSidorSections, klartextList, loadArticle, paragraphsFromText, sentenceAt, SOURCES, tokenize, wikiList,
+  articleDate, eightSidorList, eightSidorSearch, eightSidorSections, klartextList, loadArticle, paragraphsFromText, sentenceAt, SOURCES, tokenize, wikiList,
 } from "../reading.js";
 import { mastery } from "../scheduler.js";
 import { speak } from "../speech.js";
@@ -177,19 +177,30 @@ function markOf(token) {
   return MARKED.includes(level) ? level : null;
 }
 
+/** Whether a word in a text is `target` or one of its forms: "hunden" is hund, but "marken" is not ark. */
+function sameWord(word, target) {
+  const w = word.toLowerCase(), t = target.toLowerCase();
+  if (w === t) return true;
+  const ids = new Set(entriesFor(t).map((e) => e.id));
+  return entriesFor(w).some((e) => ids.has(e.id) || e.word.toLowerCase() === t);
+}
+
 /** An article with every word linked: tap (or select several words) to look it up. */
 function Reader({ article, highlight, right }) {
   const [picked, setPicked] = useState(null);
   const body = useRef(null);
   const paragraphs = useMemo(() => article.paragraphs.map((p) => ({ ...p, tokens: tokenize(p.text) })), [article]);
-  const target = highlight.toLowerCase();
-  const isTarget = (w) => target && (w.toLowerCase() === target || entriesFor(w).some((e) => e.word.toLowerCase() === target));
+  // The word being looked up (from a word page, or the last word tapped) is highlighted wherever it appears.
+  const [looked, setLooked] = useState(highlight);
+  const isTarget = (w) => looked && sameWord(w, looked);
+  let hits = 0;
   const counts = { New: 0, Learning: 0, Familiar: 0 };
   let wordCount = 0;
   for (const p of paragraphs) {
     for (const t of p.tokens) {
       if (!t.word) continue;
       wordCount += 1;
+      if (isTarget(t.text)) hits += 1;
       const level = markOf(t);
       if (level) counts[level] += 1;
     }
@@ -217,6 +228,7 @@ function Reader({ article, highlight, right }) {
     const token = p.tokens[index];
     const lead = token.inPhrase ?? (token.phrase ? token : null);
     setPicked({ text: token.text, phrase: lead?.phrase ?? null, sentence: sentenceAt(p.text, offsetOf(p, index)) });
+    setLooked(token.text);
   };
 
   useKeys([[["o"], "Open the original article", article.link && (() => window.open(article.link, "_blank", "noopener"))]]);
@@ -237,6 +249,8 @@ function Reader({ article, highlight, right }) {
         ${article.date ? html`<span>${articleDate(article.date)}</span>` : null}
         <span>${wordCount} words</span>
         ${MARKED.map((m) => html`<span><span class=${`mark-key m-${m.toLowerCase()}`}>${m}</span> ${counts[m]}</span>`)}
+        ${looked ? html`<span><span class="mark-key hit">${looked}</span> ${hits}×
+          <button class="btn plain caption" onClick=${() => setLooked("")} aria-label="Stop highlighting">✕</button></span>` : null}
         ${article.link ? html`<a href=${article.link} target="_blank" rel="noopener">Open on ${new URL(article.link).hostname.replace(/^www\./, "")}</a>` : null}
       </div>
       ${article.audio ? html`<audio class="reader-audio" controls preload="none" src=${article.audio}></audio>` : null}
@@ -317,7 +331,9 @@ export function ReadingArticles({ word }) {
   useEffect(() => {
     let current = true;
     if (/^\p{L}+$/u.test(word) && word.length > 2) {
-      eightSidorList({ search: word, perPage: 4 }).then((r) => current && setFound(r), () => {});
+      // 8 Sidor's search also finds the letters inside other words, so keep articles that really use the word.
+      eightSidorSearch(word).then((articles) => current && setFound(articles.filter((a) => a.paragraphs.some((p) =>
+        tokenize(p.text).some((t) => t.word && sameWord(t.text, word)))).slice(0, 4)), () => {});
     }
     return () => { current = false; };
   }, [word]);
