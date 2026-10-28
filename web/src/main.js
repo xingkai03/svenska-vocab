@@ -2,6 +2,7 @@ import { html, render, useEffect, useState } from "../vendor/preact-htm.js";
 import { cloud } from "./cloud.js";
 import { ShortcutHelp } from "./keys.js";
 import { dictionary } from "./dictionary.js";
+import * as offline from "./offline.js";
 import { isDue } from "./scheduler.js";
 import { store } from "./store.js";
 import { Icon, href, parseRoute } from "./ui.js";
@@ -53,7 +54,7 @@ function App() {
 
   useEffect(() => {
     const rerender = () => setVersion((v) => v + 1);
-    const unsubscribe = [store.subscribe(rerender), cloud.subscribe(rerender)];
+    const unsubscribe = [store.subscribe(rerender), cloud.subscribe(rerender), offline.subscribe(rerender)];
     const onHash = () => {
       setRoute(parseRoute());
       scrollTo(0, 0);
@@ -83,7 +84,11 @@ function App() {
         ${t.name === "words" && due > 0 ? html`<span class="badge">${due}</span>` : null}
       </a>`)}
     </nav>
-    <main class="main"><${Page} route=${route} /></main>
+    <main class="main">
+      ${offline.updateReady() ? html`<div class="update-banner" role="status">A new version is ready.
+        <button class="btn prominent small" onClick=${offline.applyUpdate}>Reload</button></div>` : null}
+      <${Page} route=${route} />
+    </main>
     <${ShortcutHelp} />
   </div>`;
 }
@@ -102,6 +107,7 @@ async function start() {
   migrate();
   store.subscribe(migrate);
   render(html`<${App} />`, root);
+  offline.registerServiceWorker();
 
   // Sync when the page opens or comes back into view, a few seconds after each change, and every few minutes.
   store.onLocalChange = () => cloud.scheduleSync();

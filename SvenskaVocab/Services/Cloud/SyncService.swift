@@ -186,19 +186,27 @@ final class SyncService: ObservableObject {
 
     private func syncLogs(context: ModelContext, userId: String, api: Remote, state: inout SyncState) async throws -> Date? {
         var cursor = state.logsCursor
-        let logs = try context.fetch(FetchDescriptor<ReviewLog>())
-        var known = Set(logs.map(LogRecord.id))
+        // Logs are only ever added, so anything newer than what was last uploaded is new. Read before the pull, so
+        // logs that arrive from the account are not sent back. Only these and the pulled date range are fetched,
+        // not the whole history.
+        let pushedThrough = state.logsPushedThrough ?? .distantPast
+        let fresh = try context.fetch(FetchDescriptor<ReviewLog>(predicate: #Predicate { $0.date > pushedThrough }))
+            .map { LogRecord(log: $0, userId: userId) }
 
         let remote: [LogRecord] = try await api.changes("review_logs", since: cursor)
+        if let oldest = remote.map(\.reviewedAt).min() {
+            // A pulled log can only duplicate a local one from the same moment; a second of slack covers rounding.
+            let since = oldest.addingTimeInterval(-1)
+            let local = try context.fetch(FetchDescriptor<ReviewLog>(predicate: #Predicate { $0.date >= since }))
+            var known = Set(local.map(LogRecord.id))
+            for record in remote where known.insert(record.id).inserted {
+                context.insert(record.makeLog())
+            }
+        }
         for record in remote {
             if let updated = record.updatedAt { cursor = max(cursor ?? updated, updated) }
-            guard known.insert(record.id).inserted else { continue }
-            context.insert(record.makeLog())
         }
 
-        // Logs are only ever added, so anything newer than what was last uploaded is new.
-        let pushedThrough = state.logsPushedThrough ?? .distantPast
-        let fresh = logs.filter { $0.date > pushedThrough }.map { LogRecord(log: $0, userId: userId) }
         for chunk in fresh.chunked(LogRecord.batchSize) {
             try await api.upsert("review_logs", rows: Array(chunk), onConflict: "user_id,id", ignoreDuplicates: true)
             if let last = chunk.map(\.reviewedAt).max() {

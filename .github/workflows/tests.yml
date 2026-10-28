@@ -1,0 +1,40 @@
+# Runs the shared test cases (SvenskaVocabTests/SharedCases.json) against the web version and the iOS app, so the
+# two implementations of the scheduler, inflection rules, spelling checker and review methods stay in step.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Shared test cases (web)
+        run: node scripts/test_web.mjs
+
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shared test cases (iOS)
+        run: |
+          # The newest available iPhone simulator on this runner image.
+          device=$(xcrun simctl list devices available -j \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print([x["udid"] for k in sorted(d) if "iOS" in k for x in d[k] if x["name"].startswith("iPhone")][-1])')
+          xcodebuild test -project SvenskaVocab.xcodeproj -scheme SvenskaVocab \
+            -destination "id=$device" CODE_SIGNING_ALLOWED=NO -quiet

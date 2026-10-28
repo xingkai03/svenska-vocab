@@ -50,6 +50,7 @@ const PATHS = {
   trophy: '<path d="M7 4h10v5a5 5 0 0 1-10 0z" fill="currentColor"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v3M8 21h8M9.5 17h5"/>',
   target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/>',
   repeat: '<path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.7M20 4v4.7h-4.7M20 12a8 8 0 0 1-13.7 5.6L4 15.3M4 20v-4.7h4.7"/>',
+  undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
   sort: '<path d="M7 4v16m-3.5-3.5L7 20l3.5-3.5M17 20V4m-3.5 3.5L17 4l3.5 3.5"/>',
   filter: '<circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none"/><path d="M7.5 9h9M9.5 12.5h5M11 16h2" stroke="var(--card)"/>',
   tv: '<rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8M10.5 8.5v5l4-2.5z"/>',
