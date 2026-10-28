@@ -4,6 +4,7 @@ import { useKeys } from "../keys.js";
 import {
   articleDate, eightSidorList, eightSidorSections, klartextList, loadArticle, paragraphsFromText, sentenceAt, SOURCES, tokenize, wikiList,
 } from "../reading.js";
+import { mastery } from "../scheduler.js";
 import { speak } from "../speech.js";
 import { local, store } from "../store.js";
 import { EmptyState, HintCaption, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, href } from "../ui.js";
@@ -24,7 +25,7 @@ function ReadHome() {
   return html`
     <${NavBar} title="Read" backTo="lookup" />
     <div class="page">
-      <${Section} footer="Tap any word in an article to see what it means and add it to your words. Words underlined in orange belong to a phrase.">
+      <${Section} footer="Tap any word in an article to see what it means and add it to your words. Your New, Learning and Familiar words are coloured in the text.">
         ${ORDER.map((s) => html`<a class="cell" href=${href("read", s)}>
           <div class="cell-main"><div class="row" style="gap:6px"><span class="headline">${SOURCES[s].name}</span><span class="tag">${SOURCES[s].level}</span></div>
             <span class="subheadline secondary">${SOURCES[s].about}</span></div>
@@ -165,6 +166,17 @@ const entriesFor = (word) => {
   return lookups.get(w);
 };
 
+/** Mastery levels that are coloured in articles; Mastered words and words not in My words stay plain. */
+const MARKED = ["New", "Learning", "Familiar"];
+
+/** The mastery of a word in the text when it (or a saved phrase it belongs to) is in My words and not yet mastered. */
+function markOf(token) {
+  const lead = token.inPhrase ?? (token.phrase ? token : null);
+  const saved = [...(lead?.phrase?.entries ?? []), ...entriesFor(token.text)].map((e) => store.words.get(e.id)).find(Boolean);
+  const level = saved && mastery(saved);
+  return MARKED.includes(level) ? level : null;
+}
+
 /** An article with every word linked: tap (or select several words) to look it up. */
 function Reader({ article, highlight, right }) {
   const [picked, setPicked] = useState(null);
@@ -172,14 +184,14 @@ function Reader({ article, highlight, right }) {
   const paragraphs = useMemo(() => article.paragraphs.map((p) => ({ ...p, tokens: tokenize(p.text) })), [article]);
   const target = highlight.toLowerCase();
   const isTarget = (w) => target && (w.toLowerCase() === target || entriesFor(w).some((e) => e.word.toLowerCase() === target));
-  const savedCount = new Set();
+  const counts = { New: 0, Learning: 0, Familiar: 0 };
   let wordCount = 0;
   for (const p of paragraphs) {
     for (const t of p.tokens) {
       if (!t.word) continue;
       wordCount += 1;
-      const saved = entriesFor(t.text).find((e) => store.words.has(e.id));
-      if (saved) savedCount.add(saved.id);
+      const level = markOf(t);
+      if (level) counts[level] += 1;
     }
   }
 
@@ -211,8 +223,8 @@ function Reader({ article, highlight, right }) {
 
   const word = (t, pi, ti) => {
     const entries = entriesFor(t.text);
-    const cls = ["w", entries.some((e) => store.words.has(e.id)) ? "saved" : "", entries.length ? "" : "unknown",
-      t.phrase || t.inPhrase ? "phrase" : "", isTarget(t.text) ? "hit" : ""].filter(Boolean).join(" ");
+    const level = markOf(t);
+    const cls = ["w", level ? `m-${level.toLowerCase()}` : "", entries.length ? "" : "unknown", isTarget(t.text) ? "hit" : ""].filter(Boolean).join(" ");
     return html`<span class=${cls} data-p=${pi} data-t=${ti}>${t.text}</span>`;
   };
 
@@ -223,7 +235,8 @@ function Reader({ article, highlight, right }) {
       ${article.title ? html`<h1 class="reader-title">${article.title}</h1>` : null}
       <div class="caption secondary reader-meta">
         ${article.date ? html`<span>${articleDate(article.date)}</span>` : null}
-        <span>${wordCount} words · ${savedCount.size} in your words</span>
+        <span>${wordCount} words</span>
+        ${MARKED.map((m) => html`<span><span class=${`mark-key m-${m.toLowerCase()}`}>${m}</span> ${counts[m]}</span>`)}
         ${article.link ? html`<a href=${article.link} target="_blank" rel="noopener">Open on ${new URL(article.link).hostname.replace(/^www\./, "")}</a>` : null}
       </div>
       ${article.audio ? html`<audio class="reader-audio" controls preload="none" src=${article.audio}></audio>` : null}
@@ -235,7 +248,7 @@ function Reader({ article, highlight, right }) {
       </div>
       ${article.source === "klartext" ? html`<div class="section-footer">Klartext's summary of the day's news; the full broadcast is in the player above.</div>` : null}
       <div class="section-footer">${article.credit}${article.link ? html` <a href=${article.link} target="_blank" rel="noopener">Original article</a>` : null}
-        <br />Blue words are already in your words; words underlined in orange belong to a phrase.</div>
+        <br />Coloured words are in your words: New (not reviewed yet), Learning (next review within a week) and Familiar (1–3 weeks). Mastered and unsaved words stay plain; tap any word to look it up.</div>
     </div>
     ${picked ? html`<${WordSheet} ...${picked} onClose=${() => setPicked(null)} />` : null}`;
 }
