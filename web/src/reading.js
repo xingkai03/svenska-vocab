@@ -120,11 +120,24 @@ export async function eightSidorList({ section = "", search = "", page = 1, perP
   return posts.map(eightItem);
 }
 
+const eightArticle = (p) => ({
+  ...eightItem(p), link: p.link, paragraphs: paragraphsFromHTML(p.content?.rendered), credit: SOURCES["8sidor"].credit,
+});
+
 async function eightSidorArticle(id) {
-  const p = await getJSON(`${EIGHT_API}/posts/${encodeURIComponent(id)}?_fields=id,date,link,title,content`);
-  return {
-    ...eightItem(p), link: p.link, paragraphs: paragraphsFromHTML(p.content?.rendered), credit: SOURCES["8sidor"].credit,
-  };
+  return eightArticle(await getJSON(`${EIGHT_API}/posts/${encodeURIComponent(id)}?_fields=id,date,link,title,content`));
+}
+
+/**
+ * Whole articles from 8 Sidor's search for a word, newest first. Its search matches any part of a word ("ark" finds
+ * "marken"), so callers check the text themselves. The articles are kept for loadArticle, so opening one is instant.
+ */
+export async function eightSidorSearch(word, perPage = 20) {
+  const params = new URLSearchParams({ per_page: perPage, search: word, _fields: "id,date,link,title,excerpt,content" });
+  params.set("categories", (await eightSidorSections()).map((s) => s.id).join(","));
+  const articles = (await getJSON(`${EIGHT_API}/posts?${params}`)).map(eightArticle);
+  for (const a of articles) if (!cache.has(`8sidor/${a.id}`)) cache.set(`8sidor/${a.id}`, Promise.resolve(a));
+  return articles;
 }
 
 // MARK: - Klartext (Sveriges Radio)
