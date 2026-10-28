@@ -139,21 +139,19 @@ export function MemoryBar({ retention }) {
     <div style=${{ width: `${width}%`, background: color }}></div></div>`;
 }
 
-/** One-line German/French memory hint for list rows: "🇩🇪 Fenster · 🇫🇷 fenêtre". Draws nothing without hints. */
-export function HintCaption({ word, partOfSpeech }) {
+/** "🇩🇪 Fenster · 🇫🇷 fenêtre": German/French memory hints in the given text style. Draws nothing without hints. */
+function Hints({ word, partOfSpeech, cls }) {
   const hints = dictionary.hints(word, partOfSpeech);
   if (!hints.length) return null;
-  return html`<div class="caption secondary" aria-label=${hints.map(hintSentence).join(". ")}>
+  return html`<div class=${`${cls} secondary`} aria-label=${hints.map(hintSentence).join(". ")}>
     ${hints.map((h) => `${HINT_LANGUAGES[h.language].flag} ${h.word}`).join(" · ")}</div>`;
 }
 
-/** "🇩🇪 Fenster · 🇫🇷 fenêtre" under the translation, for learn and review cards. */
-export function HintLines({ word, partOfSpeech }) {
-  const hints = dictionary.hints(word, partOfSpeech);
-  if (!hints.length) return null;
-  return html`<div class="subheadline secondary" aria-label=${hints.map(hintSentence).join(". ")}>
-    ${hints.map((h) => `${HINT_LANGUAGES[h.language].flag} ${h.word}`).join(" · ")}</div>`;
-}
+/** One-line hint for list rows. */
+export const HintCaption = (props) => html`<${Hints} ...${props} cls="caption" />`;
+
+/** Hint under the translation, for learn and review cards. */
+export const HintLines = (props) => html`<${Hints} ...${props} cls="subheadline" />`;
 
 /** An example sentence; double-clicking one of its words opens Lookup for it, where inflected forms
  *  ("hunden", "sprang") also find their dictionary entry. */

@@ -34,7 +34,7 @@ struct CollectionView: View {
         }
         switch sort {
         case .recent: return filtered
-        case .alphabetical: return filtered.sorted { $0.word.compare($1.word, locale: Locale(identifier: "sv_SE")) == .orderedAscending }
+        case .alphabetical: return filtered.sorted { $0.word.compare($1.word, locale: .swedish) == .orderedAscending }
         case .due: return filtered.sorted { $0.dueDate < $1.dueDate }
         case .weakest: return filtered.sorted { $0.retention < $1.retention }
         }

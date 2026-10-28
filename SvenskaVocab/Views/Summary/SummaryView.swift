@@ -63,12 +63,20 @@ struct SummaryView: View {
 
     private var activity: [DayActivity] {
         let today = cal.startOfDay(for: .now)
+        let first = cal.date(byAdding: .day, value: -13, to: today)!
+        // One pass over the history, counting per day. Logs are sorted by date, so stop at the first one in range.
+        var reviews: [Date: Int] = [:], added: [Date: Int] = [:]
+        for log in logs.reversed() {
+            guard log.date >= first else { break }
+            reviews[cal.startOfDay(for: log.date), default: 0] += 1
+        }
+        for word in words where word.addedAt >= first {
+            added[cal.startOfDay(for: word.addedAt), default: 0] += 1
+        }
         return (0..<14).reversed().flatMap { offset -> [DayActivity] in
             let day = cal.date(byAdding: .day, value: -offset, to: today)!
-            let reviews = logs.filter { cal.isDate($0.date, inSameDayAs: day) }.count
-            let added = words.filter { cal.isDate($0.addedAt, inSameDayAs: day) }.count
-            return [DayActivity(day: day, kind: L("Reviews"), count: reviews),
-                    DayActivity(day: day, kind: L("New words"), count: added)]
+            return [DayActivity(day: day, kind: L("Reviews"), count: reviews[day] ?? 0),
+                    DayActivity(day: day, kind: L("New words"), count: added[day] ?? 0)]
         }
     }
 

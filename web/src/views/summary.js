@@ -51,15 +51,27 @@ const weekdayShort = new Intl.DateTimeFormat(undefined, { weekday: "short" });
 
 function Activity({ words, logs }) {
   const today = startOfDay(Date.now());
+  const first = addDays(today, -13);
+  // One pass over the history: counts per day key. Logs are oldest first, so stop at the first one in range.
+  const reviews = new Map(), added = new Map();
+  for (let i = logs.length - 1; i >= 0 && logs[i].date >= first; i--) {
+    const k = dayString(logs[i].date);
+    reviews.set(k, (reviews.get(k) ?? 0) + 1);
+  }
+  for (const w of words) {
+    if (w.addedAt < first) continue;
+    const k = dayString(w.addedAt);
+    added.set(k, (added.get(k) ?? 0) + 1);
+  }
   const columns = [];
   for (let offset = 13; offset >= 0; offset--) {
     const day = addDays(today, -offset);
-    const end = addDays(day, 1);
+    const k = dayString(day);
     columns.push({
       label: shortDate.format(day),
       values: [
-        { value: logs.filter((l) => l.date >= day && l.date < end).length, color: "var(--accent)" },
-        { value: words.filter((w) => w.addedAt >= day && w.addedAt < end).length, color: "var(--purple)" },
+        { value: reviews.get(k) ?? 0, color: "var(--accent)" },
+        { value: added.get(k) ?? 0, color: "var(--purple)" },
       ],
     });
   }

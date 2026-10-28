@@ -67,10 +67,16 @@ enum PartOfSpeech {
     }
 }
 
+extension Locale {
+    /// Swedish rules for folding and sorting. Made once: creating a Locale is slow, and search indexing and the word
+    /// list call this tens of thousands of times.
+    static let swedish = Locale(identifier: "sv_SE")
+}
+
 extension String {
     /// Lowercased and diacritic-folded, so "a" also finds "å" and "ä" on keyboards without Swedish letters.
     var searchFolded: String {
-        folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "sv_SE"))
+        folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .swedish)
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

@@ -25,9 +25,8 @@ struct DiscoverView: View {
         return dictionary.deck(deck)
     }
 
-    private var candidates: [DictionaryEntry] {
-        let saved = savedWords
-        return deckEntries.filter { saved[$0.wordKey] == nil && matchesFilter($0) }
+    private func candidates(_ entries: [DictionaryEntry], saved: [String: Bool]) -> [DictionaryEntry] {
+        entries.filter { saved[$0.wordKey] == nil && matchesFilter($0) }
     }
 
     /// Bundled and imported word lists by picker section, in `WordDeck.groupOrder`.
@@ -81,9 +80,9 @@ struct DiscoverView: View {
     }
 
     var body: some View {
-        let remaining = candidates
         let all = deckEntries
         let saved = savedWords
+        let remaining = candidates(all, saved: saved)
         let current = progress(all, saved)
         VStack(spacing: 20) {
             HStack {

@@ -89,9 +89,12 @@ struct ReviewSessionView: View {
             queue = Array(all.filter(\.isDue).sorted { $0.dueDate < $1.dueDate }.prefix(sessionSize)).shuffled()
         }
         if mode == nil {
-            let keys = Set(queue.map(\.key))
-            let logs = (try? context.fetch(FetchDescriptor<ReviewLog>(sortBy: [SortDescriptor(\.date)]))) ?? []
-            for log in logs where keys.contains(log.wordKey) && !log.mode.isEmpty {
+            // Only the session's words' history, not every answer ever given.
+            let keys = queue.map(\.key)
+            let descriptor = FetchDescriptor<ReviewLog>(predicate: #Predicate { keys.contains($0.wordKey) },
+                                                        sortBy: [SortDescriptor(\.date)])
+            let logs = (try? context.fetch(descriptor)) ?? []
+            for log in logs where !log.mode.isEmpty {
                 attempts[log.wordKey, default: []].append(.init(mode: log.mode, grade: log.grade))
             }
         }
