@@ -59,6 +59,29 @@ export function ReviewView({ modeId, practice }) {
   const [card, setCard] = useState({ method: mode?.id ?? null, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options: [] });
   const [score, setScore] = useState({ reviewed: 0, correct: 0 });
   const typing = useRef(null);
+  // The last answer, until the next one, so it can be undone: { word (as it was), log, queue, score, method }. Its
+  // log is only saved once the answer can no longer be undone, because a log that has synced can't be taken back.
+  const [last, setLast] = useState(null);
+  const lastRef = useRef(null);
+  lastRef.current = last;
+  /** The method an undone card had, so it comes back the same. */
+  const undoneMethod = useRef(null);
+  const saveLast = () => {
+    const pending = lastRef.current;
+    if (!pending) return;
+    lastRef.current = null;
+    store.addLog(pending.log);
+    store.flush();
+  };
+  // Leaving the session, or the page going into the background (it may be closed), saves the last answer's log.
+  useEffect(() => {
+    const onHide = () => document.visibilityState === "hidden" && saveLast();
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      saveLast();
+    };
+  }, []);
 
   // Words deleted during the session (e.g. on another device) drop out of the queue.
   const live = queue.filter((k) => store.words.has(k));
@@ -70,13 +93,14 @@ export function ReviewView({ modeId, practice }) {
   // Prepare each new card.
   useEffect(() => {
     if (!word) return;
-    const method = mode?.id ?? pickMethod(enabledMethods(store.get("disabledReviewModes")), attempts.current.get(word.key) ?? []);
+    const method = undoneMethod.current ?? mode?.id ?? pickMethod(enabledMethods(store.get("disabledReviewModes")), attempts.current.get(word.key) ?? []);
     let options = [];
     if (method === "choice" || method === "listening") {
       const wrong = new Set(shuffle(live.map((k) => store.words.get(k).translation).filter((t) => t !== word.translation)).slice(0, 3));
       for (const t of dictionary.distractors(word.translation, 6)) if (wrong.size < 3) wrong.add(t);
       options = shuffle([...wrong, word.translation]);
     }
+    undoneMethod.current = null;
     setCard({ method, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
     if ((method === "flashcards" || method === "choice") && autoSpeak) speak(word.word);
     if (method === "listening") speak(word.word);
@@ -85,16 +109,30 @@ export function ReviewView({ modeId, practice }) {
 
   const answer = (grade) => {
     if (!word) return;
+    saveLast();
     const updated = practice ? word : apply(grade, word);
     if (!practice) store.updateWord(word.key, updated);
-    store.addLog({ date: Date.now(), wordKey: word.key, grade, intervalAfter: updated.interval, mode: method });
+    const log = { date: Date.now(), wordKey: word.key, grade, intervalAfter: updated.interval, mode: method };
+    setLast({ word, log, queue: live, score, method });
     if (!attempts.current.has(word.key)) attempts.current.set(word.key, []);
     attempts.current.get(word.key).push({ mode: method, grade });
     const rest = live.slice(1);
-    // Forgotten words come back later in the same session.
-    if (grade === AGAIN && rest.length) rest.splice(Math.min(rest.length, 4), 0, word.key);
+    // Forgotten words come back later in the same session, the last one too.
+    if (grade === AGAIN) rest.splice(Math.min(rest.length, 4), 0, word.key);
     setQueue(rest);
     setScore((s) => ({ reviewed: s.reviewed + 1, correct: s.correct + (grade === AGAIN ? 0 : 1) }));
+  };
+
+  /** Takes back the last answer: the word's schedule, the score and the queue return to how they were. */
+  const undo = () => {
+    if (!last) return;
+    lastRef.current = null;
+    if (!practice && store.words.has(last.word.key)) store.updateWord(last.word.key, last.word);
+    attempts.current.get(last.word.key)?.pop();
+    undoneMethod.current = last.method;
+    setLast(null);
+    setQueue(last.queue);
+    setScore(last.score);
   };
 
   const reveal = () => {
@@ -147,16 +185,19 @@ export function ReviewView({ modeId, practice }) {
       [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
     ],
     [["x"], "Play the example", word.example && (card.revealed || card.picked != null || card.spelling) && (() => speak(word.example))],
-  ] : [[["Space", "Enter"], "Done", () => back("today")]]);
+    [["u", "Mod+z"], "Undo the last answer", last && undo],
+  ] : [[["Space", "Enter"], "Done", () => back("today")], [["u", "Mod+z"], "Undo the last answer", last && undo]]);
 
   const title = practice ? `${(mode ?? MIXED).title} · practice` : mode?.title ?? "Mixed review";
   // Until the first card's method is picked.
   if (word && !method) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" />`;
-  if (!word) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" /><${Finished} score=${score} />`;
+  const undoButton = last ? html`<button class="bar-button" onClick=${undo} title="Undo the last answer (U)" aria-label="Undo the last answer">
+    <${Icon} name="undo" /> Undo</button>` : null;
+  if (!word) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" right=${undoButton} /><${Finished} score=${score} />`;
 
   const answered = card.revealed || card.picked != null || card.spelling != null;
   return html`
-    <${NavBar} title=${title} backTo="today" backLabel="Today" />
+    <${NavBar} title=${title} backTo="today" backLabel="Today" right=${undoButton} />
     <div class="page"><div class="stack">
       <div class="row caption secondary mono">
         <span>${live.length} left</span><span class="spacer"></span>

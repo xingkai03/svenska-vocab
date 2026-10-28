@@ -1,0 +1,879 @@
+{
+ "about": "Test cases shared by the iOS app (SvenskaVocabTests) and the web version (scripts/test_web.mjs), so the two implementations stay in step. Numbers are rounded to 6 decimals.",
+ "scheduler": [
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 0
+   },
+   "grade": 0,
+   "expected": {
+    "easeFactor": 1.96,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 1
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 0
+   },
+   "grade": 1,
+   "expected": {
+    "easeFactor": 2.36,
+    "interval": 1,
+    "repetitions": 1,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 0
+   },
+   "grade": 2,
+   "expected": {
+    "easeFactor": 2.5,
+    "interval": 2,
+    "repetitions": 1,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 0
+   },
+   "grade": 3,
+   "expected": {
+    "easeFactor": 2.6,
+    "interval": 4,
+    "repetitions": 1,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 2,
+    "repetitions": 1,
+    "lapses": 0
+   },
+   "grade": 0,
+   "expected": {
+    "easeFactor": 1.96,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 1
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 2,
+    "repetitions": 1,
+    "lapses": 0
+   },
+   "grade": 1,
+   "expected": {
+    "easeFactor": 2.36,
+    "interval": 3,
+    "repetitions": 2,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 2,
+    "repetitions": 1,
+    "lapses": 0
+   },
+   "grade": 2,
+   "expected": {
+    "easeFactor": 2.5,
+    "interval": 6,
+    "repetitions": 2,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.5,
+    "interval": 2,
+    "repetitions": 1,
+    "lapses": 0
+   },
+   "grade": 3,
+   "expected": {
+    "easeFactor": 2.6,
+    "interval": 8,
+    "repetitions": 2,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.36,
+    "interval": 6,
+    "repetitions": 2,
+    "lapses": 1
+   },
+   "grade": 0,
+   "expected": {
+    "easeFactor": 1.82,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 2
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.36,
+    "interval": 6,
+    "repetitions": 2,
+    "lapses": 1
+   },
+   "grade": 1,
+   "expected": {
+    "easeFactor": 2.22,
+    "interval": 11,
+    "repetitions": 3,
+    "lapses": 1
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.36,
+    "interval": 6,
+    "repetitions": 2,
+    "lapses": 1
+   },
+   "grade": 2,
+   "expected": {
+    "easeFactor": 2.36,
+    "interval": 14,
+    "repetitions": 3,
+    "lapses": 1
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.36,
+    "interval": 6,
+    "repetitions": 2,
+    "lapses": 1
+   },
+   "grade": 3,
+   "expected": {
+    "easeFactor": 2.46,
+    "interval": 18,
+    "repetitions": 3,
+    "lapses": 1
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 1.3,
+    "interval": 15,
+    "repetitions": 4,
+    "lapses": 3
+   },
+   "grade": 0,
+   "expected": {
+    "easeFactor": 1.3,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 4
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 1.3,
+    "interval": 15,
+    "repetitions": 4,
+    "lapses": 3
+   },
+   "grade": 1,
+   "expected": {
+    "easeFactor": 1.3,
+    "interval": 16,
+    "repetitions": 5,
+    "lapses": 3
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 1.3,
+    "interval": 15,
+    "repetitions": 4,
+    "lapses": 3
+   },
+   "grade": 2,
+   "expected": {
+    "easeFactor": 1.3,
+    "interval": 20,
+    "repetitions": 5,
+    "lapses": 3
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 1.3,
+    "interval": 15,
+    "repetitions": 4,
+    "lapses": 3
+   },
+   "grade": 3,
+   "expected": {
+    "easeFactor": 1.4,
+    "interval": 25,
+    "repetitions": 5,
+    "lapses": 3
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.8,
+    "interval": 3000,
+    "repetitions": 9,
+    "lapses": 0
+   },
+   "grade": 0,
+   "expected": {
+    "easeFactor": 2.26,
+    "interval": 0,
+    "repetitions": 0,
+    "lapses": 1
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.8,
+    "interval": 3000,
+    "repetitions": 9,
+    "lapses": 0
+   },
+   "grade": 1,
+   "expected": {
+    "easeFactor": 2.66,
+    "interval": 3650,
+    "repetitions": 10,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.8,
+    "interval": 3000,
+    "repetitions": 9,
+    "lapses": 0
+   },
+   "grade": 2,
+   "expected": {
+    "easeFactor": 2.8,
+    "interval": 3650,
+    "repetitions": 10,
+    "lapses": 0
+   }
+  },
+  {
+   "state": {
+    "easeFactor": 2.8,
+    "interval": 3000,
+    "repetitions": 9,
+    "lapses": 0
+   },
+   "grade": 3,
+   "expected": {
+    "easeFactor": 2.9,
+    "interval": 3650,
+    "repetitions": 10,
+    "lapses": 0
+   }
+  }
+ ],
+ "retention": [
+  {
+   "elapsedDays": 0,
+   "stability": 1,
+   "expected": 1
+  },
+  {
+   "elapsedDays": 1,
+   "stability": 1,
+   "expected": 0.9
+  },
+  {
+   "elapsedDays": 7,
+   "stability": 7,
+   "expected": 0.9
+  },
+  {
+   "elapsedDays": 10,
+   "stability": 3,
+   "expected": 0.703842
+  },
+  {
+   "elapsedDays": 2,
+   "stability": 0,
+   "expected": 0.430467
+  },
+  {
+   "elapsedDays": 30,
+   "stability": 21,
+   "expected": 0.860265
+  }
+ ],
+ "stems": [
+  {
+   "word": "bilarna",
+   "expected": [
+    "bil",
+    "bila",
+    "bilar",
+    "bilarn",
+    "bilaren",
+    "bilarnaa",
+    "bilarnaaa"
+   ]
+  },
+  {
+   "word": "pratade",
+   "expected": [
+    "prata",
+    "prataa",
+    "pratad",
+    "pratadea",
+    "pratadeea"
+   ]
+  },
+  {
+   "word": "fåglar",
+   "expected": [
+    "fågl",
+    "fågel",
+    "fågla",
+    "fåglara",
+    "fåglarra"
+   ]
+  },
+  {
+   "word": "stäng",
+   "expected": [
+    "stänga",
+    "stängga"
+   ]
+  },
+  {
+   "word": "mannen",
+   "expected": [
+    "mann",
+    "man",
+    "manen",
+    "manna",
+    "manne",
+    "mannena",
+    "mannenna"
+   ]
+  },
+  {
+   "word": "cyklar",
+   "expected": [
+    "cykl",
+    "cykel",
+    "cykla",
+    "cyklara",
+    "cyklarra"
+   ]
+  },
+  {
+   "word": "husen",
+   "expected": [
+    "hus",
+    "husa",
+    "huse",
+    "husena",
+    "husenna"
+   ]
+  },
+  {
+   "word": "flickorna",
+   "expected": [
+    "flicka",
+    "flicko",
+    "flickor",
+    "flickorn",
+    "flickoren",
+    "flickornaa",
+    "flickornaaa"
+   ]
+  },
+  {
+   "word": "springer",
+   "expected": [
+    "spring",
+    "springa",
+    "springe",
+    "springera",
+    "springerra"
+   ]
+  },
+  {
+   "word": "glöm",
+   "expected": [
+    "glöma",
+    "glömma"
+   ]
+  },
+  {
+   "word": "större",
+   "expected": [
+    "störr",
+    "stör",
+    "störer",
+    "störrea",
+    "störreea"
+   ]
+  },
+  {
+   "word": "vackrast",
+   "expected": [
+    "vackr",
+    "vacker",
+    "vackrasa",
+    "vackras",
+    "vackrasta",
+    "vackrastta"
+   ]
+  },
+  {
+   "word": "är",
+   "expected": []
+  },
+  {
+   "word": "katter",
+   "expected": [
+    "katt",
+    "kat",
+    "katta",
+    "katte",
+    "kattera",
+    "katterra"
+   ]
+  },
+  {
+   "word": "läste",
+   "expected": [
+    "läsa",
+    "läst",
+    "lästea",
+    "lästeea"
+   ]
+  }
+ ],
+ "spelling": [
+  {
+   "typed": "hund",
+   "word": "hund",
+   "forms": [],
+   "expected": {
+    "kind": "correct",
+    "form": null
+   }
+  },
+  {
+   "typed": "Hund ",
+   "word": "hund",
+   "forms": [],
+   "expected": {
+    "kind": "correct",
+    "form": null
+   }
+  },
+  {
+   "typed": "hunden",
+   "word": "hund",
+   "forms": [
+    "hunden",
+    "hundar"
+   ],
+   "expected": {
+    "kind": "correct",
+    "form": "hunden"
+   }
+  },
+  {
+   "typed": "far",
+   "word": "får",
+   "forms": [],
+   "expected": {
+    "kind": "diacritics",
+    "form": null
+   }
+  },
+  {
+   "typed": "flicka",
+   "word": "flicka",
+   "forms": [],
+   "expected": {
+    "kind": "correct",
+    "form": null
+   }
+  },
+  {
+   "typed": "flika",
+   "word": "flicka",
+   "forms": [],
+   "expected": {
+    "kind": "typo",
+    "form": null
+   }
+  },
+  {
+   "typed": "springa",
+   "word": "springa",
+   "forms": [
+    "springer",
+    "sprang"
+   ],
+   "expected": {
+    "kind": "correct",
+    "form": null
+   }
+  },
+  {
+   "typed": "sprnag",
+   "word": "springa",
+   "forms": [
+    "springer",
+    "sprang"
+   ],
+   "expected": {
+    "kind": "typo",
+    "form": "sprang"
+   }
+  },
+  {
+   "typed": "bil",
+   "word": "bok",
+   "forms": [],
+   "expected": {
+    "kind": "wrong",
+    "form": null
+   }
+  },
+  {
+   "typed": "",
+   "word": "hund",
+   "forms": [],
+   "expected": {
+    "kind": "wrong",
+    "form": null
+   }
+  },
+  {
+   "typed": "sjukhus",
+   "word": "sjukhuset",
+   "forms": [],
+   "expected": {
+    "kind": "typo",
+    "form": null
+   }
+  },
+  {
+   "typed": "att springa",
+   "word": "springa",
+   "forms": [],
+   "expected": {
+    "kind": "correct",
+    "form": null
+   }
+  }
+ ],
+ "methodStrength": [
+  {
+   "mode": "flashcards",
+   "attempts": [],
+   "expected": 0.5
+  },
+  {
+   "mode": "flashcards",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    }
+   ],
+   "expected": 0.75
+  },
+  {
+   "mode": "flashcards",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    },
+    {
+     "mode": "flashcards",
+     "grade": 1
+    },
+    {
+     "mode": "spelling",
+     "grade": 3
+    },
+    {
+     "mode": "choice",
+     "grade": 0
+    }
+   ],
+   "expected": 0.615385
+  },
+  {
+   "mode": "reverse",
+   "attempts": [],
+   "expected": 0.5
+  },
+  {
+   "mode": "reverse",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    }
+   ],
+   "expected": 0.5
+  },
+  {
+   "mode": "reverse",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    },
+    {
+     "mode": "flashcards",
+     "grade": 1
+    },
+    {
+     "mode": "spelling",
+     "grade": 3
+    },
+    {
+     "mode": "choice",
+     "grade": 0
+    }
+   ],
+   "expected": 0.5
+  },
+  {
+   "mode": "choice",
+   "attempts": [],
+   "expected": 0.5
+  },
+  {
+   "mode": "choice",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    }
+   ],
+   "expected": 0.5
+  },
+  {
+   "mode": "choice",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    },
+    {
+     "mode": "flashcards",
+     "grade": 1
+    },
+    {
+     "mode": "spelling",
+     "grade": 3
+    },
+    {
+     "mode": "choice",
+     "grade": 0
+    }
+   ],
+   "expected": 0.25
+  },
+  {
+   "mode": "listening",
+   "attempts": [],
+   "expected": 0.5
+  },
+  {
+   "mode": "listening",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    }
+   ],
+   "expected": 0.5
+  },
+  {
+   "mode": "listening",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    },
+    {
+     "mode": "flashcards",
+     "grade": 1
+    },
+    {
+     "mode": "spelling",
+     "grade": 3
+    },
+    {
+     "mode": "choice",
+     "grade": 0
+    }
+   ],
+   "expected": 0.5
+  },
+  {
+   "mode": "spelling",
+   "attempts": [],
+   "expected": 0.5
+  },
+  {
+   "mode": "spelling",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    }
+   ],
+   "expected": 0.25
+  },
+  {
+   "mode": "spelling",
+   "attempts": [
+    {
+     "mode": "flashcards",
+     "grade": 2
+    },
+    {
+     "mode": "spelling",
+     "grade": 0
+    },
+    {
+     "mode": "flashcards",
+     "grade": 1
+    },
+    {
+     "mode": "spelling",
+     "grade": 3
+    },
+    {
+     "mode": "choice",
+     "grade": 0
+    }
+   ],
+   "expected": 0.576923
+  }
+ ],
+ "enabled": [
+  {
+   "disabled": "",
+   "expected": [
+    "flashcards",
+    "reverse",
+    "choice",
+    "listening",
+    "spelling"
+   ]
+  },
+  {
+   "disabled": "spelling",
+   "expected": [
+    "flashcards",
+    "reverse",
+    "choice",
+    "listening"
+   ]
+  },
+  {
+   "disabled": "flashcards,listening",
+   "expected": [
+    "reverse",
+    "choice",
+    "spelling"
+   ]
+  },
+  {
+   "disabled": "flashcards,reverse,choice,listening,spelling",
+   "expected": [
+    "flashcards",
+    "reverse",
+    "choice",
+    "listening",
+    "spelling"
+   ]
+  },
+  {
+   "disabled": "unknown",
+   "expected": [
+    "flashcards",
+    "reverse",
+    "choice",
+    "listening",
+    "spelling"
+   ]
+  }
+ ]
+}

@@ -2,21 +2,44 @@ import SwiftData
 import SwiftUI
 
 struct TodayView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var today = Calendar.current.startOfDay(for: .now)
+
+    var body: some View {
+        TodayContent(today: today)
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { today = Calendar.current.startOfDay(for: .now) }
+            }
+            .task(id: today) {
+                // Roll over at midnight while the app stays open.
+                guard let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) else { return }
+                try? await Task.sleep(for: .seconds(max(1, tomorrow.timeIntervalSinceNow)))
+                if !Task.isCancelled { today = Calendar.current.startOfDay(for: .now) }
+            }
+    }
+}
+
+/// The Today screen for one calendar day: only that day's review history is loaded, not every answer ever given.
+private struct TodayContent: View {
     @Environment(\.modelContext) private var context
     @EnvironmentObject private var dictionary: DictionaryService
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var dailyStory = DailyStoryStore()
     @Query private var words: [SavedWord]
-    @Query(sort: \ReviewLog.date, order: .reverse) private var logs: [ReviewLog]
+    @Query private var logsToday: [ReviewLog]
     @Query(sort: \CheckIn.day) private var checkIns: [CheckIn]
     @AppStorage(AppSettings.dailyGoal) private var dailyGoal = 20
     @AppStorage(AppSettings.disabledReviewModes) private var disabledReviewModes = ""
     @State private var showSettings = false
     @State private var celebrate = false
 
+    init(today: Date) {
+        _logsToday = Query(filter: #Predicate<ReviewLog> { $0.date >= today })
+    }
+
     private var cal: Calendar { .current }
     private var dueCount: Int { words.filter(\.isDue).count }
-    private var reviewsToday: Int { logs.prefix(while: { cal.isDateInToday($0.date) }).count }
+    private var reviewsToday: Int { logsToday.count }
     private var newToday: Int { words.filter { cal.isDateInToday($0.addedAt) }.count }
     private var doneToday: Int { reviewsToday + newToday }
     private var checkedInToday: Bool { checkIns.contains { cal.isDateInToday($0.day) } }

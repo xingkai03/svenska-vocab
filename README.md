@@ -56,7 +56,7 @@ The project uses Xcode 16's folder-synchronised groups, so new files you add und
 
 `web/` is a browser version with the same tabs and features (lookup, Learn new words, reviews in all five modes, check-ins, summary, settings, imported lists) and sv-SE pronunciation through the browser's speech voices. It signs in to the same Supabase accounts and syncs the same tables with the same merge rules as the app, so you can learn on the web and on the iPhone with one account. Without an account it keeps everything in the browser (IndexedDB).
 
-On a computer everything works from the keyboard: T / L / W / S switch tabs, `/` searches, J / K or the arrow keys move through lists, Space and 1–4 answer reviews, ← / → mark new words known or learn them (Z undoes), P pronounces the word (Shift+P slowly, X the example; in Lookup and My words the selected row), Esc goes back, and `?` lists every shortcut for the current screen. In spelling, `[`, `'` and `;` type å, ä and ö (where they sit on a Swedish keyboard).
+On a computer everything works from the keyboard: T / L / W / S switch tabs, `/` searches, J / K or the arrow keys move through lists, Space and 1–4 answer reviews (U undoes the last answer), ← / → mark new words known or learn them (Z undoes), P pronounces the word (Shift+P slowly, X the example; in Lookup and My words the selected row), Esc goes back, and `?` lists every shortcut for the current screen. In spelling, `[`, `'` and `;` type å, ä and ö (where they sit on a Swedish keyboard).
 
 The web version also has SVT Play clips (formerly SVT Learn on xingkai03.github.io/svt-learn): search a Swedish word under Lookup › Hear words on SVT Play (or V) and jump to the moment it's said in an SVT programme, and each word page lists the newest episodes where the word or one of its forms is said. `web/svt/` is a links-only index (word → episode and second, plus episode names and links), never SVT's subtitles. Episodes that have left SVT Play are hidden. This is web only; the iPhone app doesn't include it.
 
@@ -69,7 +69,11 @@ python3 scripts/build_web.py           # copies the dictionary and open word lis
 python3 scripts/serve_web.py           # then open http://localhost:8000 (served without caching)
 ```
 
-`web/config.js` holds the Supabase URL and publishable key (public by design; the tables are protected by row-level security). `.github/workflows/web.yml` publishes the site to GitHub Pages on every push to `main` that touches it: in the repository settings › Pages, set Source to "GitHub Actions". The build only copies `Resources/Decks`, never `Resources/Private`. For confirmation emails to open the web version, add its URL under Supabase › Authentication › URL Configuration.
+`web/config.js` holds the Supabase URL and publishable key (public by design; the tables are protected by row-level security). `.github/workflows/web.yml` publishes the site to GitHub Pages on every push to `main` that touches it: in the repository settings › Pages, set Source to "GitHub Actions". The build only copies `Resources/Decks`, never `Resources/Private`. The published site works offline: `web/sw.js` caches every file of a deploy under one version (build_web.py fills in the list), so the app opens without a connection and never mixes files from two deploys; a new version downloads in the background and a "Reload" banner switches to it. The service worker is off on localhost. For confirmation emails to open the web version, add its URL under Supabase › Authentication › URL Configuration.
+
+### Tests
+
+The scheduler, inflection rules, spelling checker and review-method picker exist twice, in Swift and in JavaScript. `SvenskaVocabTests/SharedCases.json` holds test cases both must pass: `node scripts/test_web.mjs` checks the web version, and the SvenskaVocabTests target (Product › Test in Xcode, ⌘U) checks the app. `.github/workflows/tests.yml` runs both on every pull request.
 
 ## Project layout
 
@@ -83,7 +87,8 @@ SvenskaVocab/
   Resources/      core_vocabulary.tsv (curated), folkets_sv_en.tsv, kelly_levels.tsv, language_hints.tsv (generated)
     Decks/        open word lists (deck_*.tsv)
     Private/      your personal lists (git-ignored)
-scripts/          build_folkets.py, build_kelly.py, build_open_decks.py, build_language_hints.py, build_web.py
+SvenskaVocabTests/ unit tests over SharedCases.json, shared with the web version
+scripts/          build_folkets.py, build_kelly.py, build_open_decks.py, build_language_hints.py, build_web.py, test_web.mjs
 web/              browser version (see Web version above)
   svt/            SVT Play word index (episodes.json + one file per two-letter prefix)
 ```

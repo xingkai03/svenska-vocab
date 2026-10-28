@@ -22,3 +22,16 @@ targets:
         SWIFT_VERSION: "5.0"
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: 1
+  SvenskaVocabTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [SvenskaVocabTests]
+    dependencies:
+      - target: SvenskaVocab
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xingkai03.SvenskaVocabTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SvenskaVocab.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SvenskaVocab"
+        BUNDLE_LOADER: "$(TEST_HOST)"

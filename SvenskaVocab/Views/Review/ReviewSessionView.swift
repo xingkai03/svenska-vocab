@@ -56,11 +56,52 @@ struct ReviewSessionView: View {
     @State private var forgot = false
     @State private var reviewed = 0
     @State private var correct = 0
+    /// The last answer, until the next one, so it can be undone.
+    @State private var lastAnswer: LastAnswer?
     @FocusState private var typingFocused: Bool
+    @Environment(\.scenePhase) private var scenePhase
 
     struct SpellingResult {
         let grade: ReviewGrade
         let message: String
+    }
+
+    /// Everything an answer changed, to put back on Undo. Its review log is only saved once the answer can no longer
+    /// be undone (the next answer, or leaving the session): a log that has synced can't be taken back.
+    private struct LastAnswer {
+        let word: SavedWord
+        let schedule: Schedule
+        let log: ReviewLog
+        let queue: [SavedWord]
+        let method: ReviewMode
+        let reviewed: Int
+        let correct: Int
+    }
+
+    /// A word's spaced-repetition state.
+    private struct Schedule {
+        let easeFactor: Double, interval: Int, repetitions: Int, lapses: Int, reviewCount: Int
+        let dueDate: Date, lastReviewedAt: Date?
+
+        init(_ w: SavedWord) {
+            easeFactor = w.easeFactor
+            interval = w.interval
+            repetitions = w.repetitions
+            lapses = w.lapses
+            reviewCount = w.reviewCount
+            dueDate = w.dueDate
+            lastReviewedAt = w.lastReviewedAt
+        }
+
+        func restore(to w: SavedWord) {
+            w.easeFactor = easeFactor
+            w.interval = interval
+            w.repetitions = repetitions
+            w.lapses = lapses
+            w.reviewCount = reviewCount
+            w.dueDate = dueDate
+            w.lastReviewedAt = lastReviewedAt
+        }
     }
 
     var body: some View {
@@ -75,6 +116,16 @@ struct ReviewSessionView: View {
         }
         .navigationTitle(practice ? L("%@ · practice", title) : title)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if lastAnswer != nil {
+                Button(action: undo) { Label("Undo", systemImage: "arrow.uturn.backward") }
+                    .accessibilityLabel("Undo last answer")
+            }
+        }
+        .onDisappear(perform: saveLastAnswer)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { saveLastAnswer() }
+        }
     }
 
     private var title: String { mode?.title ?? L("Mixed review") }
@@ -102,13 +153,14 @@ struct ReviewSessionView: View {
         if let first = queue.first { prepare(first) }
     }
 
-    private func prepare(_ word: SavedWord) {
+    /// Sets up a card; `method` keeps the one it had, when an answer is undone.
+    private func prepare(_ word: SavedWord, method chosen: ReviewMode? = nil) {
         revealed = false
         picked = nil
         typed = ""
         spelling = nil
         forgot = false
-        method = mode ?? ReviewMethods.pick(from: ReviewMethods.enabled(disabled: disabledReviewModes), attempts: attempts[word.key] ?? [])
+        method = chosen ?? mode ?? ReviewMethods.pick(from: ReviewMethods.enabled(disabled: disabledReviewModes), attempts: attempts[word.key] ?? [])
         if method == .choice || method == .listening {
             var wrong = Set(queue.map(\.translation).filter { $0 != word.translation }.shuffled().prefix(3))
             if wrong.count < 3 {
@@ -132,21 +184,46 @@ struct ReviewSessionView: View {
 
     private func answer(_ grade: ReviewGrade) {
         guard !queue.isEmpty else { return }
+        saveLastAnswer()
+        let before = queue
         let word = queue.removeFirst()
+        let schedule = Schedule(word)
         if !practice {
             Scheduler.apply(grade, to: word)
         }
-        context.insert(ReviewLog(wordKey: word.key, grade: grade, intervalAfter: word.interval, mode: method.rawValue))
+        let log = ReviewLog(wordKey: word.key, grade: grade, intervalAfter: word.interval, mode: method.rawValue)
+        lastAnswer = LastAnswer(word: word, schedule: schedule, log: log, queue: before, method: method,
+                                reviewed: reviewed, correct: correct)
         attempts[word.key, default: []].append(.init(mode: method.rawValue, grade: grade.rawValue))
         try? context.save()
         reviewed += 1
         if grade != .again {
             correct += 1
-        } else if queue.count > 0 {
-            // Forgotten words come back later in the same session.
+        } else {
+            // Forgotten words come back later in the same session, the last one too.
             queue.insert(word, at: min(queue.count, 4))
         }
         if let next = queue.first { prepare(next) }
+    }
+
+    /// Takes back the last answer: the word's schedule, the score and the queue return to how they were.
+    private func undo() {
+        guard let last = lastAnswer else { return }
+        lastAnswer = nil
+        if !practice { last.schedule.restore(to: last.word) }
+        try? context.save()
+        if attempts[last.word.key]?.isEmpty == false { attempts[last.word.key]?.removeLast() }
+        queue = last.queue
+        reviewed = last.reviewed
+        correct = last.correct
+        prepare(last.word, method: last.method)
+    }
+
+    private func saveLastAnswer() {
+        guard let last = lastAnswer else { return }
+        lastAnswer = nil
+        context.insert(last.log)
+        try? context.save()
     }
 
     private func reveal(_ word: SavedWord) {

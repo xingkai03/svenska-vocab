@@ -356,3 +356,9 @@ kbd.hint { margin-left: 6px; background: rgba(127, 127, 127, 0.18); color: inher
 .mark-key { padding: 0 4px; border-radius: 4px; }
 .reader-body .w.hit, .mark-key.hit { background: color-mix(in srgb, var(--yellow) 60%, transparent); border-radius: 4px; }
 .word-sheet .speak { margin-top: 4px; }
+
+/* New version downloaded in the background (offline.js). */
+.update-banner {
+  display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+  margin: 12px 16px 0; padding: 10px 14px; border-radius: 12px; background: var(--card); font-size: 15px;
+}

@@ -2,13 +2,14 @@
 """Copy the app's open word data into the web version.
 
     python3 scripts/build_web.py            # fills web/data for local testing
-    python3 scripts/build_web.py _site      # writes a deployable copy of the web app to _site
+    python3 scripts/build_web.py _site      # writes a deployable copy of the web app to _site, with offline support
 
 Then serve the folder, e.g. `python3 -m http.server -d web 8000`, and open http://localhost:8000.
 
 Only the dictionary, Kelly levels and the open word lists in Resources/Decks are copied, never
 Resources/Private (personal lists such as Rivstart must not end up on a public website).
 """
+import hashlib
 import json
 import shutil
 import sys
@@ -33,6 +34,30 @@ def copy_data(data: Path) -> None:
     print(f"{len(FILES)} dictionary files and {len(decks)} word lists → {data.relative_to(ROOT)}")
 
 
+def stamp_service_worker(site: Path) -> None:
+    """Lists the site's files in sw.js for offline use, with a version that changes whenever any of them does.
+
+    SVT clip lists (svt/, about 5 MB) are left out; the service worker keeps the ones that get opened.
+    """
+    files = sorted(
+        p.relative_to(site).as_posix() for p in site.rglob("*")
+        if p.is_file() and p.name != "sw.js" and not p.relative_to(site).as_posix().startswith("svt/")
+    )
+    digest = hashlib.sha256()
+    for name in files:
+        digest.update(name.encode() + b"\0" + (site / name).read_bytes())
+    version = digest.hexdigest()[:12]
+    sw = site / "sw.js"
+    text = sw.read_text()
+    for old, new in [('const VERSION = "dev";', f'const VERSION = "{version}";'),
+                     ("const FILES = [];", f"const FILES = {json.dumps(['./'] + files)};")]:
+        if old not in text:
+            sys.exit(f"sw.js no longer contains {old!r}; update stamp_service_worker.")
+        text = text.replace(old, new)
+    sw.write_text(text)
+    print(f"Service worker version {version}: {len(files)} files cached for offline use")
+
+
 def main() -> None:
     if len(sys.argv) > 1:
         out = (ROOT / sys.argv[1]).resolve()
@@ -42,6 +67,7 @@ def main() -> None:
             shutil.rmtree(out)
         shutil.copytree(WEB, out, ignore=shutil.ignore_patterns("data", ".DS_Store"))
         copy_data(out / "data")
+        stamp_service_worker(out)
     else:
         copy_data(WEB / "data")
 
