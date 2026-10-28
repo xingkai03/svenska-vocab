@@ -83,9 +83,10 @@ export function go(...parts) {
   location.hash = href(...parts);
 }
 
-/** Back within the app, or to `fallback` when the page was opened directly. */
+/** Back within the app, or to `fallback` (a route name or a full "#/…" address) when the page was opened directly. */
 export function back(fallback = "today") {
   if (navigated) history.back();
+  else if (fallback.startsWith("#")) location.hash = fallback;
   else go(fallback);
 }
 

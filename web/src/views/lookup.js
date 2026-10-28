@@ -36,7 +36,8 @@ export function LookupView({ query: initial = "" }) {
     [["p"], "Pronounce the selected word", results && (() => speak(selectedWord()))],
     [["P"], "Pronounce it slowly", results && (() => speak(selectedWord(), { slow: true }))],
     [["n"], "Add your own word", () => go("new", query.trim() ? { prefill: query.trim() } : {})],
-    [["v"], "Hear it on SVT Play", () => go("svt", query.trim() ? { q: query.trim() } : {})]]);
+    [["v"], "Hear it on SVT Play", () => go("svt", query.trim() ? { q: query.trim() } : {})],
+    [["r"], "Read Swedish articles", !query.trim() && (() => go("read"))]]);
 
   return html`
     <${NavBar} title="Lookup" large right=${html`
@@ -67,6 +68,10 @@ export function LookupView({ query: initial = "" }) {
           <a class="cell" href=${href("svt")}><span class="accent"><${Icon} name="tv" /></span>
             <div class="cell-main"><span>Hear words on SVT Play</span>
               <span class="subheadline secondary">Jump to the moment a word is said in an SVT programme.</span></div>
+            <span class="chevron"><${Icon} name="chevronRight" /></span></a>
+          <a class="cell" href=${href("read")}><span class="accent"><${Icon} name="note" /></span>
+            <div class="cell-main"><span>Read Swedish articles</span>
+              <span class="subheadline secondary">8 Sidor, Klartext, Wikipedia or your own text, with every word linked to the dictionary.</span></div>
             <span class="chevron"><${Icon} name="chevronRight" /></span></a>
         <//>`
       : html`

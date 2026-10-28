@@ -4,6 +4,7 @@ import { dictionary, formList, headword, HINT_LANGUAGES } from "../dictionary.js
 import { isDue, mastery, retention, retentionAfter, DAY } from "../scheduler.js";
 import { speak } from "../speech.js";
 import { svt, svtTerms } from "../svt.js";
+import { ReadingArticles } from "./read.js";
 import { EpisodeCell } from "./svt.js";
 import { useKeys } from "../keys.js";
 import { store } from "../store.js";
@@ -70,6 +71,7 @@ export function WordDetailView({ id }) {
       <//>` : null}
 
       <${SvtClips} word=${entry.word} forms=${forms} />
+      <${ReadingArticles} word=${entry.word} />
 
       ${saved ? html`<${Memory} word=${saved} />
         <${Section} header="My note">

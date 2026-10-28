@@ -340,3 +340,18 @@ kbd.hint { margin-left: 6px; background: rgba(127, 127, 127, 0.18); color: inher
 .svt-words { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 0; }
 .svt-note { margin: 24px 0 32px; }
 .svt-programme { margin-left: auto; min-width: 0; max-width: 65%; }
+
+/* Reading */
+.reader { max-width: 720px; }
+.reader-title { font-size: 26px; font-weight: 700; line-height: 1.2; margin: 20px 0 6px; }
+.reader-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.reader-audio { width: 100%; margin-top: 14px; }
+.reader-body { background: var(--card); border-radius: 12px; padding: 4px 18px; margin-top: 16px; font-size: 19px; line-height: 1.65; }
+.reader-body p { margin: 14px 0; }
+.reader-body h2 { font-size: 20px; font-weight: 700; margin: 20px 0 6px; }
+.reader-body .w { cursor: pointer; border-radius: 4px; }
+.reader-body .w:hover { background: var(--accent-soft); }
+.reader-body .w.saved { text-decoration: underline dotted var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; color: var(--accent); }
+.reader-body .w.phrase { text-decoration: underline solid var(--orange); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.reader-body .w.hit { background: color-mix(in srgb, var(--yellow) 40%, transparent); }
+.word-sheet .speak { margin-top: 4px; }
