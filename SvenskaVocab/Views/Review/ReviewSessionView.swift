@@ -397,6 +397,7 @@ struct ReviewSessionView: View {
     private func answerControls(_ word: SavedWord) -> some View {
         switch method {
         case .flashcards, .reverse:
+            // No "I forget" here: Again is the same.
             VStack(spacing: 10) {
                 gradeButtons(word)
                 if let rated {
@@ -408,8 +409,6 @@ struct ReviewSessionView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .keyboardShortcut(.defaultAction)
-                } else {
-                    forgetButton(word)
                 }
             }
         case .choice, .listening:
