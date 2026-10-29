@@ -54,6 +54,8 @@ struct ReviewSessionView: View {
     @State private var spelling: SpellingResult?
     /// Set by "I forget": the answer is shown and the word is graded Again on Continue.
     @State private var forgot = false
+    /// A flashcard's rating, picked before the answer shows; Continue grades the word with it.
+    @State private var rated: ReviewGrade?
     @State private var reviewed = 0
     @State private var correct = 0
     /// The last answer, until the next one, so it can be undone.
@@ -166,6 +168,7 @@ struct ReviewSessionView: View {
         typed = ""
         spelling = nil
         forgot = false
+        rated = nil
         method = chosen ?? mode ?? ReviewMethods.pick(from: ReviewMethods.enabled(disabled: disabledReviewModes), attempts: attempts[word.key] ?? [])
         if method == .choice || method == .listening {
             var wrong = Set(queue.map(\.translation).filter { $0 != word.translation }.shuffled().prefix(3))
@@ -233,8 +236,15 @@ struct ReviewSessionView: View {
         try? context.save()
     }
 
-    private func reveal(_ word: SavedWord) {
-        withAnimation(.easeOut(duration: 0.2)) { revealed = true }
+    /// Flashcards are rated before the answer shows: the first rating reveals it, and until Continue the rating can
+    /// still be changed.
+    private func rate(_ grade: ReviewGrade, _ word: SavedWord) {
+        let first = !revealed
+        withAnimation(.easeOut(duration: 0.2)) {
+            rated = grade
+            revealed = true
+        }
+        guard first else { return }
         // Flashcards already said the word; the example comes into view now.
         speech.speak(method == .reverse && autoSpeak ? word.word : nil, thenExample: word.mainExample.sv)
     }
@@ -387,17 +397,19 @@ struct ReviewSessionView: View {
     private func answerControls(_ word: SavedWord) -> some View {
         switch method {
         case .flashcards, .reverse:
-            if revealed {
+            VStack(spacing: 10) {
                 gradeButtons(word)
-            } else {
-                HStack(spacing: 8) {
-                    forgetButton(word)
-                        .controlSize(.large)
-                    Button { reveal(word) } label: {
-                        Text("Show answer").frame(maxWidth: .infinity)
+                if let rated {
+                    Button {
+                        answer(rated)
+                    } label: {
+                        Text("Continue").frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+                    .keyboardShortcut(.defaultAction)
+                } else {
+                    forgetButton(word)
                 }
             }
         case .choice, .listening:
@@ -466,20 +478,24 @@ struct ReviewSessionView: View {
     private func gradeButtons(_ word: SavedWord) -> some View {
         HStack(spacing: 8) {
             ForEach(ReviewGrade.allCases) { grade in
-                Button {
-                    answer(grade)
-                } label: {
-                    VStack(spacing: 2) {
-                        Text(grade.title).font(.subheadline.weight(.semibold))
-                        if !practice {
-                            Text(Scheduler.preview(grade, for: word)).font(.caption2)
-                        }
+                let label = VStack(spacing: 2) {
+                    Text(grade.title).font(.subheadline.weight(.semibold))
+                    if !practice {
+                        Text(Scheduler.preview(grade, for: word)).font(.caption2)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
                 }
-                .buttonStyle(.bordered)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+                // The picked rating stays filled in.
+                Group {
+                    if rated == grade {
+                        Button { rate(grade, word) } label: { label }.buttonStyle(.borderedProminent)
+                    } else {
+                        Button { rate(grade, word) } label: { label }.buttonStyle(.bordered)
+                    }
+                }
                 .tint(grade.color)
+                .accessibilityAddTraits(rated == grade ? .isSelected : [])
             }
         }
     }
