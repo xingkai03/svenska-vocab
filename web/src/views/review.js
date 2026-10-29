@@ -180,7 +180,7 @@ export function ReviewView({ modeId, practice }) {
   };
 
   // Keyboard: 1–4 rate a flashcard (which shows the answer) or pick an option, space or enter continues, F (Esc in
-  // spelling) is "I forget", P plays the word again.
+  // spelling) is "I forget" outside flashcards (Again is the same there), P plays the word again.
   const flip = method === "flashcards" || method === "reverse";
   const choice = method === "choice" || method === "listening";
   const proceed = card.forgot ? () => answer(AGAIN)
@@ -191,7 +191,7 @@ export function ReviewView({ modeId, practice }) {
   const openDetail = () => { setDetail(true); scrollTo(0, 0); };
   // While the detail page is open, only its own keys apply.
   useKeys(detail ? [] : word ? [
-    [["f"], "I forget", !card.forgot && !card.revealed && card.picked == null && !card.spelling && forget],
+    [["f"], "I forget", !flip && !card.forgot && !card.revealed && card.picked == null && !card.spelling && forget],
     ...GRADES.map((g) => [[String(g.value + 1)], g.title, flip && !card.forgot && (() => rate(g.value))]),
     ...card.options.map((o, i) => [[String(i + 1)], `Answer ${i + 1}`, choice && card.picked == null && !card.forgot && (() => pick(o))]),
     [["Space", "Enter"], "Continue", proceed],
@@ -272,15 +272,14 @@ function Controls({ mode, word, card, practice, typing, onRate, onForget, onAnsw
   const forgetButton = (k) => html`<button class="btn large" onClick=${onForget}>I forget<${Kbd} k=${k} /></button>`;
   const continueButton = (grade) => html`<button class="btn prominent large full" onClick=${() => onAnswer(grade)}>Continue<${Kbd} k="Enter" /></button>`;
   if (mode === "flashcards" || mode === "reverse") {
-    if (card.forgot) return html`<div style="display:flex;flex-direction:column;gap:10px">${forgotten}${continueButton(AGAIN)}</div>`;
-    // Rate first; the answer shows once a rating is picked, and the picked one stays filled in.
+    // Rate first (no "I forget": Again is the same); the answer shows once a rating is picked, and the picked one stays filled in.
     const grades = html`<div class="grade-row">
       ${GRADES.map((g) => html`<button class=${`btn tinted ${card.rated === g.value ? "filled" : ""}`} style=${{ "--tint": `var(--${g.color})` }}
         onClick=${() => onRate(g.value)} title=${`${g.title} (${g.value + 1})`} aria-pressed=${card.rated === g.value}>
         <span class="subheadline bold">${g.title}</span>${practice ? null : html`<span class="caption2">${preview(g.value, word)}</span>`}<${Kbd} k=${String(g.value + 1)} />
       </button>`)}
     </div>`;
-    if (card.rated == null) return html`<div style="display:flex;flex-direction:column;gap:10px">${grades}${forgetButton("f")}</div>`;
+    if (card.rated == null) return grades;
     return html`<div style="display:flex;flex-direction:column;gap:10px">${grades}${continueButton(card.rated)}</div>`;
   }
   if (mode === "choice" || mode === "listening") {
