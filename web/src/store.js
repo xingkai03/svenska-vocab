@@ -44,6 +44,7 @@ export const SETTING_DEFAULTS = {
   sessionSize: 30,
   speechRate: 0.45,
   autoSpeak: true,
+  autoSpeakExamples: true,
   onlineLookup: true,
   skippedWords: "",
   discoverDeck: "core",

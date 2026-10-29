@@ -146,7 +146,7 @@ struct DiscoverView: View {
                 card(entry)
                     .id(entry.id)
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-                    .onAppear { if autoSpeak { speech.speak(entry.word) } }
+                    .onAppear { speech.speak(autoSpeak ? entry.word : nil, thenExample: entry.example) }
 
                 HStack(spacing: 16) {
                     Button {

@@ -2854,6 +2854,22 @@
         }
       }
     },
+    "Pronounce example sentences automatically" : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Läs upp exempelmeningarna automatiskt"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动朗读例句"
+          }
+        }
+      }
+    },
     "Pronounce slowly" : {
       "localizations" : {
         "sv" : {

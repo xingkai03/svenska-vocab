@@ -121,7 +121,7 @@ struct WordDetailView: View {
             }
         }
         .onAppear {
-            if autoSpeak { speech.speak(shown.word) }
+            speech.speak(autoSpeak ? shown.word : nil, thenExample: shown.example)
         }
     }
 }

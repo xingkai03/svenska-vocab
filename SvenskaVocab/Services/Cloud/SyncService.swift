@@ -571,6 +571,7 @@ struct SettingsData: Codable, Equatable {
     var sessionSize: Int?
     var speechRate: Double?
     var autoSpeak: Bool?
+    var autoSpeakExamples: Bool?
     var onlineLookup: Bool?
     var skippedWords: String?
     var discoverDeck: String?
@@ -583,6 +584,7 @@ struct SettingsData: Codable, Equatable {
                      sessionSize: d.object(forKey: AppSettings.sessionSize) as? Int,
                      speechRate: d.object(forKey: AppSettings.speechRate) as? Double,
                      autoSpeak: d.object(forKey: AppSettings.autoSpeak) as? Bool,
+                     autoSpeakExamples: d.object(forKey: AppSettings.autoSpeakExamples) as? Bool,
                      onlineLookup: d.object(forKey: AppSettings.onlineLookup) as? Bool,
                      skippedWords: d.string(forKey: AppSettings.skippedWords),
                      discoverDeck: d.string(forKey: AppSettings.discoverDeck),
@@ -594,6 +596,7 @@ struct SettingsData: Codable, Equatable {
     func applyToDefaults(_ d: UserDefaults = .standard) {
         let values: [String: Any?] = [AppSettings.dailyGoal: dailyGoal, AppSettings.sessionSize: sessionSize,
                                       AppSettings.speechRate: speechRate, AppSettings.autoSpeak: autoSpeak,
+                                      AppSettings.autoSpeakExamples: autoSpeakExamples,
                                       AppSettings.onlineLookup: onlineLookup, AppSettings.skippedWords: skippedWords,
                                       AppSettings.discoverDeck: discoverDeck, AppSettings.knowsGerman: knowsGerman,
                                       AppSettings.knowsFrench: knowsFrench,

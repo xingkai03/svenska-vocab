@@ -6,7 +6,7 @@ A compact SwiftUI app for building Swedish vocabulary, with a full offline Swedi
 
 - **Lookup** – search in Swedish or English, with or without å/ä/ö ("bat" finds "båt"). About 37 000 words work offline: a curated core vocabulary of ~700 common words plus the whole of [Folkets lexikon](https://folkets-lexikon.csc.kth.se/folkets/) (KTH). Anything else is looked up in Folkets lexikon online. Recent searches are remembered. Inflected forms find their entry too ("bilarna" finds "bil", "pratade" finds "prata"), and tapping a word in an example sentence (double-clicking on the web) opens Lookup for it.
 - **Word details** – article (en/ett), inflected forms, translation, example sentence with translation, personal notes. More than 13 000 dictionary words have an example sentence, from Folkets lexikon, Wiktionary and Tatoeba.
-- **Pronunciation** – every word, form and example sentence can be spoken with the system's Swedish (sv-SE) voice, at normal or slow speed. Optional auto-pronounce.
+- **Pronunciation** – every word, form and example sentence can be spoken with the system's Swedish (sv-SE) voice, at normal or slow speed. Optional auto-pronounce: the word when it appears, then its example sentence once the example is on screen (each can be turned off in Settings).
 - **Collection** – save words, add your own, edit, favourite, filter (due, learning, mastered, favourites), sort (recent, A–Z, next review, weakest memory), swipe to delete. Export as CSV.
 - **Learn new words** – step through the core vocabulary in frequency order, or a CEFR word list (A1, A2, B1, B2, C1, C2) from the Swedish Kelly list, with progress per list: "Learn" adds a word, "I know it" skips it.
 - **Open word lists** – in Learn new words, alongside Core and the Kelly CEFR levels:

@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage(AppSettings.sessionSize) private var sessionSize = 30
     @AppStorage(AppSettings.speechRate) private var speechRate = 0.45
     @AppStorage(AppSettings.autoSpeak) private var autoSpeak = true
+    @AppStorage(AppSettings.autoSpeakExamples) private var autoSpeakExamples = true
     @AppStorage(AppSettings.onlineLookup) private var onlineLookup = true
     @AppStorage(AppSettings.reminderEnabled) private var reminderEnabled = false
     @AppStorage(AppSettings.reminderTime) private var reminderTime = 19 * 3600.0 // seconds after midnight
@@ -90,6 +91,7 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("Pronounce words automatically", isOn: $autoSpeak)
+                    Toggle("Pronounce example sentences automatically", isOn: $autoSpeakExamples)
                     VStack(alignment: .leading) {
                         Text("Speaking speed")
                         Slider(value: $speechRate, in: 0.25...0.6) {
