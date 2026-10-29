@@ -3,7 +3,7 @@ import { dictionary, formList, headword, shortPos } from "../dictionary.js";
 import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../scheduler.js";
 import { enabledMethods, pickMethod } from "../methods.js";
 import { checkSpelling as check } from "../spelling.js";
-import { speak } from "../speech.js";
+import { speak, speakWithExample, stopSpeaking } from "../speech.js";
 import { store } from "../store.js";
 import { Kbd, useKeys } from "../keys.js";
 import { back, ExampleText, HintLines, Icon, NavBar, SpeakButton } from "../ui.js";
@@ -104,6 +104,7 @@ export function ReviewView({ modeId, practice }) {
     setCard({ method, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
     if ((method === "flashcards" || method === "choice") && autoSpeak) speak(word.word);
     if (method === "listening") speak(word.word);
+    if (method === "reverse" || method === "spelling") stopSpeaking();
     if (method === "spelling") setTimeout(() => typing.current?.focus(), 0);
   }, [word?.key, score.reviewed]);
 
@@ -137,13 +138,14 @@ export function ReviewView({ modeId, practice }) {
 
   const reveal = () => {
     setCard((c) => ({ ...c, revealed: true }));
-    if (method === "reverse" && autoSpeak) speak(word.word);
+    // Flashcards already said the word; the example comes into view now.
+    speakWithExample(method === "reverse" && autoSpeak && word.word, word.example);
   };
 
   const pick = (option) => {
     if (card.picked != null || card.forgot) return;
     setCard((c) => ({ ...c, picked: option }));
-    if (method === "listening" || !autoSpeak) speak(word.word);
+    speakWithExample((method === "listening" || !autoSpeak) && word.word, word.example);
   };
 
   /** "I forget": shows the answer, and Continue grades the word Again. */
@@ -152,7 +154,7 @@ export function ReviewView({ modeId, practice }) {
       ...c, forgot: true, revealed: true,
       spelling: method === "spelling" ? { grade: AGAIN, message: "Marked as forgotten" } : null,
     }));
-    speak(word.word);
+    speakWithExample(word.word, word.example);
   };
 
   const checkSpelling = () => {
@@ -163,7 +165,7 @@ export function ReviewView({ modeId, practice }) {
       : kind === "typo" ? { grade: HARD, message: form ? `Almost — small typo. It's spelled ${form}, a form of ${word.word}.` : `Almost — small typo. It's spelled ${word.word}.` }
       : { grade: AGAIN, message: `Answer: ${word.word}` };
     setCard((c) => ({ ...c, spelling }));
-    speak(word.word);
+    speakWithExample(word.word, word.example);
   };
 
   // Keyboard: space or enter shows the answer and continues, 1–4 grade or pick an option, F (Esc in spelling) is

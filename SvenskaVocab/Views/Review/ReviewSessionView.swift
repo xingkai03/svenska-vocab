@@ -176,9 +176,10 @@ struct ReviewSessionView: View {
         case .listening:
             speech.speak(word.word)
         case .spelling:
+            speech.stop()
             typingFocused = true
         case .reverse:
-            break
+            speech.stop()
         }
     }
 
@@ -228,9 +229,8 @@ struct ReviewSessionView: View {
 
     private func reveal(_ word: SavedWord) {
         withAnimation(.easeOut(duration: 0.2)) { revealed = true }
-        if method == .reverse && autoSpeak {
-            speech.speak(word.word)
-        }
+        // Flashcards already said the word; the example comes into view now.
+        speech.speak(method == .reverse && autoSpeak ? word.word : nil, thenExample: word.example)
     }
 
     private func forget(_ word: SavedWord) {
@@ -238,7 +238,7 @@ struct ReviewSessionView: View {
             forgot = true
             revealed = true
         }
-        speech.speak(word.word)
+        speech.speak(word.word, thenExample: word.example)
     }
 
     // MARK: - Views
@@ -394,7 +394,7 @@ struct ReviewSessionView: View {
                     Button {
                         guard picked == nil, !forgot else { return }
                         withAnimation { picked = option }
-                        if method == .listening || !autoSpeak { speech.speak(word.word) }
+                        speech.speak(method == .listening || !autoSpeak ? word.word : nil, thenExample: word.example)
                     } label: {
                         Text(option)
                             .lineLimit(2)
@@ -496,7 +496,7 @@ struct ReviewSessionView: View {
         case .wrong:
             spelling = SpellingResult(grade: .again, message: L("Answer: %@", word.word))
         }
-        speech.speak(word.word)
+        speech.speak(word.word, thenExample: word.example)
     }
 
     private var finished: some View {

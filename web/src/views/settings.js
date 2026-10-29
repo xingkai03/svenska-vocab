@@ -108,6 +108,7 @@ export function SettingsView() {
           : hasSwedishVoice() ? "Uses your browser's Swedish voice. Chrome and Edge have natural-sounding online voices; on a Mac you can add more in System Settings › Accessibility › Spoken Content."
           : "No Swedish voice found in this browser. Add one in your system's speech settings, or try Chrome or Edge."}>
         <${Toggle} label="Pronounce words automatically" checked=${store.get("autoSpeak")} onChange=${(v) => store.set("autoSpeak", v)} />
+        <${Toggle} label="Pronounce example sentences automatically" checked=${store.get("autoSpeakExamples")} onChange=${(v) => store.set("autoSpeakExamples", v)} />
         <div class="cell"><div class="cell-main">
           <span>Speaking speed</span>
           <div class="row"><span class="secondary"><${Icon} name="slow" /></span>

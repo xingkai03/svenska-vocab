@@ -1,6 +1,6 @@
 import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { deckEntries, dictionary, formList, GROUP_ORDER, headword, LEVELS } from "../dictionary.js";
-import { speak } from "../speech.js";
+import { speak, speakWithExample } from "../speech.js";
 import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { EmptyState, ExampleText, HintLines, LevelBadge, NavBar, PosTag, Segmented, SpeakButton } from "../ui.js";
@@ -81,7 +81,7 @@ export function LearnView() {
   const entry = remaining[0];
 
   useEffect(() => {
-    if (entry && store.get("autoSpeak")) speak(entry.word);
+    if (entry) speakWithExample(store.get("autoSpeak") && entry.word, entry.example);
   }, [entry?.id]);
 
   const label = (name, entries) => {

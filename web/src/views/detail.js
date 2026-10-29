@@ -2,7 +2,7 @@ import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { LineChart } from "../charts.js";
 import { dictionary, formList, headword, HINT_LANGUAGES } from "../dictionary.js";
 import { isDue, mastery, retention, retentionAfter, DAY } from "../scheduler.js";
-import { speak } from "../speech.js";
+import { speak, speakWithExample } from "../speech.js";
 import { svt, svtTerms } from "../svt.js";
 import { ReadingArticles } from "./read.js";
 import { EpisodeCell } from "./svt.js";
@@ -15,7 +15,7 @@ export function WordDetailView({ id }) {
   const entry = saved ?? dictionary.entry(id);
 
   useEffect(() => {
-    if (entry && store.get("autoSpeak")) speak(entry.word);
+    if (entry) speakWithExample(store.get("autoSpeak") && entry.word, entry.example);
   }, [id]);
 
   useKeys(entry ? [

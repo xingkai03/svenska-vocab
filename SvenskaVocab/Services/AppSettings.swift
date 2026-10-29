@@ -7,6 +7,8 @@ enum AppSettings {
     static let sessionSize = "sessionSize"
     static let speechRate = "speechRate"
     static let autoSpeak = "autoSpeak"
+    /// Read the example sentence aloud when it is shown (after the word). Synced.
+    static let autoSpeakExamples = "autoSpeakExamples"
     static let reminderEnabled = "reminderEnabled"
     static let reminderTime = "reminderTime"
     /// Legacy: words skipped with "I know it" before they went to the collection as mastered. Still synced,
