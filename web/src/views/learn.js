@@ -1,5 +1,6 @@
 import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { deckEntries, dictionary, formList, GROUP_ORDER, headword, LEVELS } from "../dictionary.js";
+import { mainExample } from "../examples.js";
 import { speak, speakWithExample } from "../speech.js";
 import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
@@ -81,7 +82,7 @@ export function LearnView() {
   const entry = remaining[0];
 
   useEffect(() => {
-    if (entry) speakWithExample(store.get("autoSpeak") && entry.word, entry.example);
+    if (entry) speakWithExample(store.get("autoSpeak") && entry.word, mainExample(entry).sv);
   }, [entry?.id]);
 
   const label = (name, entries) => {
@@ -115,7 +116,7 @@ export function LearnView() {
     [["z", "Mod+z"], "Undo “I know it”", lastKnown && undo],
     [["p"], "Pronounce", entry && (() => speak(entry.word))],
     [["P"], "Pronounce slowly", entry && (() => speak(entry.word, { slow: true }))],
-    [["x"], "Pronounce the example", entry?.example && (() => speak(entry.example))],
+    [["x"], "Pronounce the example", entry?.example && (() => speak(mainExample(entry).sv))],
     [["]"], "Next word type", () => cycleType(1)],
     [["["], "Previous word type", () => cycleType(-1)],
   ]);
@@ -156,9 +157,9 @@ export function LearnView() {
           <${HintLines} word=${entry.word} partOfSpeech=${entry.partOfSpeech} />
           ${formList(entry).length ? html`<div class="subheadline secondary">${formList(entry).join(" · ")}</div>` : null}
           ${entry.example ? html`<hr />
-            <${ExampleText} text=${entry.example} />
-            <div class="subheadline secondary">${entry.exampleTranslation}</div>
-            <${SpeakButton} text=${entry.example} hotkey="x" />` : null}
+            <${ExampleText} text=${mainExample(entry).sv} />
+            <div class="subheadline secondary">${mainExample(entry).en}</div>
+            <${SpeakButton} text=${mainExample(entry).sv} hotkey="x" />` : null}
         </div>
         <div class="row" style="gap:16px">
           <button class="btn large full" onClick=${skip}>✓ I know it<${Kbd} k="ArrowLeft" /></button>

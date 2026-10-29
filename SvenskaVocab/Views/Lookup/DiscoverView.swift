@@ -146,7 +146,7 @@ struct DiscoverView: View {
                 card(entry)
                     .id(entry.id)
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-                    .onAppear { speech.speak(autoSpeak ? entry.word : nil, thenExample: entry.example) }
+                    .onAppear { speech.speak(autoSpeak ? entry.word : nil, thenExample: entry.mainExample.sv) }
 
                 HStack(spacing: 16) {
                     Button {
@@ -210,10 +210,10 @@ struct DiscoverView: View {
             }
             if !entry.example.isEmpty {
                 Divider()
-                ExampleText(text: entry.example).multilineTextAlignment(.center)
-                Text(entry.exampleTranslation).font(.subheadline).foregroundStyle(.secondary)
+                ExampleText(text: entry.mainExample.sv).multilineTextAlignment(.center)
+                Text(entry.mainExample.en).font(.subheadline).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                SpeakButton(text: entry.example, font: .body)
+                SpeakButton(text: entry.mainExample.sv, font: .body)
             }
         }
         .padding(24)

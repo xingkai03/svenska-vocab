@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// Checks the web version's scheduler, inflection rules, spelling checker and review-method picker against the test
+// Checks the web version's scheduler, inflection rules, spelling checker, review-method picker and example sentences against the test
 // cases the iOS app's tests use too (SvenskaVocabTests/SharedCases.json), so the two implementations stay in step.
 //
 //     node scripts/test_web.mjs
 
 import { readFileSync } from "node:fs";
 import { inflectionStems } from "../web/src/dictionary.js";
+import { joinExamples, splitExamples } from "../web/src/examples.js";
 import { enabledMethods, strength } from "../web/src/methods.js";
 import { next, retentionAfter } from "../web/src/scheduler.js";
 import { checkSpelling } from "../web/src/spelling.js";
@@ -38,6 +39,10 @@ for (const c of cases.methodStrength) {
   check(`strength of ${c.mode} after ${c.attempts.length}`, round(strength(c.mode, c.attempts)), c.expected);
 }
 for (const c of cases.enabled) check(`enabled methods with "${c.disabled}" off`, enabledMethods(c.disabled), c.expected);
+for (const c of cases.exampleSplit) {
+  check(`split examples ${JSON.stringify(c.example)}`, splitExamples(c.example, c.translation), c.expected);
+}
+for (const c of cases.exampleJoin) check(`join examples ${JSON.stringify(c.pairs)}`, joinExamples(c.pairs), c.expected);
 
 console.log(failures ? `${failures} of ${count} checks failed` : `All ${count} checks passed`);
 process.exit(failures ? 1 : 0);

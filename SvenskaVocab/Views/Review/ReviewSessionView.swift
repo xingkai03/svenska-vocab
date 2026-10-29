@@ -236,7 +236,7 @@ struct ReviewSessionView: View {
     private func reveal(_ word: SavedWord) {
         withAnimation(.easeOut(duration: 0.2)) { revealed = true }
         // Flashcards already said the word; the example comes into view now.
-        speech.speak(method == .reverse && autoSpeak ? word.word : nil, thenExample: word.example)
+        speech.speak(method == .reverse && autoSpeak ? word.word : nil, thenExample: word.mainExample.sv)
     }
 
     private func forget(_ word: SavedWord) {
@@ -244,7 +244,7 @@ struct ReviewSessionView: View {
             forgot = true
             revealed = true
         }
-        speech.speak(word.word, thenExample: word.example)
+        speech.speak(word.word, thenExample: word.mainExample.sv)
     }
 
     // MARK: - Views
@@ -339,10 +339,10 @@ struct ReviewSessionView: View {
         }
         if !word.example.isEmpty {
             VStack(spacing: 4) {
-                ExampleText(text: word.example).multilineTextAlignment(.center)
-                Text(word.exampleTranslation).font(.subheadline).foregroundStyle(.secondary)
+                ExampleText(text: word.mainExample.sv).multilineTextAlignment(.center)
+                Text(word.mainExample.en).font(.subheadline).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                SpeakButton(text: word.example, font: .body)
+                SpeakButton(text: word.mainExample.sv, font: .body)
             }
         }
         if !word.note.isEmpty {
@@ -406,7 +406,7 @@ struct ReviewSessionView: View {
                     Button {
                         guard picked == nil, !forgot else { return }
                         withAnimation { picked = option }
-                        speech.speak(method == .listening || !autoSpeak ? word.word : nil, thenExample: word.example)
+                        speech.speak(method == .listening || !autoSpeak ? word.word : nil, thenExample: word.mainExample.sv)
                     } label: {
                         Text(option)
                             .lineLimit(2)
@@ -508,7 +508,7 @@ struct ReviewSessionView: View {
         case .wrong:
             spelling = SpellingResult(grade: .again, message: L("Answer: %@", word.word))
         }
-        speech.speak(word.word, thenExample: word.example)
+        speech.speak(word.word, thenExample: word.mainExample.sv)
     }
 
     private var finished: some View {

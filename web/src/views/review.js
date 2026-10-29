@@ -3,6 +3,7 @@ import { dictionary, formList, headword, shortPos } from "../dictionary.js";
 import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../scheduler.js";
 import { enabledMethods, pickMethod } from "../methods.js";
 import { checkSpelling as check } from "../spelling.js";
+import { mainExample } from "../examples.js";
 import { speak, speakWithExample, stopSpeaking } from "../speech.js";
 import { store } from "../store.js";
 import { Kbd, useKeys } from "../keys.js";
@@ -143,13 +144,13 @@ export function ReviewView({ modeId, practice }) {
   const reveal = () => {
     setCard((c) => ({ ...c, revealed: true }));
     // Flashcards already said the word; the example comes into view now.
-    speakWithExample(method === "reverse" && autoSpeak && word.word, word.example);
+    speakWithExample(method === "reverse" && autoSpeak && word.word, mainExample(word).sv);
   };
 
   const pick = (option) => {
     if (card.picked != null || card.forgot) return;
     setCard((c) => ({ ...c, picked: option }));
-    speakWithExample((method === "listening" || !autoSpeak) && word.word, word.example);
+    speakWithExample((method === "listening" || !autoSpeak) && word.word, mainExample(word).sv);
   };
 
   /** "I forget": shows the answer, and Continue grades the word Again. */
@@ -158,7 +159,7 @@ export function ReviewView({ modeId, practice }) {
       ...c, forgot: true, revealed: true,
       spelling: method === "spelling" ? { grade: AGAIN, message: "Marked as forgotten" } : null,
     }));
-    speakWithExample(word.word, word.example);
+    speakWithExample(word.word, mainExample(word).sv);
   };
 
   const checkSpelling = () => {
@@ -169,7 +170,7 @@ export function ReviewView({ modeId, practice }) {
       : kind === "typo" ? { grade: HARD, message: form ? `Almost — small typo. It's spelled ${form}, a form of ${word.word}.` : `Almost — small typo. It's spelled ${word.word}.` }
       : { grade: AGAIN, message: `Answer: ${word.word}` };
     setCard((c) => ({ ...c, spelling }));
-    speakWithExample(word.word, word.example);
+    speakWithExample(word.word, mainExample(word).sv);
   };
 
   // Keyboard: space or enter shows the answer and continues, 1–4 grade or pick an option, F (Esc in spelling) is
@@ -193,7 +194,7 @@ export function ReviewView({ modeId, practice }) {
       [["p"], "Play the word", () => speak(word.word)],
       [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
     ],
-    [["x"], "Play the example", word.example && answered && (() => speak(word.example))],
+    [["x"], "Play the example", word.example && answered && (() => speak(mainExample(word).sv))],
     [["d"], "Word details", answered && openDetail],
     [["u", "Mod+z"], "Undo the last answer", last && undo],
   ] : [[["Space", "Enter"], "Done", () => back("today")], [["u", "Mod+z"], "Undo the last answer", last && undo]]);
@@ -252,9 +253,9 @@ function Details({ mode, word, onOpen }) {
     <${HintLines} word=${word.word} partOfSpeech=${word.partOfSpeech} />
     ${word.forms ? html`<div class="subheadline secondary fade-in">${formList(word).join(" · ")}</div>` : null}
     ${word.example ? html`<div class="fade-in" style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <${ExampleText} text=${word.example} />
-      <div class="subheadline secondary">${word.exampleTranslation}</div>
-      <${SpeakButton} text=${word.example} hotkey="x" /></div>` : null}
+      <${ExampleText} text=${mainExample(word).sv} />
+      <div class="subheadline secondary">${mainExample(word).en}</div>
+      <${SpeakButton} text=${mainExample(word).sv} hotkey="x" /></div>` : null}
     ${word.note ? html`<div class="footnote secondary fade-in"><${Icon} name="note" /> ${word.note}</div>` : null}
     <button class="btn small fade-in" onClick=${onOpen} title="Open the word's page (D)">Word details<${Icon} name="chevronRight" /><${Kbd} k="d" /></button>`;
 }

@@ -113,6 +113,11 @@ struct SupabaseClient {
         _ = try await request("rest/v1/rpc/\(function)", method: "POST", query: [], body: Data("{}".utf8), token: token)
     }
 
+    /// Calls an Edge Function and returns its answer.
+    func invoke(_ function: String, body: Data, token: String) async throws -> Data {
+        try await request("functions/v1/\(function)", method: "POST", query: [], body: body, token: token).0
+    }
+
     // MARK: Transport
 
     private func send(_ path: String, query: [URLQueryItem] = [], body: [String: String], token: String? = nil) async throws -> Any {
@@ -235,6 +240,16 @@ final class AccountService: ObservableObject {
             // The refresh token was revoked or has expired: the learner has to sign in again.
             store(nil)
             throw SupabaseError.notSignedIn
+        }
+    }
+
+    /// Calls one of the project's Edge Functions as the signed-in learner; retries once with a fresh token on 401.
+    func invoke(_ function: String, body: Data) async throws -> Data {
+        guard let client else { throw SupabaseError.notConfigured }
+        do {
+            return try await client.invoke(function, body: body, token: try await accessToken())
+        } catch let error as SupabaseError where error.status == 401 {
+            return try await client.invoke(function, body: body, token: try await accessToken(forceRefresh: true))
         }
     }
 

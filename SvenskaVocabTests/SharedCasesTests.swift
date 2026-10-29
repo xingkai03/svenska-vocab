@@ -1,7 +1,7 @@
 import XCTest
 @testable import SvenskaVocab
 
-/// Checks the scheduler, inflection rules, spelling checker and review-method picker against SharedCases.json, the
+/// Checks the scheduler, inflection rules, spelling checker, review-method picker and example sentences against SharedCases.json, the
 /// same cases the web version is tested with (scripts/test_web.mjs), so the two implementations stay in step.
 final class SharedCasesTests: XCTestCase {
     private struct Cases: Decodable {
@@ -48,6 +48,19 @@ final class SharedCasesTests: XCTestCase {
             let disabled: String
             let expected: [String]
         }
+        struct ExampleSplitCase: Decodable {
+            let example: String
+            let translation: String
+            let expected: [ExampleSentence]
+        }
+        struct ExampleJoinCase: Decodable {
+            struct Expected: Decodable {
+                let example: String
+                let exampleTranslation: String
+            }
+            let pairs: [ExampleSentence]
+            let expected: Expected
+        }
 
         let scheduler: [SchedulerCase]
         let retention: [RetentionCase]
@@ -55,6 +68,8 @@ final class SharedCasesTests: XCTestCase {
         let spelling: [SpellingCase]
         let methodStrength: [StrengthCase]
         let enabled: [EnabledCase]
+        let exampleSplit: [ExampleSplitCase]
+        let exampleJoin: [ExampleJoinCase]
     }
 
     private static let cases: Cases = {
@@ -114,6 +129,17 @@ final class SharedCasesTests: XCTestCase {
     func testEnabledMethods() {
         for c in Self.cases.enabled {
             XCTAssertEqual(ReviewMethods.enabled(disabled: c.disabled).map(\.rawValue), c.expected, c.disabled)
+        }
+    }
+
+    func testExampleSentences() {
+        for c in Self.cases.exampleSplit {
+            XCTAssertEqual(ExampleSentence.split(c.example, c.translation), c.expected, c.example)
+        }
+        for c in Self.cases.exampleJoin {
+            let joined = ExampleSentence.join(c.pairs)
+            XCTAssertEqual(joined.example, c.expected.example)
+            XCTAssertEqual(joined.translation, c.expected.exampleTranslation)
         }
     }
 }

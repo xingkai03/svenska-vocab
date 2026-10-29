@@ -58,17 +58,20 @@ struct WordDetailView: View {
                 }
             }
 
-            if !shown.example.isEmpty {
-                Section("Example") {
-                    HStack(alignment: .top) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            ExampleText(text: shown.example)
-                            if !shown.exampleTranslation.isEmpty {
-                                Text(shown.exampleTranslation).font(.subheadline).foregroundStyle(.secondary)
+            let examples = shown.examples
+            if !examples.isEmpty {
+                Section(examples.count > 1 ? LocalizedStringKey("Examples") : LocalizedStringKey("Example")) {
+                    ForEach(examples) { example in
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                ExampleText(text: example.sv)
+                                if !example.en.isEmpty {
+                                    Text(example.en).font(.subheadline).foregroundStyle(.secondary)
+                                }
                             }
+                            Spacer()
+                            SpeakButton(text: example.sv, font: .body)
                         }
-                        Spacer()
-                        SpeakButton(text: shown.example, font: .body)
                     }
                 }
             }
@@ -124,7 +127,7 @@ struct WordDetailView: View {
             }
         }
         .onAppear {
-            speech.speak(autoSpeak ? shown.word : nil, thenExample: shown.example)
+            speech.speak(autoSpeak ? shown.word : nil, thenExample: shown.mainExample.sv)
         }
     }
 }

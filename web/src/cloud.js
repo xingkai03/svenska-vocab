@@ -119,6 +119,11 @@ class Cloud {
     }
   }
 
+  /** Calls one of the project's Edge Functions as the signed-in learner. */
+  invoke(fn, body) {
+    return this.#authorized((token) => api.invoke(fn, body, token));
+  }
+
   /** Table reads and writes with a fresh token; retries once with a refreshed token on 401. */
   async #authorized(call) {
     try {

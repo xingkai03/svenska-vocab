@@ -329,8 +329,9 @@ enum OfflineStoryWriter {
                 sv.append("\(w.entry.headword.capitalizedFirst) betyder ”\(w.shortTranslation)”.")
                 en.append("“\(w.entry.headword)” means “\(w.shortTranslation)”.")
             } else {
-                sv.append(w.example)
-                en.append(w.exampleTranslation)
+                let example = w.entry.mainExample
+                sv.append(example.sv)
+                en.append(example.en)
             }
         }
         return (sv, en)

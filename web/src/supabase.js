@@ -109,3 +109,8 @@ export async function upsert(table, rows, onConflict, token, ignoreDuplicates = 
 export async function rpc(fn, token) {
   await request(`rest/v1/rpc/${fn}`, { method: "POST", body: {}, token });
 }
+
+// Edge Functions
+
+/** Calls an Edge Function and returns its JSON answer. */
+export const invoke = (fn, body, token) => request(`functions/v1/${fn}`, { method: "POST", body, token });
