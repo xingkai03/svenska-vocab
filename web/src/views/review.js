@@ -58,7 +58,7 @@ export function ReviewView({ modeId, practice }) {
       }
     }
   }
-  const [card, setCard] = useState({ method: mode?.id ?? null, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options: [] });
+  const [card, setCard] = useState({ method: mode?.id ?? null, revealed: false, picked: null, typed: "", spelling: null, forgot: false, rated: null, options: [] });
   const [score, setScore] = useState({ reviewed: 0, correct: 0 });
   // The current word's detail page, shown over the card; the session stays as it was underneath.
   const [detail, setDetail] = useState(false);
@@ -106,7 +106,7 @@ export function ReviewView({ modeId, practice }) {
     }
     undoneMethod.current = null;
     setDetail(false);
-    setCard({ method, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
+    setCard({ method, revealed: false, picked: null, typed: "", spelling: null, forgot: false, rated: null, options });
     if ((method === "flashcards" || method === "choice") && autoSpeak) speak(word.word);
     if (method === "listening") speak(word.word);
     if (method === "reverse" || method === "spelling") stopSpeaking();
@@ -141,8 +141,13 @@ export function ReviewView({ modeId, practice }) {
     setScore(last.score);
   };
 
-  const reveal = () => {
-    setCard((c) => ({ ...c, revealed: true }));
+  /**
+   * Flashcards are rated before the answer shows: the first rating reveals it, and until Continue the rating can still
+   * be changed.
+   */
+  const rate = (grade) => {
+    setCard((c) => ({ ...c, rated: grade, revealed: true }));
+    if (card.revealed) return;
     // Flashcards already said the word; the example comes into view now.
     speakWithExample(method === "reverse" && autoSpeak && word.word, mainExample(word).sv);
   };
@@ -173,20 +178,20 @@ export function ReviewView({ modeId, practice }) {
     speakWithExample(word.word, mainExample(word).sv);
   };
 
-  // Keyboard: space or enter shows the answer and continues, 1–4 grade or pick an option, F (Esc in spelling) is
-  // "I forget", P plays the word again.
+  // Keyboard: 1–4 rate a flashcard (which shows the answer) or pick an option, space or enter continues, F (Esc in
+  // spelling) is "I forget", P plays the word again.
   const flip = method === "flashcards" || method === "reverse";
   const choice = method === "choice" || method === "listening";
   const proceed = card.forgot ? () => answer(AGAIN)
+    : flip && card.rated != null ? () => answer(card.rated)
     : card.spelling ? () => answer(card.spelling.grade)
     : choice && card.picked != null ? () => answer(card.picked === word.translation ? GOOD : AGAIN) : null;
   const answered = card.revealed || card.picked != null || card.spelling != null;
   const openDetail = () => { setDetail(true); scrollTo(0, 0); };
   // While the detail page is open, only its own keys apply.
   useKeys(detail ? [] : word ? [
-    [["Space", "Enter"], "Show answer", flip && !card.revealed && reveal],
     [["f"], "I forget", !card.forgot && !card.revealed && card.picked == null && !card.spelling && forget],
-    ...GRADES.map((g) => [[String(g.value + 1)], g.title, flip && card.revealed && !card.forgot && (() => answer(g.value))]),
+    ...GRADES.map((g) => [[String(g.value + 1)], g.title, flip && !card.forgot && (() => rate(g.value))]),
     ...card.options.map((o, i) => [[String(i + 1)], `Answer ${i + 1}`, choice && card.picked == null && !card.forgot && (() => pick(o))]),
     [["Space", "Enter"], "Continue", proceed],
     // In English → Swedish and spelling, the word is the answer: it plays only once it's shown.
@@ -220,7 +225,7 @@ export function ReviewView({ modeId, practice }) {
         ${answered ? html`<${Details} mode=${method} word=${word} onOpen=${openDetail} />` : null}
       </div>
       <${Controls} mode=${method} word=${word} card=${card} practice=${practice} typing=${typing}
-        onReveal=${reveal} onForget=${forget} onAnswer=${answer} onPick=${pick} onCheck=${checkSpelling}
+        onRate=${rate} onForget=${forget} onAnswer=${answer} onPick=${pick} onCheck=${checkSpelling}
         onType=${(typed) => setCard((c) => ({ ...c, typed }))}
       />
     </div></div>`;
@@ -262,19 +267,20 @@ function Details({ mode, word, onOpen }) {
 
 const forgotten = html`<div class="headline red fade-in"><${Icon} name="xCircle" /> Marked as forgotten</div>`;
 
-function Controls({ mode, word, card, practice, typing, onReveal, onForget, onAnswer, onPick, onCheck, onType }) {
+function Controls({ mode, word, card, practice, typing, onRate, onForget, onAnswer, onPick, onCheck, onType }) {
   const forgetButton = (k) => html`<button class="btn large" onClick=${onForget}>I forget<${Kbd} k=${k} /></button>`;
   const continueButton = (grade) => html`<button class="btn prominent large full" onClick=${() => onAnswer(grade)}>Continue<${Kbd} k="Enter" /></button>`;
   if (mode === "flashcards" || mode === "reverse") {
     if (card.forgot) return html`<div style="display:flex;flex-direction:column;gap:10px">${forgotten}${continueButton(AGAIN)}</div>`;
-    if (!card.revealed) return html`<div class="row" style="gap:12px">${forgetButton("f")}
-      <button class="btn prominent large full" onClick=${onReveal}>Show answer<${Kbd} k="Space" /></button></div>`;
-    return html`<div class="grade-row">
-      ${GRADES.map((g) => html`<button class="btn tinted" style=${{ "--tint": `var(--${g.color})` }} onClick=${() => onAnswer(g.value)}
-        title=${`${g.title} (${g.value + 1})`}>
+    // Rate first; the answer shows once a rating is picked, and the picked one stays filled in.
+    const grades = html`<div class="grade-row">
+      ${GRADES.map((g) => html`<button class=${`btn tinted ${card.rated === g.value ? "filled" : ""}`} style=${{ "--tint": `var(--${g.color})` }}
+        onClick=${() => onRate(g.value)} title=${`${g.title} (${g.value + 1})`} aria-pressed=${card.rated === g.value}>
         <span class="subheadline bold">${g.title}</span>${practice ? null : html`<span class="caption2">${preview(g.value, word)}</span>`}<${Kbd} k=${String(g.value + 1)} />
       </button>`)}
     </div>`;
+    if (card.rated == null) return html`<div style="display:flex;flex-direction:column;gap:10px">${grades}${forgetButton("f")}</div>`;
+    return html`<div style="display:flex;flex-direction:column;gap:10px">${grades}${continueButton(card.rated)}</div>`;
   }
   if (mode === "choice" || mode === "listening") {
     const answered = card.picked != null || card.forgot;
