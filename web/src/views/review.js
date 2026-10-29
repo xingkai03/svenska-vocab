@@ -1,4 +1,4 @@
-import { html, useEffect, useRef, useState } from "../../vendor/preact-htm.js";
+import { html, useEffect, useLayoutEffect, useRef, useState } from "../../vendor/preact-htm.js";
 import { dictionary, formList, headword, shortPos } from "../dictionary.js";
 import { AGAIN, apply, GOOD, GRADES, HARD, isDue, preview, retention } from "../scheduler.js";
 import { enabledMethods, pickMethod } from "../methods.js";
@@ -94,8 +94,9 @@ export function ReviewView({ modeId, practice }) {
   // The method of the current card.
   const method = mode?.id ?? card.method;
 
-  // Prepare each new card.
-  useEffect(() => {
+  // Prepare each new card. A layout effect, so the new card's first render (still holding the last card's answer
+  // state) is replaced before it is painted; a plain effect let it flash for a frame.
+  useLayoutEffect(() => {
     if (!word) return;
     const method = undoneMethod.current ?? mode?.id ?? pickMethod(enabledMethods(store.get("disabledReviewModes")), attempts.current.get(word.key) ?? []);
     let options = [];
