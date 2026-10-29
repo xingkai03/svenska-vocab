@@ -6,6 +6,7 @@ import { checkSpelling as check } from "../spelling.js";
 import { speak } from "../speech.js";
 import { store } from "../store.js";
 import { Kbd, useKeys } from "../keys.js";
+import { WordDetailView } from "./detail.js";
 import { back, ExampleText, HintLines, Icon, NavBar, SpeakButton } from "../ui.js";
 
 export const REVIEW_MODES = [
@@ -58,6 +59,8 @@ export function ReviewView({ modeId, practice }) {
   }
   const [card, setCard] = useState({ method: mode?.id ?? null, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options: [] });
   const [score, setScore] = useState({ reviewed: 0, correct: 0 });
+  // The current word's detail page, shown over the card; the session stays as it was underneath.
+  const [detail, setDetail] = useState(false);
   const typing = useRef(null);
   // The last answer, until the next one, so it can be undone: { word (as it was), log, queue, score, method }. Its
   // log is only saved once the answer can no longer be undone, because a log that has synced can't be taken back.
@@ -101,6 +104,7 @@ export function ReviewView({ modeId, practice }) {
       options = shuffle([...wrong, word.translation]);
     }
     undoneMethod.current = null;
+    setDetail(false);
     setCard({ method, revealed: false, picked: null, typed: "", spelling: null, forgot: false, options });
     if ((method === "flashcards" || method === "choice") && autoSpeak) speak(word.word);
     if (method === "listening") speak(word.word);
@@ -173,7 +177,10 @@ export function ReviewView({ modeId, practice }) {
   const proceed = card.forgot ? () => answer(AGAIN)
     : card.spelling ? () => answer(card.spelling.grade)
     : choice && card.picked != null ? () => answer(card.picked === word.translation ? GOOD : AGAIN) : null;
-  useKeys(word ? [
+  const answered = card.revealed || card.picked != null || card.spelling != null;
+  const openDetail = () => { setDetail(true); scrollTo(0, 0); };
+  // While the detail page is open, only its own keys apply.
+  useKeys(detail ? [] : word ? [
     [["Space", "Enter"], "Show answer", flip && !card.revealed && reveal],
     [["f"], "I forget", !card.forgot && !card.revealed && card.picked == null && !card.spelling && forget],
     ...GRADES.map((g) => [[String(g.value + 1)], g.title, flip && card.revealed && !card.forgot && (() => answer(g.value))]),
@@ -184,7 +191,8 @@ export function ReviewView({ modeId, practice }) {
       [["p"], "Play the word", () => speak(word.word)],
       [["P"], "Play it slowly", () => speak(word.word, { slow: true })],
     ],
-    [["x"], "Play the example", word.example && (card.revealed || card.picked != null || card.spelling) && (() => speak(word.example))],
+    [["x"], "Play the example", word.example && answered && (() => speak(word.example))],
+    [["d"], "Word details", answered && openDetail],
     [["u", "Mod+z"], "Undo the last answer", last && undo],
   ] : [[["Space", "Enter"], "Done", () => back("today")], [["u", "Mod+z"], "Undo the last answer", last && undo]]);
 
@@ -195,7 +203,7 @@ export function ReviewView({ modeId, practice }) {
     <${Icon} name="undo" /> Undo</button>` : null;
   if (!word) return html`<${NavBar} title=${title} backTo="today" backLabel="Today" right=${undoButton} /><${Finished} score=${score} />`;
 
-  const answered = card.revealed || card.picked != null || card.spelling != null;
+  if (detail) return html`<${WordDetailView} id=${word.key} onBack=${() => setDetail(false)} />`;
   return html`
     <${NavBar} title=${title} backTo="today" backLabel="Today" right=${undoButton} />
     <div class="page"><div class="stack">
@@ -206,7 +214,7 @@ export function ReviewView({ modeId, practice }) {
       </div>
       <div class="flashcard" key=${`${word.key}-${score.reviewed}`}>
         <${Prompt} mode=${method} word=${word} card=${card} />
-        ${answered ? html`<${Details} mode=${method} word=${word} />` : null}
+        ${answered ? html`<${Details} mode=${method} word=${word} onOpen=${openDetail} />` : null}
       </div>
       <${Controls} mode=${method} word=${word} card=${card} practice=${practice} typing=${typing}
         onReveal=${reveal} onForget=${forget} onAnswer=${answer} onPick=${pick} onCheck=${checkSpelling}
@@ -236,7 +244,7 @@ function Prompt({ mode, word, card }) {
     ${card.revealed || card.spelling ? html`<hr /><${SwedishHeader} word=${word} />` : null}`;
 }
 
-function Details({ mode, word }) {
+function Details({ mode, word, onOpen }) {
   return html`<hr class="fade-in" />
     ${mode === "flashcards" || mode === "listening" || mode === "choice" ? html`<div class="title3 fade-in">${word.translation}</div>` : null}
     <${HintLines} word=${word.word} partOfSpeech=${word.partOfSpeech} />
@@ -245,7 +253,8 @@ function Details({ mode, word }) {
       <${ExampleText} text=${word.example} />
       <div class="subheadline secondary">${word.exampleTranslation}</div>
       <${SpeakButton} text=${word.example} hotkey="x" /></div>` : null}
-    ${word.note ? html`<div class="footnote secondary fade-in"><${Icon} name="note" /> ${word.note}</div>` : null}`;
+    ${word.note ? html`<div class="footnote secondary fade-in"><${Icon} name="note" /> ${word.note}</div>` : null}
+    <button class="btn small fade-in" onClick=${onOpen} title="Open the word's page (D)">Word details<${Icon} name="chevronRight" /><${Kbd} k="d" /></button>`;
 }
 
 const forgotten = html`<div class="headline red fade-in"><${Icon} name="xCircle" /> Marked as forgotten</div>`;

@@ -58,6 +58,8 @@ struct ReviewSessionView: View {
     @State private var correct = 0
     /// The last answer, until the next one, so it can be undone.
     @State private var lastAnswer: LastAnswer?
+    /// The word whose detail page is open on top of the session.
+    @State private var detailWord: SavedWord?
     @FocusState private var typingFocused: Bool
     @Environment(\.scenePhase) private var scenePhase
 
@@ -122,7 +124,11 @@ struct ReviewSessionView: View {
                     .accessibilityLabel("Undo last answer")
             }
         }
-        .onDisappear(perform: saveLastAnswer)
+        .navigationDestination(item: $detailWord) { word in
+            WordDetailView(entry: word.entry, allowsRemove: false)
+        }
+        // Not while the word's detail page is pushed on top: the session is still open, and Undo still works.
+        .onDisappear { if detailWord == nil { saveLastAnswer() } }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background { saveLastAnswer() }
         }
@@ -342,6 +348,12 @@ struct ReviewSessionView: View {
         if !word.note.isEmpty {
             Label(word.note, systemImage: "note.text").font(.footnote).foregroundStyle(.secondary)
         }
+        // Pushed on top of the session, so Back returns to this card as it was.
+        Button { detailWord = word } label: {
+            Label("Word details", systemImage: "info.circle")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
     }
 
     @ViewBuilder
