@@ -387,6 +387,57 @@
         }
       }
     },
+    "(none)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(inga)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（无）"
+          }
+        }
+      }
+    },
+    "AI check & polish" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI-granska och förbättra"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 检查并润色"
+          }
+        }
+      }
+    },
+    "AI suggestion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI-förslag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 建议"
+          }
+        }
+      }
+    },
     "Account" : {
       "localizations" : {
         "sv" : {
@@ -415,6 +466,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "30 天正确率"
+          }
+        }
+      }
+    },
+    "Add example sentence" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lägg till exempelmening"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加例句"
           }
         }
       }
@@ -927,6 +995,23 @@
         }
       }
     },
+    "Checking…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Granskar…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查…"
+          }
+        }
+      }
+    },
     "Clear" : {
       "localizations" : {
         "sv" : {
@@ -939,6 +1024,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stäng"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
           }
         }
       }
@@ -1236,6 +1338,23 @@
         }
       }
     },
+    "Discard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Släng"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放弃"
+          }
+        }
+      }
+    },
     "Done" : {
       "localizations" : {
         "sv" : {
@@ -1420,6 +1539,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exempelmening"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例句"
+          }
+        }
+      }
+    },
+    "Example sentences (%lld)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exempelmeningar (%lld)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "例句（%lld）"
+          }
+        }
+      }
+    },
+    "Examples" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exempel"
           }
         },
         "zh-Hans" : {
@@ -1641,6 +1794,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "来自 Folkets lexikon，CC BY-SA 2.5。"
+          }
+        }
+      }
+    },
+    "Gemini checks the translation, adds missing meanings and writes more example sentences. You choose what to keep before saving." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemini granskar översättningen, lägger till betydelser som saknas och skriver fler exempelmeningar. Du väljer vad du vill behålla innan du sparar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gemini 会检查翻译、补充缺失的释义并添加更多例句。保存前由你决定保留哪些。"
           }
         }
       }
@@ -2544,6 +2714,23 @@
         }
       }
     },
+    "Nothing to change. This word looks good." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inget att ändra. Ordet ser bra ut."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无需修改，这个词没有问题。"
+          }
+        }
+      }
+    },
     "Nothing to review" : {
       "localizations" : {
         "sv" : {
@@ -3388,6 +3575,23 @@
         }
       }
     },
+    "Sign in under Account to let Gemini check this word and add example sentences." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logga in under Konto så kan Gemini granska ordet och lägga till exempelmeningar."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在“账户”中登录后，即可让 Gemini 检查这个词并添加例句。"
+          }
+        }
+      }
+    },
     "Sign out" : {
       "localizations" : {
         "sv" : {
@@ -3951,6 +4155,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "即将到来的复习"
+          }
+        }
+      }
+    },
+    "Use selected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Använd valda"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用所选"
           }
         }
       }

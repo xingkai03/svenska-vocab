@@ -262,8 +262,8 @@ private struct TodayContent: View {
                 }
                 Text(entry.translation).font(.body)
                 if !entry.example.isEmpty {
-                    ExampleText(text: entry.example)
-                    Text(entry.exampleTranslation).font(.caption).foregroundStyle(.secondary)
+                    ExampleText(text: entry.mainExample.sv)
+                    Text(entry.mainExample.en).font(.caption).foregroundStyle(.secondary)
                 }
                 NavigationLink("Details") { WordDetailView(entry: entry) }
                     .font(.subheadline)

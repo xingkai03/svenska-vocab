@@ -875,5 +875,137 @@
     "spelling"
    ]
   }
+ ],
+ "exampleSplit": [
+  {
+   "example": "",
+   "translation": "",
+   "expected": []
+  },
+  {
+   "example": "Jag springer.",
+   "translation": "I run.",
+   "expected": [
+    {
+     "sv": "Jag springer.",
+     "en": "I run."
+    }
+   ]
+  },
+  {
+   "example": "Hon springer fort.\nVi sprang hem.",
+   "translation": "She runs fast.\nWe ran home.",
+   "expected": [
+    {
+     "sv": "Hon springer fort.",
+     "en": "She runs fast."
+    },
+    {
+     "sv": "Vi sprang hem.",
+     "en": "We ran home."
+    }
+   ]
+  },
+  {
+   "example": "A.\nB.\nC.",
+   "translation": "\nBB.",
+   "expected": [
+    {
+     "sv": "A.",
+     "en": ""
+    },
+    {
+     "sv": "B.",
+     "en": "BB."
+    },
+    {
+     "sv": "C.",
+     "en": ""
+    }
+   ]
+  },
+  {
+   "example": " A. \n\nC.",
+   "translation": "a\nb\nc",
+   "expected": [
+    {
+     "sv": "A.",
+     "en": "a"
+    },
+    {
+     "sv": "C.",
+     "en": "c"
+    }
+   ]
+  }
+ ],
+ "exampleJoin": [
+  {
+   "pairs": [],
+   "expected": {
+    "example": "",
+    "exampleTranslation": ""
+   }
+  },
+  {
+   "pairs": [
+    {
+     "sv": " Jag springer. ",
+     "en": "I run."
+    },
+    {
+     "sv": "",
+     "en": "orphan"
+    }
+   ],
+   "expected": {
+    "example": "Jag springer.",
+    "exampleTranslation": "I run."
+   }
+  },
+  {
+   "pairs": [
+    {
+     "sv": "A.",
+     "en": ""
+    },
+    {
+     "sv": "B.",
+     "en": "b"
+    },
+    {
+     "sv": "C.",
+     "en": ""
+    }
+   ],
+   "expected": {
+    "example": "A.\nB.\nC.",
+    "exampleTranslation": "\nb"
+   }
+  },
+  {
+   "pairs": [
+    {
+     "sv": "Två\nrader.",
+     "en": "Two\r\n lines."
+    }
+   ],
+   "expected": {
+    "example": "Två rader.",
+    "exampleTranslation": "Two lines."
+   }
+  },
+  {
+   "pairs": [
+    {
+     "sv": "A.",
+     "en": ""
+    }
+   ],
+   "expected": {
+    "example": "A.",
+    "exampleTranslation": ""
+   }
+  }
  ]
 }

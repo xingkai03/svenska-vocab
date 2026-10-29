@@ -1,6 +1,7 @@
 import { html, useEffect, useState } from "../../vendor/preact-htm.js";
 import { LineChart } from "../charts.js";
 import { dictionary, formList, headword, HINT_LANGUAGES } from "../dictionary.js";
+import { mainExample, splitExamples } from "../examples.js";
 import { isDue, mastery, retention, retentionAfter, DAY } from "../scheduler.js";
 import { speak, speakWithExample } from "../speech.js";
 import { svt, svtTerms } from "../svt.js";
@@ -15,15 +16,16 @@ import { EmptyState, ExampleText, Icon, LevelBadge, NavBar, PosTag, Section, Spe
 export function WordDetailView({ id, onBack }) {
   const saved = store.words.get(id);
   const entry = saved ?? dictionary.entry(id);
+  const examples = entry ? splitExamples(entry.example, entry.exampleTranslation) : [];
 
   useEffect(() => {
-    if (entry) speakWithExample(store.get("autoSpeak") && entry.word, entry.example);
+    if (entry) speakWithExample(store.get("autoSpeak") && entry.word, mainExample(entry).sv);
   }, [id]);
 
   useKeys(entry ? [
     [["p"], "Pronounce", () => speak(entry.word)],
     [["P"], "Pronounce slowly", () => speak(entry.word, { slow: true })],
-    [["x"], "Pronounce the example", entry.example && (() => speak(entry.example))],
+    [["x"], "Pronounce the example", examples.length > 0 && (() => speak(examples[0].sv))],
     [["a"], "Add to my words", !saved && (() => store.addToCollection(entry))],
     [["f"], "Favorite", saved && (() => store.updateWord(id, { isFavorite: !saved.isFavorite }))],
     [["e"], "Edit", saved && (() => go("edit", id))],
@@ -66,11 +68,11 @@ export function WordDetailView({ id, onBack }) {
         ${forms.map((f) => html`<div class="cell"><span class="cell-main">${f}</span><${SpeakButton} text=${f} /></div>`)}
       <//>` : null}
 
-      ${entry.example ? html`<${Section} header="Example">
-        <div class="cell"><div class="cell-main">
-          <${ExampleText} text=${entry.example} />
-          ${entry.exampleTranslation ? html`<span class="subheadline secondary">${entry.exampleTranslation}</span>` : null}
-        </div><${SpeakButton} text=${entry.example} hotkey="x" /></div>
+      ${examples.length ? html`<${Section} header=${examples.length > 1 ? "Examples" : "Example"}>
+        ${examples.map((p, i) => html`<div class="cell"><div class="cell-main">
+          <${ExampleText} text=${p.sv} />
+          ${p.en ? html`<span class="subheadline secondary">${p.en}</span>` : null}
+        </div><${SpeakButton} text=${p.sv} hotkey=${i === 0 ? "x" : undefined} /></div>`)}
       <//>` : null}
 
       <${SvtClips} word=${entry.word} forms=${forms} />
