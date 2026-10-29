@@ -4038,6 +4038,22 @@
         }
       }
     },
+    "Word details" : {
+      "localizations" : {
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orddetaljer"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单词详情"
+          }
+        }
+      }
+    },
     "Word list" : {
       "localizations" : {
         "sv" : {

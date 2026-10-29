@@ -4,6 +4,8 @@ import SwiftUI
 
 struct WordDetailView: View {
     let entry: DictionaryEntry
+    /// False when opened from a review session, which still holds the word.
+    private let allowsRemove: Bool
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var speech: SpeechService
@@ -12,8 +14,9 @@ struct WordDetailView: View {
     @State private var showEdit = false
     @State private var confirmRemove = false
 
-    init(entry: DictionaryEntry) {
+    init(entry: DictionaryEntry, allowsRemove: Bool = true) {
         self.entry = entry
+        self.allowsRemove = allowsRemove
         let key = entry.id
         _matches = Query(filter: #Predicate<SavedWord> { $0.key == key })
     }
@@ -82,7 +85,7 @@ struct WordDetailView: View {
                     } label: {
                         Label("Add to my words", systemImage: "bookmark")
                     }
-                } else {
+                } else if allowsRemove {
                     Button(role: .destructive) {
                         confirmRemove = true
                     } label: {

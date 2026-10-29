@@ -10,7 +10,9 @@ import { useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { EmptyState, ExampleText, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, href, relative } from "../ui.js";
 
-export function WordDetailView({ id }) {
+/** `onBack` is set when opened on top of a review: Back and Esc then return to the card instead of leaving the session,
+ * and the word can't be removed while the session holds it. */
+export function WordDetailView({ id, onBack }) {
   const saved = store.words.get(id);
   const entry = saved ?? dictionary.entry(id);
 
@@ -27,11 +29,12 @@ export function WordDetailView({ id }) {
     [["e"], "Edit", saved && (() => go("edit", id))],
     [["v"], "Search the word on SVT Play", () => go("svt", { q: entry.word })],
     [["m"], "Write a note", saved && (() => document.querySelector("main textarea")?.focus())],
-    [["Delete", "Backspace"], "Remove from my words", saved && (() => remove())],
-  ] : []);
+    [["Delete", "Backspace"], "Remove from my words", saved && !onBack && (() => remove())],
+    [["Escape", "d"], "Back to the review", onBack],
+  ] : onBack ? [[["Escape", "d"], "Back to the review", onBack]] : []);
 
   if (!entry) {
-    return html`<${NavBar} title="Word" backTo="lookup" />
+    return html`<${NavBar} title="Word" backTo=${onBack ? null : "lookup"} left=${onBack && backButton(onBack)} />
       <div class="page"><${EmptyState} icon="search" title="Word not found">It may have been removed from your words.<//></div>`;
   }
   const level = entry.level || dictionary.entry(id)?.level || "";
@@ -42,7 +45,7 @@ export function WordDetailView({ id }) {
   };
 
   return html`
-    <${NavBar} title=${entry.word} backTo="lookup" right=${saved ? html`
+    <${NavBar} title=${entry.word} backTo=${onBack ? null : "lookup"} left=${onBack && backButton(onBack)} right=${saved ? html`
       <button class="bar-button" onClick=${() => store.updateWord(id, { isFavorite: !saved.isFavorite })} aria-label="Favorite" title="Favorite">
         <${Icon} name=${saved.isFavorite ? "starFill" : "star"} /></button>
       <button class="bar-button" onClick=${() => go("edit", id)}>Edit</button>` : null} />
@@ -81,11 +84,14 @@ export function WordDetailView({ id }) {
 
       <${Section} footer=${entry.source === "online" ? "From Folkets lexikon, CC BY-SA 2.5." : null}>
         ${saved
-          ? html`<button class="cell destructive" onClick=${remove}><${Icon} name="bookmarkSlash" /> Remove from my words</button>`
+          ? !onBack && html`<button class="cell destructive" onClick=${remove}><${Icon} name="bookmarkSlash" /> Remove from my words</button>`
           : html`<button class="cell action" onClick=${() => store.addToCollection(entry)}><${Icon} name="bookmark" /> Add to my words</button>`}
       <//>
     </div>`;
 }
+
+const backButton = (onBack) => html`<button class="bar-button back" onClick=${onBack} title="Back to the review (Esc)">
+  <${Icon} name="chevronLeft" />Review</button>`;
 
 /** German and French look-alikes, for learners who know those languages. */
 function MemoryHint({ word, partOfSpeech }) {
