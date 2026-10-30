@@ -97,7 +97,7 @@ function Results({ results, query, showAllFirst, onShowAll }) {
   const english = ["English → Swedish", results.english];
   const [first, second] = results.englishFirst ? [english, swedish] : [swedish, english];
   const collapsed = !showAllFirst && second[1].length > 0 && first[1].length > 6;
-  const row = (entry) => html`<${EntryRow} key=${entry.id} entry=${entry} saved=${store.words.has(entry.id)} onOpen=${() => remember(entry.word)} />`;
+  const row = (entry) => html`<${EntryRow} key=${entry.id} entry=${entry} saved=${store.words.get(entry.id)} onOpen=${() => remember(entry.word)} />`;
   return html`
     ${first[1].length ? html`<${Section} header=${first[0]}>
       ${(collapsed ? first[1].slice(0, 5) : first[1]).map(row)}

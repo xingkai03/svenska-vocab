@@ -24,7 +24,10 @@ struct LookupView: View {
         case idle, loading, done, failed(String)
     }
 
-    private var savedKeys: Set<String> { Set(words.map(\.key)) }
+    /// Saved words by key, so result rows show the user's edits instead of the dictionary's text.
+    private var savedByKey: [String: SavedWord] {
+        Dictionary(words.map { ($0.key, $0) }, uniquingKeysWith: { first, _ in first })
+    }
     private var recent: [String] { recentRaw.split(separator: "\n").map(String.init) }
     private var localResults: SearchResults { dictionary.search(query) }
 
@@ -35,9 +38,10 @@ struct LookupView: View {
                     emptyState
                 } else {
                     let local = localResults
-                    localSections(local)
+                    let saved = savedByKey
+                    localSections(local, saved: saved)
                     if onlineLookup {
-                        onlineSection(hasLocal: !local.isEmpty)
+                        onlineSection(hasLocal: !local.isEmpty, saved: saved)
                     } else if local.isEmpty {
                         Text("No matches in the built-in dictionary.").foregroundStyle(.secondary)
                     }
@@ -84,7 +88,7 @@ struct LookupView: View {
     /// Swedish-word matches and translation matches in separate sections. When both exist, the first section
     /// is cut to a few rows so the other stays visible (e.g. "dog" shows Swedish "dog" = died, and "hund").
     @ViewBuilder
-    private func localSections(_ results: SearchResults) -> some View {
+    private func localSections(_ results: SearchResults, saved: [String: SavedWord]) -> some View {
         let swedish = (L("Swedish"), results.swedish)
         let english = (L("English → Swedish"), results.english)
         let (first, second) = results.englishFirst ? (english, swedish) : (swedish, english)
@@ -92,7 +96,7 @@ struct LookupView: View {
         if !first.1.isEmpty {
             Section(first.0) {
                 ForEach(collapsed ? Array(first.1.prefix(5)) : first.1) { entry in
-                    link(entry)
+                    link(entry, saved: saved)
                 }
                 if collapsed {
                     Button("Show \(first.1.count - 5) more") { showAllFirst = true }
@@ -102,18 +106,19 @@ struct LookupView: View {
         if !second.1.isEmpty {
             Section(second.0) {
                 ForEach(second.1) { entry in
-                    link(entry)
+                    link(entry, saved: saved)
                 }
             }
         }
     }
 
-    private func link(_ entry: DictionaryEntry) -> some View {
-        NavigationLink {
+    private func link(_ entry: DictionaryEntry, saved: [String: SavedWord]) -> some View {
+        let word = saved[entry.id]
+        return NavigationLink {
             WordDetailView(entry: entry)
                 .onAppear { remember(entry.word) }
         } label: {
-            EntryRow(entry: entry, isSaved: savedKeys.contains(entry.id))
+            EntryRow(entry: word.map { edited(entry, by: $0) } ?? entry, isSaved: word != nil)
         }
     }
 
@@ -150,7 +155,7 @@ struct LookupView: View {
     }
 
     @ViewBuilder
-    private func onlineSection(hasLocal: Bool) -> some View {
+    private func onlineSection(hasLocal: Bool, saved: [String: SavedWord]) -> some View {
         Section {
             switch onlineState {
             case .idle:
@@ -168,7 +173,7 @@ struct LookupView: View {
                     Text("No online results for “\(query)”.").foregroundStyle(.secondary)
                 }
                 ForEach(onlineResults) { entry in
-                    link(entry)
+                    link(entry, saved: saved)
                 }
             }
         } header: {
@@ -188,6 +193,13 @@ struct LookupView: View {
             guard term == query else { return }
             onlineState = .failed(error.localizedDescription)
         }
+    }
+
+    /// The saved copy's text, keeping the dictionary's level when the saved word has none (as the word page does).
+    private func edited(_ entry: DictionaryEntry, by word: SavedWord) -> DictionaryEntry {
+        var shown = word.entry
+        if shown.level.isEmpty { shown.level = entry.level }
+        return shown
     }
 
     private func remember(_ term: String) {
