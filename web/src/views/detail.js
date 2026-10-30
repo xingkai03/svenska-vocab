@@ -7,7 +7,7 @@ import { speak, speakWithExample } from "../speech.js";
 import { svt, svtTerms } from "../svt.js";
 import { ReadingArticles } from "./read.js";
 import { EpisodeCell } from "./svt.js";
-import { useKeys } from "../keys.js";
+import { Kbd, useKeys } from "../keys.js";
 import { store } from "../store.js";
 import { EmptyState, ExampleText, Icon, LevelBadge, NavBar, PosTag, Section, SpeakButton, go, href, relative } from "../ui.js";
 
@@ -26,7 +26,7 @@ export function WordDetailView({ id, onBack }) {
     [["p"], "Pronounce", () => speak(entry.word)],
     [["P"], "Pronounce slowly", () => speak(entry.word, { slow: true })],
     [["x"], "Pronounce the example", examples.length > 0 && (() => speak(examples[0].sv))],
-    [["a"], "Add to my words", !saved && (() => store.addToCollection(entry))],
+    [["a", "Mod+d"], "Add to my words", !saved && (() => store.addToCollection(entry))],
     [["f"], "Favorite", saved && (() => store.updateWord(id, { isFavorite: !saved.isFavorite }))],
     [["e"], "Edit", saved && (() => go("edit", id))],
     [["v"], "Search the word on SVT Play", () => go("svt", { q: entry.word })],
@@ -87,7 +87,7 @@ export function WordDetailView({ id, onBack }) {
       <${Section} footer=${entry.source === "online" ? "From Folkets lexikon, CC BY-SA 2.5." : null}>
         ${saved
           ? !onBack && html`<button class="cell destructive" onClick=${remove}><${Icon} name="bookmarkSlash" /> Remove from my words</button>`
-          : html`<button class="cell action" onClick=${() => store.addToCollection(entry)}><${Icon} name="bookmark" /> Add to my words</button>`}
+          : html`<button class="cell action" onClick=${() => store.addToCollection(entry)}><${Icon} name="bookmark" /> Add to my words<${Kbd} k="a" /></button>`}
       <//>
     </div>`;
 }
