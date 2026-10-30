@@ -167,13 +167,14 @@ export function ExampleText({ text, class: cls = "italic" }) {
   return html`<div class=${`${cls} example-text`} onDblClick=${lookUp} title="Double-click a word to look it up">${text}</div>`;
 }
 
-/** A list row for a dictionary entry. */
+/** A list row for a dictionary entry. `saved` is the user's saved copy of it, if any, whose edits the row shows. */
 export function EntryRow({ entry, saved, onOpen }) {
+  const shown = saved ?? entry;
   return html`<a class="cell" href=${href("word", entry.id)} data-entry=${entry.id} onClick=${onOpen}>
     <div class="cell-main">
-      <div class="row" style="gap:6px"><span class="headline">${entry.word}</span><${PosTag} entry=${entry} /><${LevelBadge} level=${entry.level} /></div>
-      <div class="subheadline secondary clamp2">${entry.translation}</div>
-      <${HintCaption} word=${entry.word} partOfSpeech=${entry.partOfSpeech} />
+      <div class="row" style="gap:6px"><span class="headline">${shown.word}</span><${PosTag} entry=${shown} /><${LevelBadge} level=${shown.level || entry.level} /></div>
+      <div class="subheadline secondary clamp2">${shown.translation}</div>
+      <${HintCaption} word=${shown.word} partOfSpeech=${shown.partOfSpeech} />
     </div>
     ${saved ? html`<span class="accent"><${Icon} name="bookmarkFill" /></span>` : null}
     <span class="chevron"><${Icon} name="chevronRight" /></span>
