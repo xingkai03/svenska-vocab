@@ -1,6 +1,8 @@
 // Reading: Swedish articles fetched straight from the sources' own open APIs in the browser, split into words and
-// phrases that link to the dictionary. Nothing is copied into this site or synced; articles are kept in memory only
-// while the page is open. Each source allows browser requests from other sites (CORS):
+// phrases that link to the dictionary. Nothing is copied into this site or synced. 8 Sidor's lists and articles are
+// kept in this browser (IndexedDB) for up to a month so they show at once, and refreshed in the background when they
+// are old; the other sources are kept in memory only while the page is open. Each source allows browser requests from
+// other sites (CORS):
 //   8 Sidor          easy-Swedish news (WordPress API, wp-json). © 8 Sidor; read on their terms, always linked back.
 //   Klartext         Sveriges Radio's easy news: a short summary and the episode's audio (SR open API, credited).
 //   Wikipedia        Swedish Wikipedia, CC BY-SA 4.0.
@@ -93,15 +95,96 @@ export function paragraphsFromText(text) {
     .map((t) => ({ kind: t.length < 80 && !/[.!?:”"]$/.test(t) && !t.includes(". ") ? "h" : "p", text: t }));
 }
 
+// MARK: - Kept in this browser
+
+const MINUTE = 60_000;
+const DAY = 24 * 60 * MINUTE;
+/** Anything not read again for this long is removed. */
+const KEEP_FOR = 30 * DAY;
+
+let database = null;
+
+/** The browser's store of fetched lists and articles, or null where IndexedDB isn't available. */
+function db() {
+  database ??= new Promise((resolve) => {
+    try {
+      const open = indexedDB.open("svenska-reading", 1);
+      open.onupgradeneeded = () => open.result.createObjectStore("kept");
+      open.onsuccess = () => { resolve(open.result); setTimeout(prune, 5000); };
+      open.onerror = () => resolve(null);
+    } catch {
+      resolve(null);
+    }
+  });
+  return database;
+}
+
+/** Runs `fn` on the store and resolves with its request's result (undefined if anything fails). */
+async function withStore(mode, fn) {
+  const store = await db();
+  if (!store) return undefined;
+  return new Promise((resolve) => {
+    try {
+      const request = fn(store.transaction("kept", mode).objectStore("kept"));
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => resolve(undefined);
+    } catch {
+      resolve(undefined);
+    }
+  });
+}
+
+/** { at, value } kept under `key`, where `at` is when it was fetched. */
+const stored = (key) => withStore("readonly", (s) => s.get(key));
+const keep = (key, value, at = Date.now()) => withStore("readwrite", (s) => s.put({ at, value }, key));
+
+/** Removes what was fetched more than KEEP_FOR ago. */
+async function prune() {
+  try {
+    const request = (await db()).transaction("kept", "readwrite").objectStore("kept").openCursor();
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (!cursor) return;
+      if (!(Date.now() - cursor.value?.at < KEEP_FOR)) cursor.delete();
+      cursor.continue();
+    };
+  } catch {
+    // Nothing kept, or the store is unavailable.
+  }
+}
+
+const refreshing = new Set();
+
+/**
+ * The kept value for `key` straight away, fetched with `load` when there is none. A kept value older than `maxAge`
+ * is still returned, then fetched again in the background, and `onUpdate` gets the new value if it changed.
+ */
+async function kept(key, maxAge, load, onUpdate) {
+  const hit = await stored(key);
+  if (!hit) {
+    const value = await load();
+    keep(key, value);
+    return value;
+  }
+  if (Date.now() - hit.at > maxAge && !refreshing.has(key)) {
+    refreshing.add(key);
+    load().then((value) => {
+      keep(key, value);
+      if (JSON.stringify(value) !== JSON.stringify(hit.value)) onUpdate?.(value);
+    }, () => {}).finally(() => refreshing.delete(key));
+  }
+  return hit.value;
+}
+
 // MARK: - 8 Sidor
 
 let eightSections = null;
 
 /** [{ id, name }] for the news sections, looked up once by slug. */
 export function eightSidorSections() {
-  eightSections ??= getJSON(`${EIGHT_API}/categories?slug=${EIGHT_SECTIONS.join(",")}&_fields=id,name,slug`)
+  eightSections ??= kept("8sidor/sections", 7 * DAY, () => getJSON(`${EIGHT_API}/categories?slug=${EIGHT_SECTIONS.join(",")}&_fields=id,name,slug`)
     .then((list) => EIGHT_SECTIONS.map((slug) => list.find((c) => c.slug === slug)).filter(Boolean)
-      .map((c) => ({ id: String(c.id), name: textOf(c.name) })))
+      .map((c) => ({ id: String(c.id), name: textOf(c.name) }))))
     .catch((e) => { eightSections = null; throw e; });
   return eightSections;
 }
@@ -110,34 +193,52 @@ const eightItem = (p) => ({
   source: "8sidor", id: String(p.id), title: textOf(p.title?.rendered), date: Date.parse(p.date), summary: textOf(p.excerpt?.rendered),
 });
 
-/** Newest articles, optionally in one section or containing a word (8 Sidor's own search). */
-export async function eightSidorList({ section = "", search = "", page = 1, perPage = 20 } = {}) {
-  const params = new URLSearchParams({ per_page: perPage, page, _fields: "id,date,title,excerpt" });
-  if (section) params.set("categories", section);
-  else params.set("categories", (await eightSidorSections()).map((s) => s.id).join(","));
-  if (search) params.set("search", search);
-  const posts = await getJSON(`${EIGHT_API}/posts?${params}`);
-  return posts.map(eightItem);
-}
-
 const eightArticle = (p) => ({
   ...eightItem(p), link: p.link, paragraphs: paragraphsFromHTML(p.content?.rendered), credit: SOURCES["8sidor"].credit,
 });
 
-async function eightSidorArticle(id) {
-  return eightArticle(await getJSON(`${EIGHT_API}/posts/${encodeURIComponent(id)}?_fields=id,date,link,title,content`));
+/** Whole articles for `params`, each kept for loadArticle, so opening one later is instant. */
+async function eightSidorPosts(params) {
+  params.set("_fields", "id,date,link,title,excerpt,content");
+  if (!params.has("categories")) params.set("categories", (await eightSidorSections()).map((s) => s.id).join(","));
+  const articles = (await getJSON(`${EIGHT_API}/posts?${params}`)).map(eightArticle);
+  for (const a of articles) {
+    cache.set(`8sidor/${a.id}`, Promise.resolve(a));
+    keep(`8sidor/${a.id}`, a);
+  }
+  return articles;
 }
 
 /**
- * Whole articles from 8 Sidor's search for a word, newest first. Its search matches any part of a word ("ark" finds
- * "marken"), so callers check the text themselves. The articles are kept for loadArticle, so opening one is instant.
+ * Newest articles, optionally in one section. Shown at once from this browser when it has them; `onUpdate` gets the
+ * list again if a background refresh finds newer articles.
  */
-export async function eightSidorSearch(word, perPage = 20) {
-  const params = new URLSearchParams({ per_page: perPage, search: word, _fields: "id,date,link,title,excerpt,content" });
-  params.set("categories", (await eightSidorSections()).map((s) => s.id).join(","));
-  const articles = (await getJSON(`${EIGHT_API}/posts?${params}`)).map(eightArticle);
-  for (const a of articles) if (!cache.has(`8sidor/${a.id}`)) cache.set(`8sidor/${a.id}`, Promise.resolve(a));
-  return articles;
+export function eightSidorList({ section = "", page = 1, perPage = 20 } = {}, onUpdate) {
+  const params = new URLSearchParams({ per_page: perPage, page });
+  if (section) params.set("categories", section);
+  return kept(`8sidor/list/${section}/${page}/${perPage}`, 15 * MINUTE, async () => (await eightSidorPosts(params))
+    .map(({ source, id, title, date, summary }) => ({ source, id, title, date, summary })), onUpdate);
+}
+
+async function eightSidorArticle(id) {
+  const key = `8sidor/${id}`;
+  return kept(key, 7 * DAY, async () =>
+    eightArticle(await getJSON(`${EIGHT_API}/posts/${encodeURIComponent(id)}?_fields=id,date,link,title,content`)));
+}
+
+/** The kept articles for a list of ids, leaving out any that can no longer be loaded. */
+const eightSidorArticles = async (ids) => (await Promise.all(ids.map((id) => loadArticle("8sidor", id).catch(() => null)))).filter(Boolean);
+
+/**
+ * Whole articles from 8 Sidor's search for a word, newest first. Its search matches any part of a word ("ark" finds
+ * "marken"), so callers check the text themselves. Shown at once from this browser when it has searched for the word
+ * before; `onUpdate` gets the articles again if a background refresh finds new ones.
+ */
+export async function eightSidorSearch(word, perPage = 20, onUpdate) {
+  const load = async () => (await eightSidorPosts(new URLSearchParams({ per_page: perPage, search: word }))).map((a) => a.id);
+  const ids = await kept(`8sidor/search/${word.toLowerCase()}/${perPage}`, 6 * 60 * MINUTE, load,
+    onUpdate && (async (newIds) => onUpdate(await eightSidorArticles(newIds))));
+  return eightSidorArticles(ids);
 }
 
 // MARK: - Klartext (Sveriges Radio)
