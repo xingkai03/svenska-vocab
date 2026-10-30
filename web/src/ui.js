@@ -169,7 +169,7 @@ export function ExampleText({ text, class: cls = "italic" }) {
 
 /** A list row for a dictionary entry. */
 export function EntryRow({ entry, saved, onOpen }) {
-  return html`<a class="cell" href=${href("word", entry.id)} onClick=${onOpen}>
+  return html`<a class="cell" href=${href("word", entry.id)} data-entry=${entry.id} onClick=${onOpen}>
     <div class="cell-main">
       <div class="row" style="gap:6px"><span class="headline">${entry.word}</span><${PosTag} entry=${entry} /><${LevelBadge} level=${entry.level} /></div>
       <div class="subheadline secondary clamp2">${entry.translation}</div>

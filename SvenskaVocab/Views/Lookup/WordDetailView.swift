@@ -88,6 +88,8 @@ struct WordDetailView: View {
                     } label: {
                         Label("Add to my words", systemImage: "bookmark")
                     }
+                    // ⌘D, like bookmarking a page in Safari. A bare letter would fire while typing a note.
+                    .keyboardShortcut("d", modifiers: .command)
                 } else if allowsRemove {
                     Button(role: .destructive) {
                         confirmRemove = true

@@ -48,10 +48,14 @@ function keyName(e) {
   return e.metaKey || e.ctrlKey ? `Mod+${key.length === 1 ? key.toLowerCase() : key}` : key;
 }
 
+/** The selected list row, or the first row. */
+export function selectedRow() {
+  return document.activeElement?.closest?.("main a.cell") ?? document.querySelector("main .list a.cell");
+}
+
 /** The Swedish word of the selected list row, or of the first row: for P in Lookup and My words. */
 export function selectedWord() {
-  const row = document.activeElement?.closest?.("main a.cell") ?? document.querySelector("main .list a.cell");
-  return row?.querySelector(".headline")?.textContent ?? null;
+  return selectedRow()?.querySelector(".headline")?.textContent ?? null;
 }
 
 /** Links and buttons in the page's lists and cards, in screen order. */
