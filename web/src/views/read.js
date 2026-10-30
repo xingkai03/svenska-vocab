@@ -31,7 +31,8 @@ function ReadHome() {
             <span class="subheadline secondary">${SOURCES[s].about}</span></div>
           <span class="chevron"><${Icon} name="chevronRight" /></span></a>`)}
       <//>
-      <div class="section-footer">Articles are read straight from each site and are not stored here.
+      <div class="section-footer">Articles are read straight from each site. 8 Sidor articles are kept in this browser
+        for a while so they open instantly; they are never uploaded or shared.
         8 Sidor and Klartext belong to their publishers; please read them for your own learning.</div>
     </div>`;
 }
@@ -60,7 +61,9 @@ function ArticleList({ source, query }) {
     if (page === 1) setItems(null);
     const delay = source === "wiki" && search ? 300 : 0;
     const timer = setTimeout(() => {
-      const load = source === "8sidor" ? eightSidorList({ section, page })
+      // Newer articles from a background refresh replace the first page while it is the only one shown.
+      const update = page === 1 ? (list) => current && setItems(list) : undefined;
+      const load = source === "8sidor" ? eightSidorList({ section, page }, update)
         : source === "klartext" ? klartextList({ page })
         : wikiList(search);
       load.then((list) => {
@@ -332,8 +335,9 @@ export function ReadingArticles({ word }) {
     let current = true;
     if (/^\p{L}+$/u.test(word) && word.length > 2) {
       // 8 Sidor's search also finds the letters inside other words, so keep articles that really use the word.
-      eightSidorSearch(word).then((articles) => current && setFound(articles.filter((a) => a.paragraphs.some((p) =>
-        tokenize(p.text).some((t) => t.word && sameWord(t.text, word)))).slice(0, 4)), () => {});
+      const show = (articles) => current && setFound(articles.filter((a) => a.paragraphs.some((p) =>
+        tokenize(p.text).some((t) => t.word && sameWord(t.text, word)))).slice(0, 4));
+      eightSidorSearch(word, 20, show).then(show, () => {});
     }
     return () => { current = false; };
   }, [word]);
